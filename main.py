@@ -1,6 +1,6 @@
 def opcion1():
     # Lógica para la opción 1
-    print("Hola")
+    print("Hola y Adios")
 
 def opcion2():
     # Lógica para la opción 2
