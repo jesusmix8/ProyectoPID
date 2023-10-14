@@ -9,7 +9,7 @@ class ImageProcessingApp:
         self.root = root
         self.root.title("Procesamiento de Imágenes")
         self.root.geometry("1250x650")
-        self.root.minsize(700, 480) # Ancho x Alto
+        self.root.minsize(1200, 650) # Ancho x Alto
 
         self.colorbg = "#27374D"
         self.sidemenubg = "#526D82"
@@ -21,7 +21,6 @@ class ImageProcessingApp:
         self.create_functionbotones()
         self.desactivar_botones()
         self.imagen = None  # Variable para almacenar la imagen
-        self.imagen_procesada = None  # Variable para almacenar la imagen procesada
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
@@ -59,49 +58,56 @@ class ImageProcessingApp:
     def create_functionbotones(self):
         self.botonLoadImage = tk.Button(self.contenido_frame, text="Cargar imagen", width=20, height=5, font=("Montserrat"), bg=self.colorbg, fg="White", command=self.cargar_imagen)
         self.botonLoadImage.pack(pady=75)
+        
         botonSalir = tk.Button(self.menu_frame, text="Salir", command=self.root.destroy, width=self.boton_width, bg="#0F2C59", fg="White", font=("Montserrat"))
         botonSalir.config(state="normal")
         botonSalir.pack(side="bottom" )
+        
+        botonLoadNewImage = tk.Button(self.menu_frame, text="Cargar una nueva imagen", command=self.cargar_imagen, width=self.boton_width, bg="#0F2C59", fg="White", font=("Montserrat"))
+        botonLoadNewImage.config(state="disabled")
+        botonLoadNewImage.pack(side="bottom")
+
 
     def cargar_imagen(self):
-        self.rutadeArchivo = filedialog.askopenfilename(title="Seleccione una imagen")
+        filetypes = [
+        ("Archivos de imagen", "*.jpg *.tif *.bmp *.ppm *.jpeg" ),
+        ("Todos los archivos", "*.*")
+        ]
+        self.rutadeArchivo = filedialog.askopenfilename(title="Seleccione una imagen", filetypes=filetypes )
         if self.rutadeArchivo:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
-            self.imagencv = cv2.imread(self.rutadeArchivo)
         self.botonLoadImage.destroy()
         self.label.destroy()
-        self.activar_botones()    
-
-    def desactivar_botones(self):
-        for widget in self.menu_frame.winfo_children():
-            if isinstance(widget, tk.Button) and widget.cget("text") != "Salir":
-                widget.config(state="disabled")
-
-    def activar_botones(self):
-        for widget in self.menu_frame.winfo_children():
-            if isinstance(widget, tk.Button):
-                widget.config(state="normal")
+        self.activar_botones()
 
     def mostrar_imagen(self, imagen):
         if imagen:
+            max_width = 1000
+            max_height = 600
+            width, height = imagen.size
+            if width > max_width or height > max_height:
+                ratio = min(max_width / width, max_height / height)
+                new_width = int(width * ratio)
+                new_height = int(height * ratio)
+                imagen = imagen.resize((new_width, new_height), Image.BOX)
+
+
             photo = ImageTk.PhotoImage(imagen)
             self.image_label.config(image=photo)
             self.image_label.image = photo
             self.image_label.pack(expand=True, anchor="center")
         self.label.destroy()
 
+
+
     def Ecualización(self):
-        image = cv2.imread(self.rutadeArchivo, cv2.IMREAD_GRAYSCALE)
-        imagenEcualizada = cv2.equalizeHist(image)
-        self.imagen_procesada = Image.fromarray(imagenEcualizada)
-        self.mostrar_imagen(self.imagen_procesada)
+     pass # Llama al método para actualizar la imagen en el frame de contenido
+
+
+
 
     def InversionB(self):
-        image = cv2.imread(self.rutadeArchivo,cv2.IMREAD_GRAYSCALE)
-        imageninvertida = 255 - image
-        self.imagen_procesada = Image.fromarray(imageninvertida)
-        self.mostrar_imagen(self.imagen_procesada)
         pass
 
     def inversionF(self):
@@ -113,10 +119,11 @@ class ImageProcessingApp:
         pass
 
     def Rotar(self):
-        image = Image.open(self.rutadeArchivo)
+        image = self.imagen
         imagenRotada = image.rotate(45)
         self.imagen_procesada = imagenRotada
         self.mostrar_imagen(self.imagen_procesada)
+        self.actualizar_imagen_procesada(self.imagen_procesada)
         
 
         
@@ -145,8 +152,16 @@ class ImageProcessingApp:
     def Segmentación(self):
         # Implementa la lógica para la opción 1
         pass
+    
+    def desactivar_botones(self):
+        for widget in self.menu_frame.winfo_children():
+            if isinstance(widget, tk.Button) and widget.cget("text") != "Salir":
+                widget.config(state="disabled")
 
-    # Definir funciones opcion2, opcion3, etc.
+    def activar_botones(self):
+        for widget in self.menu_frame.winfo_children():
+            if isinstance(widget, tk.Button):
+                widget.config(state="normal")
 
 if __name__ == "__main__":
     ventana = tk.Tk()
