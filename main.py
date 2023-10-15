@@ -3,6 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class ImageProcessingApp:
@@ -106,6 +107,7 @@ class ImageProcessingApp:
         botonLoadNewImage.pack(side="bottom")
 
     def cargar_imagen(self):
+        
         filetypes = [
             ("Archivos de imagen", "*.jpg *.tif *.bmp *.ppm *.jpeg *.png"),
             ("Todos los archivos", "*.*"),
@@ -116,6 +118,7 @@ class ImageProcessingApp:
         if self.rutadeArchivo:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
+            
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
@@ -138,9 +141,61 @@ class ImageProcessingApp:
         self.label.destroy()
 
     def Ecualización(self):
-        pass  # Llama al método para actualizar la imagen en el frame de contenido
+        if hasattr(self, "imagen_procesada"):
+            # Si ya hay una imagen procesada, úsala como base
+            image = self.imagen_procesada
+        else:
+            # Si no, usa la imagen original
+            image = self.imagen
+        
+        # Convertir la imagen a escala de grises
+        image = image.convert("L")
+        # Convertir la imagen a un arreglo de numpy
+        image = np.array(image)
+
+        histoOriginal = cv2.calcHist([image], [0], None, [256], [0, 256])
+        # Aplicar la ecualización
+        image = cv2.equalizeHist(image)
+        histoEcualizada = cv2.calcHist([image], [0], None, [256], [0, 256])
+
+
+        # Normalizar el histograma
+        histoOriginal = histoOriginal / histoOriginal.sum()
+        histoEcualizada = histoEcualizada / histoEcualizada.sum()
+
+        # Convertir la imagen de nuevo a un objeto de PIL
+        image = Image.fromarray(image)
+        # Guardar la imagen procesada
+        self.imagen_procesada = image
+        # Mostrar la imagen procesada
+        self.mostrar_imagen(self.imagen_procesada)
+        
+        fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+        axes[0].plot(histoOriginal, color="black")
+        axes[0].set_title('Histograma Original')
+
+        axes[1].plot(histoEcualizada, color="red")
+        axes[1].set_title('Histograma Ecualizado')
+
+        plt.show()
 
     def InversionB(self):
+
+        if hasattr(self, "imagen_procesada"):
+            # Si ya hay una imagen procesada, úsala como base
+            image = self.imagen_procesada
+        else:
+            # Si no, usa la imagen original
+            image = self.imagen
+        
+        # Aplicar la inversión binaria
+        self.invertida = Image.eval(image, lambda x: 255 - x)
+        
+        # Guardar la imagen procesada
+        self.imagen_procesada = self.invertida
+        # Mostrar la imagen procesada
+        self.mostrar_imagen(self.imagen_procesada)
+
         pass
 
     def inversionF(self):
