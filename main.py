@@ -56,6 +56,7 @@ class ImageProcessingApp:
             ("Dilatar", self.Dilatar),
             ("Modificar color de ojos", self.ojos),
             ("Segmentación para \n N renglones", self.Segmentación),
+            ("Reset imagen", self.reset),
         ]
 
         for text, command in buttons_data:
@@ -200,6 +201,40 @@ class ImageProcessingApp:
         pass
 
     def collage(self):
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame.pack(side="left", fill="y")
+
+        self.boton_width = 20
+        buttons_data = [
+            ("Basic", self.basic),
+            ("Panel", self.panel),
+        ]
+        # mostrar los botones para elegir el tipo de collage
+        for text, command in buttons_data:
+            button = tk.Button(
+                self.menu_frame,
+                text=text,
+                command=command,
+                width=self.boton_width,
+                font=("Montserrat"),
+                bg=self.botonesbg,
+            )
+            button.pack(side="left")
+
+        # boton para regresar al menu principal
+        botonRegresar = tk.Button(
+            self.menu_frame,
+            text="Regresar",
+            command=self.regresar,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        botonRegresar.config(state="normal")
+        botonRegresar.pack(side="left")
+
+    def basic(self):
         # Implementa la lógica para la opción 1
         if hasattr(self, "imagen_procesada"):
             # Si ya hay una imagen procesada, úsala como base
@@ -210,12 +245,18 @@ class ImageProcessingApp:
         else:
             # No hay imagen para procesar
             return
-
+        # basic collage
         h_stack = np.hstack((img, img))
         v_stack = np.vstack((h_stack, h_stack))
 
         self.imagen = Image.fromarray(v_stack)
         self.mostrar_imagen(self.imagen)
+
+    def panel(self):
+        pass
+
+    def regresar(self):
+        self.menu_frame.destroy()
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
@@ -260,6 +301,10 @@ class ImageProcessingApp:
     def Segmentación(self):
         # Implementa la lógica para la opción 1
         pass
+
+    def reset(self):
+        self.imagen_procesada = self.imagen
+        self.mostrar_imagen(self.imagen_procesada)
 
     def desactivar_botones(self):
         for widget in self.menu_frame.winfo_children():
