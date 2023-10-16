@@ -152,6 +152,7 @@ class ImageProcessingApp:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
+            self.historial.append(self.imagen)
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
@@ -173,38 +174,24 @@ class ImageProcessingApp:
             self.image_label.pack(expand=True, anchor="center")
         self.label.destroy()
 
-    def realizar_operacion(self, operacion, *args):
-        # ... (resto del código)
-
-        # Agregar la operación al historial
-        self.historial.append((operacion, args))
-
-        # ... (resto del código)
-
     def undo(self):
         if self.historial:
-            # Obtener la última operación y sus parámetros
-            ultima_operacion, parametros = self.historial.pop()
+            self.historial.pop()
+            ultimaimagen = self.historial[-1]
+            self.imagen_procesada = ultimaimagen
+            self.imagen = ultimaimagen
+            self.mostrar_imagen(ultimaimagen)
 
-            # Deshacer la acción (revertir la última operación)
-            if ultima_operacion == "Ecualización":
-                # ... (revertir la operación Ecualización)
-                pass
-            elif ultima_operacion == "InversionB":
-                # ... (revertir la operación InversionB)
-                # Agrega más operaciones según sea necesario
-                pass
-            # Actualizar la imagen
-            elif ultima_operacion == "Rotar":
-                # ... (revertir la operación Rotar)
-                # Actualizar la imagen
-                # regresar 45 grados la imagen rotada
-                image = self.imagen_procesada
-                imagenRotada = image.rotate(-45)
-                self.imagen_procesada = imagenRotada
-            self.mostrar_imagen(self.imagen_procesada)
+
         else:
             print("No hay operaciones para deshacer")
+
+
+    def HistorialdeCambios(self, Image):
+        self.historial.append(Image)
+
+
+        pass
 
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
@@ -225,6 +212,7 @@ class ImageProcessingApp:
         image = Image.fromarray(image)
         self.imagen_procesada = image
         self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
         fig, axes = plt.subplots(1, 2, figsize=(10, 4))
         axes[0].plot(histoOriginal, color="black")
@@ -243,6 +231,7 @@ class ImageProcessingApp:
         self.invertida = Image.eval(image, lambda x: 255 - x)
         self.imagen_procesada = self.invertida
         self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
         pass
 
@@ -302,6 +291,7 @@ class ImageProcessingApp:
         v_stack = np.vstack((h_stack, h_stack))
 
         self.imagen = Image.fromarray(v_stack)
+        self.HistorialdeCambios(self.imagen)
         self.mostrar_imagen(self.imagen)
 
     def panel(self):
@@ -320,7 +310,7 @@ class ImageProcessingApp:
         imagenRotada = image.rotate(45)
         self.imagen_procesada = imagenRotada
         self.mostrar_imagen(self.imagen_procesada)
-        self.historial.append(("Rotar", ()))
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
@@ -331,6 +321,7 @@ class ImageProcessingApp:
         imagenEspejo = image.transpose(Image.FLIP_LEFT_RIGHT)
         self.imagen_procesada = imagenEspejo
         self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def Filtros(self):
 
