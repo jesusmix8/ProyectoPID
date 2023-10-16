@@ -107,7 +107,6 @@ class ImageProcessingApp:
         botonLoadNewImage.pack(side="bottom")
 
     def cargar_imagen(self):
-        
         filetypes = [
             ("Archivos de imagen", "*.jpg *.tif *.bmp *.ppm *.jpeg *.png"),
             ("Todos los archivos", "*.*"),
@@ -118,7 +117,7 @@ class ImageProcessingApp:
         if self.rutadeArchivo:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
-            
+
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
@@ -147,7 +146,7 @@ class ImageProcessingApp:
         else:
             # Si no, usa la imagen original
             image = self.imagen
-        
+
         # Convertir la imagen a escala de grises
         image = image.convert("L")
         # Convertir la imagen a un arreglo de numpy
@@ -157,7 +156,6 @@ class ImageProcessingApp:
         # Aplicar la ecualización
         image = cv2.equalizeHist(image)
         histoEcualizada = cv2.calcHist([image], [0], None, [256], [0, 256])
-
 
         # Normalizar el histograma
         histoOriginal = histoOriginal / histoOriginal.sum()
@@ -169,28 +167,27 @@ class ImageProcessingApp:
         self.imagen_procesada = image
         # Mostrar la imagen procesada
         self.mostrar_imagen(self.imagen_procesada)
-        
+
         fig, axes = plt.subplots(1, 2, figsize=(10, 4))
         axes[0].plot(histoOriginal, color="black")
-        axes[0].set_title('Histograma Original')
+        axes[0].set_title("Histograma Original")
 
         axes[1].plot(histoEcualizada, color="red")
-        axes[1].set_title('Histograma Ecualizado')
+        axes[1].set_title("Histograma Ecualizado")
 
         plt.show()
 
     def InversionB(self):
-
         if hasattr(self, "imagen_procesada"):
             # Si ya hay una imagen procesada, úsala como base
             image = self.imagen_procesada
         else:
             # Si no, usa la imagen original
             image = self.imagen
-        
+
         # Aplicar la inversión binaria
         self.invertida = Image.eval(image, lambda x: 255 - x)
-        
+
         # Guardar la imagen procesada
         self.imagen_procesada = self.invertida
         # Mostrar la imagen procesada
@@ -204,14 +201,21 @@ class ImageProcessingApp:
 
     def collage(self):
         # Implementa la lógica para la opción 1
-        pass
+        if hasattr(self, "imagen_procesada"):
+            # Si ya hay una imagen procesada, úsala como base
+            img = np.array(self.imagen)
+        elif hasattr(self, "imagen"):
+            # Si no, usa la imagen original
+            img = np.array(self.imagen)
+        else:
+            # No hay imagen para procesar
+            return
 
-    # def Rotar(self):
-    #     image = self.imagen
-    #     imagenRotada = image.rotate(45)
-    #     self.imagen_procesada = imagenRotada
-    #     self.mostrar_imagen(self.imagen_procesada)
-    #     # self.actualizar_imagen_procesada(self.imagen_procesada)
+        h_stack = np.hstack((img, img))
+        v_stack = np.vstack((h_stack, h_stack))
+
+        self.imagen = Image.fromarray(v_stack)
+        self.mostrar_imagen(self.imagen)
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
