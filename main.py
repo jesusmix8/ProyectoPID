@@ -6,12 +6,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+#TODO   Implementar el poder deshacer las acciones realizadas en la imagen
+#BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
+#       Implementar la inversión fotográfica
+#       Implementar que al momento de presionar la opcion de filtros abrir un menu con las filtros disponibles y que al seleccionar uno se aplique a la imagen
+#       Implementar opciones de erosionar y dilatar
+#       Implementar la modificacion de color de ojos
+#       Implementar la segmentacion para N renglones
+#       Posibilidad de guardar la imagen procesada??????? 
+
+
 class ImageProcessingApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Procesamiento de Imágenes")
         self.root.geometry("1250x650")
         self.root.minsize(1200, 650)  # Ancho x Alto
+
+
 
         self.colorbg = "#27374D"
         self.sidemenubg = "#526D82"
@@ -22,7 +34,7 @@ class ImageProcessingApp:
         self.create_buttons()
         self.create_functionbotones()
         self.desactivar_botones()
-        self.imagen = None  # Variable para almacenar la imagen
+        # self.imagen = None  # Variable para almacenar la imagen
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
@@ -39,8 +51,7 @@ class ImageProcessingApp:
             fg="White",
         )
         self.label.pack(expand=True, fill="both")
-        self.image_label = tk.Label(self.contenido_frame)  # Para mostrar la imagen
-        self.image_label.pack()
+
 
     def create_buttons(self):
         self.boton_width = 20
@@ -108,6 +119,12 @@ class ImageProcessingApp:
         botonLoadNewImage.pack(side="bottom")
 
     def cargar_imagen(self):
+        # Limpiar la imagen anterior
+        if hasattr(self, "image_label"):
+            self.image_label.destroy()
+        
+        self.image_label = tk.Label(self.contenido_frame)  # Para mostrar la imagen
+        self.image_label.pack()
         filetypes = [
             ("Archivos de imagen", "*.jpg *.tif *.bmp *.ppm *.jpeg *.png"),
             ("Todos los archivos", "*.*"),
@@ -118,7 +135,7 @@ class ImageProcessingApp:
         if self.rutadeArchivo:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
-
+            self.imagen_procesada = self.imagen
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
@@ -132,7 +149,7 @@ class ImageProcessingApp:
                 ratio = min(max_width / width, max_height / height)
                 new_width = int(width * ratio)
                 new_height = int(height * ratio)
-                imagen = imagen.resize((new_width, new_height), Image.BOX)
+                imagen = imagen.resize((new_width, new_height))
 
             photo = ImageTk.PhotoImage(imagen)
             self.image_label.config(image=photo)
@@ -142,31 +159,22 @@ class ImageProcessingApp:
 
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
-            # Si ya hay una imagen procesada, úsala como base
             image = self.imagen_procesada
         else:
-            # Si no, usa la imagen original
             image = self.imagen
 
-        # Convertir la imagen a escala de grises
         image = image.convert("L")
-        # Convertir la imagen a un arreglo de numpy
         image = np.array(image)
 
         histoOriginal = cv2.calcHist([image], [0], None, [256], [0, 256])
-        # Aplicar la ecualización
         image = cv2.equalizeHist(image)
         histoEcualizada = cv2.calcHist([image], [0], None, [256], [0, 256])
 
-        # Normalizar el histograma
         histoOriginal = histoOriginal / histoOriginal.sum()
         histoEcualizada = histoEcualizada / histoEcualizada.sum()
 
-        # Convertir la imagen de nuevo a un objeto de PIL
         image = Image.fromarray(image)
-        # Guardar la imagen procesada
         self.imagen_procesada = image
-        # Mostrar la imagen procesada
         self.mostrar_imagen(self.imagen_procesada)
 
         fig, axes = plt.subplots(1, 2, figsize=(10, 4))
@@ -180,24 +188,19 @@ class ImageProcessingApp:
 
     def InversionB(self):
         if hasattr(self, "imagen_procesada"):
-            # Si ya hay una imagen procesada, úsala como base
             image = self.imagen_procesada
         else:
-            # Si no, usa la imagen original
             image = self.imagen
-
-        # Aplicar la inversión binaria
         self.invertida = Image.eval(image, lambda x: 255 - x)
-
-        # Guardar la imagen procesada
         self.imagen_procesada = self.invertida
-        # Mostrar la imagen procesada
         self.mostrar_imagen(self.imagen_procesada)
 
         pass
 
     def inversionF(self):
-        # Implementa la lógica para la opción 3
+
+
+
         pass
 
     def collage(self):
@@ -258,12 +261,11 @@ class ImageProcessingApp:
     def regresar(self):
         self.menu_frame.destroy()
 
+
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
-            # Si ya hay una imagen procesada, úsala como base
             image = self.imagen_procesada
         else:
-            # Si no, usa la imagen original
             image = self.imagen
 
         imagenRotada = image.rotate(45)
@@ -272,10 +274,8 @@ class ImageProcessingApp:
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
-            # Si ya hay una imagen procesada, úsala como base
             image = self.imagen_procesada
         else:
-            # Si no, usa la imagen original
             image = self.imagen
 
         imagenEspejo = image.transpose(Image.FLIP_LEFT_RIGHT)
@@ -283,6 +283,7 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
 
     def Filtros(self):
+
         # Implementa la lógica para la opción 1
         pass
 
