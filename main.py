@@ -17,6 +17,8 @@ class ImageProcessingApp:
         self.sidemenubg = "#526D82"
         self.botonesbg = "#9DB2BF"
 
+        self.historial = []
+
         self.create_menu_frame()
         self.create_content_frame()
         self.create_buttons()
@@ -41,6 +43,20 @@ class ImageProcessingApp:
         self.label.pack(expand=True, fill="both")
         self.image_label = tk.Label(self.contenido_frame)  # Para mostrar la imagen
         self.image_label.pack()
+
+        # en la esquina superior izquierda colocar un boton con una imagen para poder deshacer la ultima accion
+        self.imagen = Image.open("img/undo.png")
+        self.imagen = self.imagen.resize((50, 50), Image.BOX)
+        photo = ImageTk.PhotoImage(self.imagen)
+        self.botonUndo = tk.Button(
+            self.contenido_frame,
+            image=photo,
+            command=self.undo,
+            bg=self.colorbg,
+            fg="White",
+        )
+        self.botonUndo.image = photo
+        self.botonUndo.place(x=0, y=0)
 
     def create_buttons(self):
         self.boton_width = 20
@@ -139,6 +155,39 @@ class ImageProcessingApp:
             self.image_label.image = photo
             self.image_label.pack(expand=True, anchor="center")
         self.label.destroy()
+
+    def realizar_operacion(self, operacion, *args):
+        # ... (resto del código)
+
+        # Agregar la operación al historial
+        self.historial.append((operacion, args))
+
+        # ... (resto del código)
+
+    def undo(self):
+        if self.historial:
+            # Obtener la última operación y sus parámetros
+            ultima_operacion, parametros = self.historial.pop()
+
+            # Deshacer la acción (revertir la última operación)
+            if ultima_operacion == "Ecualización":
+                # ... (revertir la operación Ecualización)
+                pass
+            elif ultima_operacion == "InversionB":
+                # ... (revertir la operación InversionB)
+                # Agrega más operaciones según sea necesario
+                pass
+            # Actualizar la imagen
+            elif ultima_operacion == "Rotar":
+                # ... (revertir la operación Rotar)
+                # Actualizar la imagen
+                # regresar 45 grados la imagen rotada
+                image = self.imagen_procesada
+                imagenRotada = image.rotate(-45)
+                self.imagen_procesada = imagenRotada
+            self.mostrar_imagen(self.imagen_procesada)
+        else:
+            print("No hay operaciones para deshacer")
 
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
@@ -269,6 +318,7 @@ class ImageProcessingApp:
         imagenRotada = image.rotate(45)
         self.imagen_procesada = imagenRotada
         self.mostrar_imagen(self.imagen_procesada)
+        self.historial.append(("Rotar", ()))
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
