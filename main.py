@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#TODO   Implementar el poder deshacer las acciones realizadas en la imagen
+#TODO   
 #BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
 #       Implementar la inversión fotográfica
 #       Implementar que al momento de presionar la opcion de filtros abrir un menu con las filtros disponibles y que al seleccionar uno se aplique a la imagen
@@ -36,7 +36,6 @@ class ImageProcessingApp:
         self.create_buttons()
         self.create_functionbotones()
         self.desactivar_botones()
-        # self.imagen = None  # Variable para almacenar la imagen
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
@@ -324,6 +323,46 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Filtros(self):
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame.pack(side="left", fill="y")
+
+
+
+        self.boton_width = 20
+        buttons_data = [
+            ("Moda", self.basic),
+            ("Media", self.panel),
+            ("Mediana", self.panel),
+            ("Gaussiano", self.panel),
+            ("Maximos y minimos", self.panel),
+            ("Filtro de Laplaciano", self.panel),
+            ("Filtro de prewitt", self.panel),
+            ("Filtro de Sobel", self.panel),
+            ("Filtro de Roberts", self.panel)
+        ]
+        # mostrar los botones para elegir el tipo de collage
+        for text, command in buttons_data:
+            button = tk.Button(
+                self.menu_frame,
+                text=text,
+                command=command,
+                width=self.boton_width,
+                font=("Montserrat"),
+                bg=self.botonesbg,
+            )
+            button.pack(side="left")
+
+        botonRegresar = tk.Button(
+            self.menu_frame,
+            text="Regresar",
+            command=self.regresar,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        botonRegresar.config(state="normal")
+        botonRegresar.pack(side="left")
 
         # Implementa la lógica para la opción 1
         pass
