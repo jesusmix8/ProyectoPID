@@ -174,7 +174,7 @@ class ImageProcessingApp:
         self.label.destroy()
 
     def undo(self):
-        if self.historial:
+        if self.historial != []:
             self.historial.pop()
             ultimaimagen = self.historial[-1]
             self.imagen_procesada = ultimaimagen
@@ -183,7 +183,21 @@ class ImageProcessingApp:
 
 
         else:
-            print("No hay operaciones para deshacer")
+            #Ventana de error
+            ventanaError = tk.Tk()
+            ventanaError.title("Error")
+            ventanaError.geometry("300x100")
+            ventanaError.minsize(300, 150)
+            ventanaError.maxsize(300, 150)
+            ventanaError.config(bg="#27374D")
+            labelError = tk.Label(ventanaError, text="No hay más acciones \n para deshacer", font=("Montserrat", 15), bg="#27374D", fg="White")
+            labelError.pack(pady=10)
+            botonError = tk.Button(ventanaError, text="Aceptar", command=ventanaError.destroy, width=10, bg="#0F2C59", fg="White", font=("Montserrat"))
+            botonError.pack(pady=10)
+            ventanaError.mainloop()
+
+
+
 
 
     def HistorialdeCambios(self, Image):
