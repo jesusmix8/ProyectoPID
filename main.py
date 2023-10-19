@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog 
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import cv2
 import numpy as np
@@ -134,7 +135,6 @@ class ImageProcessingApp:
         botonLoadNewImage.pack(side="bottom")
 
     def cargar_imagen(self):
-        # Limpiar la imagen anterior
         if hasattr(self, "image_label"):
             self.image_label.destroy()
         
@@ -174,7 +174,7 @@ class ImageProcessingApp:
         self.label.destroy()
 
     def undo(self):
-        if self.historial != []:
+        if len(self.historial) > 1:
             self.historial.pop()
             ultimaimagen = self.historial[-1]
             self.imagen_procesada = ultimaimagen
@@ -183,28 +183,10 @@ class ImageProcessingApp:
 
 
         else:
-            #Ventana de error
-            ventanaError = tk.Tk()
-            ventanaError.title("Error")
-            ventanaError.geometry("300x100")
-            ventanaError.minsize(300, 150)
-            ventanaError.maxsize(300, 150)
-            ventanaError.config(bg="#27374D")
-            labelError = tk.Label(ventanaError, text="No hay más acciones \n para deshacer", font=("Montserrat", 15), bg="#27374D", fg="White")
-            labelError.pack(pady=10)
-            botonError = tk.Button(ventanaError, text="Aceptar", command=ventanaError.destroy, width=10, bg="#0F2C59", fg="White", font=("Montserrat"))
-            botonError.pack(pady=10)
-            ventanaError.mainloop()
-
-
-
-
+            messagebox.showerror("Error", "No hay cambios que deshacer")
 
     def HistorialdeCambios(self, Image):
         self.historial.append(Image)
-
-
-        pass
 
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
@@ -246,13 +228,11 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-        pass
-
     def inversionF(self):
-
-
-
         pass
+
+
+    
 
     def collage(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
@@ -289,7 +269,6 @@ class ImageProcessingApp:
         botonRegresar.pack(side="left")
 
     def basic(self):
-        # Implementa la lógica para la opción 1
         if hasattr(self, "imagen_procesada"):
             # Si ya hay una imagen procesada, úsala como base
             img = np.array(self.imagen)

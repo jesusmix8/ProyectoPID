@@ -1,82 +1,94 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog
+from PIL import Image
 
-class MyApplication:
+class ImageProcessingApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ejemplo de barra de desplazamiento")
+        self.root.title("Procesamiento de Imágenes")
+        self.root.geometry("1250x650")
+        self.root.minsize(700, 400)
 
-        # Crear un frame para la barra de desplazamiento
-        scroll_frame = tk.Frame(self.root)
-        scroll_frame.pack(side="left", fill="y")
+        self.colorbg = "#27374D"
+        self.sidemenubg = "#526D82"
+        self.botonesbg = "#9DB2BF"
 
-        # Crear una barra de desplazamiento vertical
-        scrollbar = ttk.Scrollbar(scroll_frame, orient="vertical")
+        self.create_menu_frame()
+        self.create_content_frame()
+        self.create_buttons()
 
-        # Crear un lienzo (Canvas) para contener los botones
-        self.menu_canvas = tk.Canvas(scroll_frame, yscrollcommand=scrollbar.set)
-        self.menu_canvas.pack(side="left", fill="both", expand=True)
+        # Sidemenu 2 (inicialmente oculto)
+        self.create_sidemenu2()
+        self.hide_sidemenu2()
 
-        scrollbar.config(command=self.menu_canvas.yview)
-        scrollbar.pack(side="right", fill="y")
+    def create_menu_frame(self):
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame.pack(side="left", fill="y")
 
-        # Crear un frame para contener los botones
-        self.menu_frame = tk.Frame(self.menu_canvas, bg="white")
-        self.menu_canvas.create_window((0, 0), window=self.menu_frame, anchor="nw")
+    def create_content_frame(self):
+        self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.contenido_frame.pack(expand=True, fill="both")
+        self.label = tk.Label(self.contenido_frame, text="Cargue una imagen para empezar", font=("Montserrat", 25), bg=self.colorbg, fg="White")
+        self.label.pack(expand=True, fill="both")
 
-        # Configurar el lienzo para que sea desplazable
-        self.menu_frame.bind("<Configure>", self.on_frame_configure)
-        self.menu_canvas.bind("<Configure>", self.on_canvas_configure)
-
-        # Agregar botones
+    def create_buttons(self):
+        self.boton_width = 20
         buttons_data = [
-            ("Moda", self.basic),
-            ("Media", self.panel),
-            # ... otros botones ...
+            ("Ecualización", self.opcion1),
+            ("Mostrar Sidemenu 2", self.toggle_sidemenu2),  # Nuevo botón para mostrar el segundo sidemenu
+            ("Salir", self.root.quit)
         ]
 
         for text, command in buttons_data:
-            button = tk.Button(
-                self.menu_frame,
-                text=text,
-                command=command,
-                width=20,  # Opcional: Puedes ajustar el ancho aquí
-                font=("Montserrat"),
-                bg="lightblue",
-            )
-            button.pack(side="top")
+            button = tk.Button(self.menu_frame, text=text, command=command, width=self.boton_width, font=("Montserrat"), bg=self.botonesbg)
+            button.pack()
 
-        botonRegresar = tk.Button(
-            self.menu_frame,
-            text="Regresar",
-            command=self.regresar,
-            width=20,  # Opcional: Puedes ajustar el ancho aquí
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonRegresar.pack(side="top")
+    def create_sidemenu2(self):
+        self.sidemenu2_frame = tk.Frame(self.root, width=150, bg="yellow")  # Cambia el color a tu preferencia
+        self.sidemenu2_frame.pack(side="left", fill="y")
 
-        # Inicializar la barra de desplazamiento
-        self.menu_canvas.update_idletasks()
-        self.menu_canvas.config(scrollregion=self.menu_canvas.bbox("all"))
+        # Agrega botones específicos para el sidemenu2
+        button = tk.Button(self.sidemenu2_frame, text="Opción 1 del Sidemenu 2", command=self.opcion2, width=self.boton_width, font=("Montserrat"), bg=self.botonesbg)
+        button.pack()
 
-    def on_frame_configure(self, event):
-        self.menu_canvas.config(scrollregion=self.menu_canvas.bbox("all"))
+    def hide_sidemenu2(self):
+        self.sidemenu2_frame.pack_forget()
 
-    def on_canvas_configure(self, event):
-        canvas_width = event.width
-        self.menu_canvas.itemconfig(self.menu_frame, width=canvas_width)
+    def show_sidemenu2(self):
+        self.sidemenu2_frame.pack(side="left", fill="y")
 
-    def basic(self):
+    def cargar_imagen(self):
+        rutadeArchivo = filedialog.askopenfilename(title="Seleccione una imagen")
+        if rutadeArchivo:
+            imagen = Image.open(rutadeArchivo)
+            return imagen
+        return None
+
+    def desactivar_botones(self):
+        for widget in self.menu_frame.winfo_children():
+            if isinstance(widget, tk.Button):
+                widget.config(state="disabled")
+
+    def activar_botones(self):
+        for widget in self.menu_frame.winfo_children():
+            if isinstance(widget, tk.Button):
+                widget.config(state="normal")
+
+    def opcion1(self):
+        # Implementa la funcionalidad de la opción 1 aquí
         pass
 
-    def panel(self):
+    def opcion2(self):
+        # Implementa la funcionalidad de la opción 2 aquí
         pass
 
-    def regresar(self):
-        pass
+    def toggle_sidemenu2(self):
+        if self.sidemenu2_frame.winfo_viewable():
+            self.hide_sidemenu2()
+        else:
+            self.show_sidemenu2()
 
-root = tk.Tk()
-app = MyApplication(root)
-root.mainloop()
+if __name__ == "__main__":
+    ventana = tk.Tk()
+    app = ImageProcessingApp(ventana)
+    ventana.mainloop()
