@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog 
+from tkinter import filedialog
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import cv2
@@ -7,14 +7,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#TODO   
-#BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
+# TODO
+# BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
 #       Implementar la inversión fotográfica
 #       Implementar que al momento de presionar la opcion de filtros abrir un menu con las filtros disponibles y que al seleccionar uno se aplique a la imagen
 #       Implementar opciones de erosionar y dilatar
 #       Implementar la modificacion de color de ojos
 #       Implementar la segmentacion para N renglones
-#       Posibilidad de guardar la imagen procesada??????? 
+#       Posibilidad de guardar la imagen procesada???????
 
 
 class ImageProcessingApp:
@@ -23,8 +23,6 @@ class ImageProcessingApp:
         self.root.title("Procesamiento de Imágenes")
         self.root.geometry("1250x650")
         self.root.minsize(1200, 650)  # Ancho x Alto
-
-
 
         self.colorbg = "#27374D"
         self.sidemenubg = "#526D82"
@@ -53,7 +51,6 @@ class ImageProcessingApp:
             fg="White",
         )
         self.label.pack(expand=True, fill="both")
-
 
         # en la esquina superior izquierda colocar un boton con una imagen para poder deshacer la ultima accion
         self.imagen = Image.open("img/undo.png")
@@ -134,10 +131,22 @@ class ImageProcessingApp:
         botonLoadNewImage.config(state="disabled")
         botonLoadNewImage.pack(side="bottom")
 
+        boton_save_image = tk.Button(
+            self.menu_frame,
+            text="Guardar imagen",
+            command=self.save_image,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        boton_save_image.config(state="disabled")
+        boton_save_image.pack(side="bottom")
+
     def cargar_imagen(self):
         if hasattr(self, "image_label"):
             self.image_label.destroy()
-        
+
         self.image_label = tk.Label(self.contenido_frame)  # Para mostrar la imagen
         self.image_label.pack()
         filetypes = [
@@ -155,6 +164,18 @@ class ImageProcessingApp:
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
+
+    def save_image(self):
+        if hasattr(self, "imagen_procesada"):
+            filetypes = [("Archivos de imagen", "*.png"), ("Todos los archivos", "*.*")]
+            ruta_guardado = filedialog.asksaveasfilename(
+                defaultextension=".png", filetypes=filetypes
+            )
+            if ruta_guardado:
+                self.imagen_procesada.save(ruta_guardado)
+                messagebox.showinfo("Guardado", "La imagen se ha guardado.")
+        else:
+            messagebox.showerror("Error", "No hay una imagen procesada para guardar.")
 
     def mostrar_imagen(self, imagen):
         if imagen:
@@ -180,8 +201,6 @@ class ImageProcessingApp:
             self.imagen_procesada = ultimaimagen
             self.imagen = ultimaimagen
             self.mostrar_imagen(ultimaimagen)
-
-
         else:
             messagebox.showerror("Error", "No hay cambios que deshacer")
 
@@ -231,9 +250,6 @@ class ImageProcessingApp:
     def inversionF(self):
         pass
 
-
-    
-
     def collage(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
         self.menu_frame.pack(side="left", fill="y")
@@ -276,7 +292,6 @@ class ImageProcessingApp:
             # Si no, usa la imagen original
             img = np.array(self.imagen)
         else:
-            # No hay imagen para procesar
             return
         # basic collage
         h_stack = np.hstack((img, img))
@@ -291,7 +306,6 @@ class ImageProcessingApp:
 
     def regresar(self):
         self.menu_frame.destroy()
-
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
@@ -319,8 +333,6 @@ class ImageProcessingApp:
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
         self.menu_frame.pack(side="left", fill="y")
 
-
-
         self.boton_width = 20
         buttons_data = [
             ("Moda", self.basic),
@@ -331,7 +343,7 @@ class ImageProcessingApp:
             ("Filtro de Laplaciano", self.panel),
             ("Filtro de prewitt", self.panel),
             ("Filtro de Sobel", self.panel),
-            ("Filtro de Roberts", self.panel)
+            ("Filtro de Roberts", self.panel),
         ]
         # mostrar los botones para elegir el tipo de collage
         for text, command in buttons_data:
