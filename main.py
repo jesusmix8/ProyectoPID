@@ -10,11 +10,9 @@ import matplotlib.pyplot as plt
 # TODO
 # BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
 #       Implementar la inversión fotográfica
-#       Implementar que al momento de presionar la opcion de filtros abrir un menu con las filtros disponibles y que al seleccionar uno se aplique a la imagen
 #       Implementar opciones de erosionar y dilatar
 #       Implementar la modificacion de color de ojos
 #       Implementar la segmentacion para N renglones
-#       Posibilidad de guardar la imagen procesada???????
 
 
 class ImageProcessingApp:
@@ -80,7 +78,7 @@ class ImageProcessingApp:
             ("Filtros", self.Filtros),
             ("Erosionar", self.Erosionar),
             ("Dilatar", self.Dilatar),
-            ("Modificar color de ojos", self.ojos),
+            ("Modificar color de ojos", self.CambiodeColordeOjos),
             ("Segmentación para \n N renglones", self.Segmentación),
             ("Reset imagen", self.reset),
         ]
@@ -538,12 +536,45 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Erosionar(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar la operación de erosión a la imagen
+        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
+        eroded_image = cv2.erode(image_array, kernel, iterations=1)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        eroded_image = Image.fromarray(eroded_image)
+
+        self.imagen_procesada = eroded_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+       
 
     def Dilatar(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
 
-    def ojos(self):
+        image_array = np.array(image)
+
+        # Aplicar la operación de dilatación a la imagen
+        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
+        dilated_image = cv2.dilate(image_array, kernel, iterations=1)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        dilated_image = Image.fromarray(dilated_image)
+
+        self.imagen_procesada = dilated_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+    def CambiodeColordeOjos(self):
         pass
 
     def Segmentación(self):
