@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 
 # TODO
 # BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
-#       Implementar la inversión fotográfica
 #       Implementar opciones de erosionar y dilatar
 #       Implementar la modificacion de color de ojos
 #       Implementar la segmentacion para N renglones
