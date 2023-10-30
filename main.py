@@ -440,13 +440,34 @@ class ImageProcessingApp:
         self.imagen_procesada = image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-        
+
 
     def FiltroMaxMin(self):
         pass
 
     def FiltroLaplaciano(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image_array = np.array(image)
+
+        # Aplicar el filtro Laplaciano a la imagen
+        filtered_image = cv2.Laplacian(image_array, cv2.CV_64F)
+
+        # Escalar los valores para que estén en el rango 0-255
+        filtered_image = cv2.convertScaleAbs(filtered_image)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+
+        
 
     def FiltroPrewitt(self):
         pass
