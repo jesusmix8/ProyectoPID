@@ -516,7 +516,26 @@ class ImageProcessingApp:
 
 
     def FiltroRoberts(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Roberts a la imagen
+        kernel_x = np.array([[1, 0], [0, -1]])
+        kernel_y = np.array([[0, 1], [-1, 0]])
+        filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
+        filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def Erosionar(self):
         pass
