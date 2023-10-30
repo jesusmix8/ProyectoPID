@@ -350,8 +350,15 @@ class ImageProcessingApp:
 
         self.boton_width = 20
         buttons_data = [
-            ("Filtro 1", self.Erosionar),
-            ("Filter 2", self.Erosionar),
+            ("Filtro Moda", self.FiltroModa),
+            ("Filtro Media", self.FiltroMedia),
+            ("Filtro mediana", self.FiltroMediana),
+            ("Filtro Gausiano", self.FiltroGausiano),
+            ("Filtro Maximos y minimos", self.FiltroMaxMin),
+            ("Filtro Laplaciano", self.FiltroLaplaciano),
+            ("Filtro Prewitt", self.FiltroPrewitt),
+            ("Filtro Sobel", self.FiltroSobel),
+            ("Filtro Roberts", self.FiltroRoberts)
         ]
 
         for text, command in buttons_data:
@@ -379,9 +386,63 @@ class ImageProcessingApp:
         botonRegresar.pack(side="bottom")
 
 
+
+    def FiltroModa(self):
+        #Aplicar el filtro moda a la imagen
+        pass
+        
+
+    def FiltroMedia(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image = np.array(image)
+
+
+        image = cv2.blur(image,(3,3))
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+        
+
+
+
+    def FiltroMediana(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image = np.array(image)
+
+        image = cv2.medianBlur(image,3)
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
         pass
 
+    def FiltroGausiano(self):
+        pass
 
+    def FiltroMaxMin(self):
+        pass
+
+    def FiltroLaplaciano(self):
+        pass
+
+    def FiltroPrewitt(self):
+        pass
+
+    def FiltroSobel(self):
+        pass
+
+    def FiltroRoberts(self):
+        pass
 
     def Erosionar(self):
         pass
