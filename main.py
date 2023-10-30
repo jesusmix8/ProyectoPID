@@ -427,7 +427,20 @@ class ImageProcessingApp:
         pass
 
     def FiltroGausiano(self):
-        pass
+
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image = np.array(image)
+
+        image = cv2.GaussianBlur(image,(3,3),0)
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+        
 
     def FiltroMaxMin(self):
         pass
