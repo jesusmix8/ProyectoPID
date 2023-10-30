@@ -470,10 +470,50 @@ class ImageProcessingApp:
         
 
     def FiltroPrewitt(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+                image = self.imagen_procesada
+        else:
+                image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Prewitt a la imagen
+        kernel_x = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+        kernel_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+        filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
+        filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+            # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroSobel(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Sobel a la imagen
+        filtered_image_x = cv2.Sobel(image_array, cv2.CV_64F, 1, 0, ksize=3)
+        filtered_image_y = cv2.Sobel(image_array, cv2.CV_64F, 0, 1, ksize=3)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+        # Escalar los valores para que estén en el rango 0-255
+        filtered_image = cv2.convertScaleAbs(filtered_image)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
 
     def FiltroRoberts(self):
         pass
