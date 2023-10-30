@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
 class ImageProcessingApp:
@@ -220,13 +221,18 @@ class ImageProcessingApp:
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
             # Si ya hay una imagen procesada, úsala como base
-            image = self.imagen_procesada
+            image = self.imagen_procesada.copy()  # Copia la imagen procesada
         else:
             # Si no, usa la imagen original
             image = self.imagen
+        
+        # Define el ángulo de rotación en radianes (45 grados)
+        angulo = math.radians(45)
 
-        imagenRotada = image.rotate(45)
-        self.imagen_procesada = imagenRotada
+        # Aplica la rotación
+        imagen_rotada = image.transform(image.size, Image.AFFINE, (math.cos(angulo), -math.sin(angulo), 0, math.sin(angulo), math.cos(angulo), 0), resample=Image.BICUBIC)
+
+        self.imagen_procesada = imagen_rotada
         self.mostrar_imagen(self.imagen_procesada)
 
     def Espejo(self):
