@@ -25,20 +25,21 @@ class ImageProcessingApp:
         self.root.minsize(1200, 650)  # Ancho x Alto
 
         self.colorbg = "#27374D"
-        self.sidemenubg = "#526D82"
+        self.sidemenucolorbg = "#526D82"
         self.botonesbg = "#9DB2BF"
 
         self.historial = []
 
         self.create_menu_frame()
         self.create_content_frame()
-        self.create_buttons()
-        self.create_functionbotones()
         self.desactivar_botones()
+        self.create_functionbotones()
+        
 
     def create_menu_frame(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
         self.menu_frame.pack(side="left", fill="y")
+        self.create_buttons()
 
     def create_content_frame(self):
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
@@ -65,6 +66,7 @@ class ImageProcessingApp:
         )
         self.botonUndo.image = photo
         self.botonUndo.place(x=0, y=0)
+        
 
     def create_buttons(self):
         self.boton_width = 20
@@ -251,7 +253,7 @@ class ImageProcessingApp:
         pass
 
     def collage(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
         self.menu_frame.pack(side="left", fill="y")
 
         self.boton_width = 20
@@ -305,7 +307,11 @@ class ImageProcessingApp:
         pass
 
     def regresar(self):
-        self.menu_frame.destroy()
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.create_buttons()
+        self.create_functionbotones()
+        self.activar_botones()
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
@@ -329,36 +335,35 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
+
     def Filtros(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
-        self.menu_frame.pack(side="left", fill="y")
+        #Deleete buttons from menu_frame
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuFiltros = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
+        self.menuFiltros.pack(side="left", fill="y" )
+
 
         self.boton_width = 20
         buttons_data = [
-            ("Moda", self.basic),
-            ("Media", self.panel),
-            ("Mediana", self.panel),
-            ("Gaussiano", self.panel),
-            ("Maximos y minimos", self.panel),
-            ("Filtro de Laplaciano", self.panel),
-            ("Filtro de prewitt", self.panel),
-            ("Filtro de Sobel", self.panel),
-            ("Filtro de Roberts", self.panel),
+            ("Filtro 1", self.Erosionar),
+            ("Filter 2", self.Erosionar),
         ]
-        # mostrar los botones para elegir el tipo de collage
+
         for text, command in buttons_data:
             button = tk.Button(
-                self.menu_frame,
+                self.menuFiltros,
                 text=text,
                 command=command,
                 width=self.boton_width,
                 font=("Montserrat"),
                 bg=self.botonesbg,
             )
-            button.pack(side="left")
+            button.pack()
 
+        # boton para regresar al menu principal
         botonRegresar = tk.Button(
-            self.menu_frame,
+            self.menuFiltros,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -367,25 +372,23 @@ class ImageProcessingApp:
             font=("Montserrat"),
         )
         botonRegresar.config(state="normal")
-        botonRegresar.pack(side="left")
+        botonRegresar.pack(side="bottom")
 
-        # Implementa la lógica para la opción 1
+
         pass
 
+
+
     def Erosionar(self):
-        # Implementa la lógica para la opción 1
         pass
 
     def Dilatar(self):
-        # Implementa la lógica para la opción 1
         pass
 
     def ojos(self):
-        # Implementa la lógica para la opción 1
         pass
 
     def Segmentación(self):
-        # Implementa la lógica para la opción 1
         pass
 
     def reset(self):
