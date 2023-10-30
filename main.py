@@ -253,8 +253,10 @@ class ImageProcessingApp:
         pass
 
     def collage(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
-        self.menu_frame.pack(side="left", fill="y")
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuCollage = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y" )
 
         self.boton_width = 20
         buttons_data = [
@@ -264,18 +266,18 @@ class ImageProcessingApp:
         # mostrar los botones para elegir el tipo de collage
         for text, command in buttons_data:
             button = tk.Button(
-                self.menu_frame,
+                self.menuCollage,
                 text=text,
                 command=command,
                 width=self.boton_width,
                 font=("Montserrat"),
                 bg=self.botonesbg,
             )
-            button.pack(side="left")
+            button.pack()
 
         # boton para regresar al menu principal
         botonRegresar = tk.Button(
-            self.menu_frame,
+            self.menuCollage,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -284,7 +286,7 @@ class ImageProcessingApp:
             font=("Montserrat"),
         )
         botonRegresar.config(state="normal")
-        botonRegresar.pack(side="left")
+        botonRegresar.pack(side="bottom")
 
     def basic(self):
         if hasattr(self, "imagen_procesada"):
@@ -311,7 +313,9 @@ class ImageProcessingApp:
             widget.destroy()
         self.create_buttons()
         self.create_functionbotones()
+        self.botonLoadImage.destroy()
         self.activar_botones()
+
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
