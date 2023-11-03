@@ -33,6 +33,9 @@ class ImageProcessingApp:
         self.create_content_frame()
         self.desactivar_botones()
         self.create_functionbotones()
+        self.create_help_frame()
+        # collage frame
+        # self.create_collage_frame()
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
@@ -42,6 +45,7 @@ class ImageProcessingApp:
     def create_content_frame(self):
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_frame.pack(expand=True, fill="both")
+
         self.label = tk.Label(
             self.contenido_frame,
             text="Cargue una imagen para empezar",
@@ -51,10 +55,10 @@ class ImageProcessingApp:
         )
         self.label.pack(expand=True, fill="both")
 
-        # en la esquina superior izquierda colocar un boton con una imagen para poder deshacer la ultima accion
         self.imagen = Image.open("img/undo.png")
         self.imagen = self.imagen.resize((50, 50), Image.BOX)
         photo = ImageTk.PhotoImage(self.imagen)
+
         self.botonUndo = tk.Button(
             self.contenido_frame,
             image=photo,
@@ -64,6 +68,43 @@ class ImageProcessingApp:
         )
         self.botonUndo.image = photo
         self.botonUndo.place(x=0, y=0)
+
+    # def create_help_frame(self):
+
+    #     pass
+
+    def create_help_frame(self):
+        self.help_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.help_frame.pack(expand=True, fill="both")
+        self.label_help = tk.Label(
+            self.help_frame,
+            text="fasd",
+            font=("Montserrat", 25),
+            bg=self.colorbg,
+            fg=self.colorbg,
+            # wraplength=self.help_frame.winfo_width(),
+        )
+        self.label_help.pack(expand=True, fill="both")
+
+    def show_help_frame(self):
+        self.hide_frames()
+        self.help_frame.pack()
+
+    def show_content_frame(self):
+        self.hide_frames()
+        self.contenido_frame.pack()
+        self.botonUndo.pack()
+
+    def hide_frames(self):
+        self.contenido_frame.pack_forget()
+        self.help_frame.pack_forget()
+
+    def exit_help(self):
+        self.regresar()
+        self.show_content_frame()
+
+    def create_collage_frame(self):
+        pass
 
     def create_buttons(self):
         self.boton_width = 20
@@ -142,6 +183,18 @@ class ImageProcessingApp:
         boton_save_image.config(state="disabled")
         boton_save_image.pack(side="bottom")
 
+        help_button = tk.Button(
+            self.menu_frame,
+            text="Ayuda",
+            command=self.help_buttons,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        help_button.config(state="disabled")
+        help_button.pack(side="bottom")
+
     def cargar_imagen(self):
         if hasattr(self, "image_label"):
             self.image_label.destroy()
@@ -175,6 +228,46 @@ class ImageProcessingApp:
                 messagebox.showinfo("Guardado", "La imagen se ha guardado.")
         else:
             messagebox.showerror("Error", "No hay una imagen procesada para guardar.")
+
+    def help_buttons(self):
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y")
+
+        self.boton_width = 20
+        buttons_data = [
+            ("Procesamiento de Imágenes", self.show_help_frame),
+            ("Contenido", self.show_content_frame),
+        ]
+        # mostrar los botones para elegir el tipo de collage
+        for text, command in buttons_data:
+            button = tk.Button(
+                self.menuCollage,
+                text=text,
+                command=command,
+                width=self.boton_width,
+                font=("Montserrat"),
+                bg=self.botonesbg,
+            )
+            button.pack()
+
+        # boton para regresar al menu principal
+        botonRegresar_1 = tk.Button(
+            self.menuCollage,
+            text="Regresar",
+            command=self.exit_help,
+            # command=self.regresar,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        botonRegresar_1.config(state="normal")
+        botonRegresar_1.pack(side="bottom")
+
+    def helpProcesamiento(self):
+        pass
 
     def mostrar_imagen(self, imagen):
         if imagen:
@@ -286,8 +379,9 @@ class ImageProcessingApp:
         botonRegresar.pack(side="bottom")
 
     def basic(self):
-        ventana_collage = tk.Toplevel(ventana)
-        app_collage = ImageCollageApp(ventana_collage, app_processing)
+        # ventana_collage = tk.Toplevel(ventana)
+        # app_collage = ImageCollageApp(ventana_collage, app_processing)
+        pass
 
     def panel(self):
         pass
@@ -331,17 +425,20 @@ class ImageProcessingApp:
     #     self.HistorialdeCambios(self.imagen_procesada)
 
     def Rotar(self):
-        if hasattr(self, "imagen_procesada"):
-            image_np = np.array(self.imagen_procesada)
-            angle = 45
-            rotated_image = rotate_image(image_np, angle)
+        pass
 
-            # Convertir la imagen rotada a formato PIL para mostrarla en Tkinter
-            rotated_image_pil = Image.fromarray(rotated_image)
+    # def Rotar(self):
+    #     if hasattr(self, "imagen_procesada"):
+    #         image_np = np.array(self.imagen_procesada)
+    #         angle = 45
+    #         rotated_image = rotate_image(image_np, angle)
 
-            # Actualizar la imagen mostrada
-            self.mostrar_imagen(rotated_image_pil)
-            self.HistorialdeCambios(self.imagen_procesada)
+    #         # Convertir la imagen rotada a formato PIL para mostrarla en Tkinter
+    #         rotated_image_pil = Image.fromarray(rotated_image)
+
+    #         # Actualizar la imagen mostrada
+    #         self.mostrar_imagen(rotated_image_pil)
+    #         self.HistorialdeCambios(self.imagen_procesada)
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
