@@ -5,16 +5,14 @@ from PIL import Image, ImageTk
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
 # TODO
 # BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
-#       Implementar la inversión fotográfica
-#       Implementar que al momento de presionar la opcion de filtros abrir un menu con las filtros disponibles y que al seleccionar uno se aplique a la imagen
 #       Implementar opciones de erosionar y dilatar
 #       Implementar la modificacion de color de ojos
 #       Implementar la segmentacion para N renglones
-#       Posibilidad de guardar la imagen procesada???????
 
 
 class ImageProcessingApp:
@@ -25,20 +23,21 @@ class ImageProcessingApp:
         self.root.minsize(1200, 650)  # Ancho x Alto
 
         self.colorbg = "#27374D"
-        self.sidemenubg = "#526D82"
+        self.sidemenucolorbg = "#526D82"
         self.botonesbg = "#9DB2BF"
 
         self.historial = []
 
         self.create_menu_frame()
         self.create_content_frame()
-        self.create_buttons()
-        self.create_functionbotones()
         self.desactivar_botones()
+        self.create_functionbotones()
+        
 
     def create_menu_frame(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
         self.menu_frame.pack(side="left", fill="y")
+        self.create_buttons()
 
     def create_content_frame(self):
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
@@ -65,6 +64,7 @@ class ImageProcessingApp:
         )
         self.botonUndo.image = photo
         self.botonUndo.place(x=0, y=0)
+        
 
     def create_buttons(self):
         self.boton_width = 20
@@ -78,7 +78,7 @@ class ImageProcessingApp:
             ("Filtros", self.Filtros),
             ("Erosionar", self.Erosionar),
             ("Dilatar", self.Dilatar),
-            ("Modificar color de ojos", self.ojos),
+            ("Modificar color de ojos", self.CambiodeColordeOjos),
             ("Segmentación para \n N renglones", self.Segmentación),
             ("Reset imagen", self.reset),
         ]
@@ -251,8 +251,10 @@ class ImageProcessingApp:
         pass
 
     def collage(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
-        self.menu_frame.pack(side="left", fill="y")
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuCollage = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y" )
 
         self.boton_width = 20
         buttons_data = [
@@ -262,18 +264,18 @@ class ImageProcessingApp:
         # mostrar los botones para elegir el tipo de collage
         for text, command in buttons_data:
             button = tk.Button(
-                self.menu_frame,
+                self.menuCollage,
                 text=text,
                 command=command,
                 width=self.boton_width,
                 font=("Montserrat"),
                 bg=self.botonesbg,
             )
-            button.pack(side="left")
+            button.pack()
 
         # boton para regresar al menu principal
         botonRegresar = tk.Button(
-            self.menu_frame,
+            self.menuCollage,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -282,7 +284,7 @@ class ImageProcessingApp:
             font=("Montserrat"),
         )
         botonRegresar.config(state="normal")
-        botonRegresar.pack(side="left")
+        botonRegresar.pack(side="bottom")
 
     # def basic(self):
     #     if hasattr(self, "imagen_procesada"):
@@ -330,16 +332,29 @@ class ImageProcessingApp:
         pass
 
     def regresar(self):
-        self.menu_frame.destroy()
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.create_buttons()
+        self.create_functionbotones()
+        self.botonLoadImage.destroy()
+        self.activar_botones()
+
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
-            image = self.imagen_procesada
+            # Si ya hay una imagen procesada, úsala como base
+            image = self.imagen_procesada.copy()  # Copia la imagen procesada
         else:
+            # Si no, usa la imagen original
             image = self.imagen
+        
+        # Define el ángulo de rotación en radianes (45 grados)
+        angulo = math.radians(45)
 
-        imagenRotada = image.rotate(45)
-        self.imagen_procesada = imagenRotada
+        # Aplica la rotación
+        imagen_rotada = image.transform(image.size, Image.AFFINE, (math.cos(angulo), -math.sin(angulo), 0, math.sin(angulo), math.cos(angulo), 0), resample=Image.BICUBIC)
+
+        self.imagen_procesada = imagen_rotada
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
@@ -354,36 +369,42 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
+
     def Filtros(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenubg)
-        self.menu_frame.pack(side="left", fill="y")
+        #Deleete buttons from menu_frame
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuFiltros = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
+        self.menuFiltros.pack(side="left", fill="y" )
+
 
         self.boton_width = 20
         buttons_data = [
-            ("Moda", self.basic),
-            ("Media", self.panel),
-            ("Mediana", self.panel),
-            ("Gaussiano", self.panel),
-            ("Maximos y minimos", self.panel),
-            ("Filtro de Laplaciano", self.panel),
-            ("Filtro de prewitt", self.panel),
-            ("Filtro de Sobel", self.panel),
-            ("Filtro de Roberts", self.panel),
+            ("Filtro Moda", self.FiltroModa),
+            ("Filtro Media", self.FiltroMedia),
+            ("Filtro mediana", self.FiltroMediana),
+            ("Filtro Gausiano", self.FiltroGausiano),
+            ("Filtro Maximos y minimos", self.FiltroMaxMin),
+            ("Filtro Laplaciano", self.FiltroLaplaciano),
+            ("Filtro Prewitt", self.FiltroPrewitt),
+            ("Filtro Sobel", self.FiltroSobel),
+            ("Filtro Roberts", self.FiltroRoberts)
         ]
-        # mostrar los botones para elegir el tipo de collage
+
         for text, command in buttons_data:
             button = tk.Button(
-                self.menu_frame,
+                self.menuFiltros,
                 text=text,
                 command=command,
                 width=self.boton_width,
                 font=("Montserrat"),
                 bg=self.botonesbg,
             )
-            button.pack(side="left")
+            button.pack()
 
+        # boton para regresar al menu principal
         botonRegresar = tk.Button(
-            self.menu_frame,
+            self.menuFiltros,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -392,25 +413,203 @@ class ImageProcessingApp:
             font=("Montserrat"),
         )
         botonRegresar.config(state="normal")
-        botonRegresar.pack(side="left")
+        botonRegresar.pack(side="bottom")
 
-        # Implementa la lógica para la opción 1
+
+
+    def FiltroModa(self):
+        #Aplicar el filtro moda a la imagen
         pass
+        
+
+    def FiltroMedia(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image = np.array(image)
+
+
+        image = cv2.blur(image,(3,3))
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+        
+
+
+
+    def FiltroMediana(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image = np.array(image)
+
+        image = cv2.medianBlur(image,3)
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+        pass
+
+    def FiltroGausiano(self):
+
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image = np.array(image)
+
+        image = cv2.GaussianBlur(image,(3,3),0)
+        image = Image.fromarray(image)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+
+    def FiltroMaxMin(self):
+        pass
+
+    def FiltroLaplaciano(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+        image_array = np.array(image)
+
+        # Aplicar el filtro Laplaciano a la imagen
+        filtered_image = cv2.Laplacian(image_array, cv2.CV_64F)
+
+        # Escalar los valores para que estén en el rango 0-255
+        filtered_image = cv2.convertScaleAbs(filtered_image)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+
+        
+
+    def FiltroPrewitt(self):
+        if hasattr(self, "imagen_procesada"):
+                image = self.imagen_procesada
+        else:
+                image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Prewitt a la imagen
+        kernel_x = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+        kernel_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+        filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
+        filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+            # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+    def FiltroSobel(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Sobel a la imagen
+        filtered_image_x = cv2.Sobel(image_array, cv2.CV_64F, 1, 0, ksize=3)
+        filtered_image_y = cv2.Sobel(image_array, cv2.CV_64F, 0, 1, ksize=3)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+        # Escalar los valores para que estén en el rango 0-255
+        filtered_image = cv2.convertScaleAbs(filtered_image)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+
+    def FiltroRoberts(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro Roberts a la imagen
+        kernel_x = np.array([[1, 0], [0, -1]])
+        kernel_y = np.array([[0, 1], [-1, 0]])
+        filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
+        filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
+        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        filtered_image = Image.fromarray(filtered_image)
+
+        self.imagen_procesada = filtered_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def Erosionar(self):
-        # Implementa la lógica para la opción 1
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar la operación de erosión a la imagen
+        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
+        eroded_image = cv2.erode(image_array, kernel, iterations=1)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        eroded_image = Image.fromarray(eroded_image)
+
+        self.imagen_procesada = eroded_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+       
 
     def Dilatar(self):
-        # Implementa la lógica para la opción 1
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
 
-    def ojos(self):
-        # Implementa la lógica para la opción 1
+        image_array = np.array(image)
+
+        # Aplicar la operación de dilatación a la imagen
+        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
+        dilated_image = cv2.dilate(image_array, kernel, iterations=1)
+
+        # Crear una imagen de Pillow a partir del array resultante
+        dilated_image = Image.fromarray(dilated_image)
+
+        self.imagen_procesada = dilated_image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+    def CambiodeColordeOjos(self):
         pass
 
     def Segmentación(self):
-        # Implementa la lógica para la opción 1
         pass
 
     def reset(self):
