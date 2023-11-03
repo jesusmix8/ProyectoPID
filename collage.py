@@ -21,7 +21,7 @@ class ImageCollageApp:
         self.load_images_button = tk.Button(
             self.root, text="Cargar Imágenes", command=self.load_images
         )
-        self.load_images_button.grid(row=2, column=0, columnspan=2, pady=10)
+        self.load_images_button.grid(row=2, column=0, columnspan=2, pady=0)
 
     def load_images(self):
         collage_images = []

@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+from rotate import rotate_image
 
 # TODO
 # BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
@@ -32,7 +33,6 @@ class ImageProcessingApp:
         self.create_content_frame()
         self.desactivar_botones()
         self.create_functionbotones()
-        
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
@@ -64,7 +64,6 @@ class ImageProcessingApp:
         )
         self.botonUndo.image = photo
         self.botonUndo.place(x=0, y=0)
-        
 
     def create_buttons(self):
         self.boton_width = 20
@@ -253,8 +252,8 @@ class ImageProcessingApp:
     def collage(self):
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
-        self.menuCollage = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
-        self.menuCollage.pack(side="left", fill="y" )
+        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y")
 
         self.boton_width = 20
         buttons_data = [
@@ -286,47 +285,9 @@ class ImageProcessingApp:
         botonRegresar.config(state="normal")
         botonRegresar.pack(side="bottom")
 
-    # def basic(self):
-    #     if hasattr(self, "imagen_procesada"):
-    #         # Si ya hay una imagen procesada, úsala como base
-    #         img = np.array(self.imagen)
-    #     elif hasattr(self, "imagen"):
-    #         # Si no, usa la imagen original
-    #         img = np.array(self.imagen)
-    #     else:
-    #         return
-    #     # # basic collage
-    #     # h_stack = np.hstack((img, img))
-    #     # v_stack = np.vstack((h_stack, h_stack))
-
-    #     # self.imagen = Image.fromarray(v_stack)
-    #     # self.HistorialdeCambios(self.imagen)
-    #     # self.mostrar_imagen(self.imagen)
-
-    #     # generar un frame de 4 x 4 para que en cada frame se coloque una imagen diferente
-    #     # y que cada imagen sea la misma
-
     def basic(self):
-        # # generar un frame de 2 x 2 para que en cada frame se coloque una imagen diferente
-        # # en cada frame se coloca una imagen diferente
-        # if hasattr(self, "imagen_procesada"):
-        #     # Si ya hay una imagen procesada, úsala como base
-        #     img = np.array(self.imagen)
-        # elif hasattr(self, "imagen"):
-        #     # Si no, usa la imagen original
-        #     img = np.array(self.imagen)
-        # else:
-        #     return
-
-        # # call the function to create the collage
-        # collage = ImageCollageApp(self.root)
-        # collage.create_collage(img)
-
-        # if __name__ == "__main__":
-        #     ventana = tk.Tk()
-        #     app = ImageCollageApp(ventana)
-        #     ventana.mainloop()
-        pass
+        ventana_collage = tk.Toplevel(ventana)
+        app_collage = ImageCollageApp(ventana_collage, app_processing)
 
     def panel(self):
         pass
@@ -339,24 +300,48 @@ class ImageProcessingApp:
         self.botonLoadImage.destroy()
         self.activar_botones()
 
+    # def Rotar(self):
+    #     if hasattr(self, "imagen_procesada"):
+    #         # Si ya hay una imagen procesada, úsala como base
+    #         image = self.imagen_procesada.copy()  # Copia la imagen procesada
+    #     else:
+    #         # Si no, usa la imagen original
+    #         image = self.imagen
+
+    #     # Define el ángulo de rotación en radianes (45 grados)
+    #     angulo = math.radians(45)
+
+    #     # Aplica la rotación
+    #     imagen_rotada = image.transform(
+    #         image.size,
+    #         Image.AFFINE,
+    #         (
+    #             math.cos(angulo),
+    #             -math.sin(angulo),
+    #             0,
+    #             math.sin(angulo),
+    #             math.cos(angulo),
+    #             0,
+    #         ),
+    #         resample=Image.BICUBIC,
+    #     )
+
+    #     self.imagen_procesada = imagen_rotada
+    #     self.mostrar_imagen(self.imagen_procesada)
+    #     self.HistorialdeCambios(self.imagen_procesada)
 
     def Rotar(self):
         if hasattr(self, "imagen_procesada"):
-            # Si ya hay una imagen procesada, úsala como base
-            image = self.imagen_procesada.copy()  # Copia la imagen procesada
-        else:
-            # Si no, usa la imagen original
-            image = self.imagen
-        
-        # Define el ángulo de rotación en radianes (45 grados)
-        angulo = math.radians(45)
+            image_np = np.array(self.imagen_procesada)
+            angle = 45
+            rotated_image = rotate_image(image_np, angle)
 
-        # Aplica la rotación
-        imagen_rotada = image.transform(image.size, Image.AFFINE, (math.cos(angulo), -math.sin(angulo), 0, math.sin(angulo), math.cos(angulo), 0), resample=Image.BICUBIC)
+            # Convertir la imagen rotada a formato PIL para mostrarla en Tkinter
+            rotated_image_pil = Image.fromarray(rotated_image)
 
-        self.imagen_procesada = imagen_rotada
-        self.mostrar_imagen(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+            # Actualizar la imagen mostrada
+            self.mostrar_imagen(rotated_image_pil)
+            self.HistorialdeCambios(self.imagen_procesada)
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
@@ -369,14 +354,12 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def Filtros(self):
-        #Deleete buttons from menu_frame
+        # Deleete buttons from menu_frame
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
-        self.menuFiltros = tk.Frame(self.menu_frame, width=150 , bg=self.sidemenucolorbg)
-        self.menuFiltros.pack(side="left", fill="y" )
-
+        self.menuFiltros = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuFiltros.pack(side="left", fill="y")
 
         self.boton_width = 20
         buttons_data = [
@@ -388,7 +371,7 @@ class ImageProcessingApp:
             ("Filtro Laplaciano", self.FiltroLaplaciano),
             ("Filtro Prewitt", self.FiltroPrewitt),
             ("Filtro Sobel", self.FiltroSobel),
-            ("Filtro Roberts", self.FiltroRoberts)
+            ("Filtro Roberts", self.FiltroRoberts),
         ]
 
         for text, command in buttons_data:
@@ -415,12 +398,21 @@ class ImageProcessingApp:
         botonRegresar.config(state="normal")
         botonRegresar.pack(side="bottom")
 
-
-
     def FiltroModa(self):
-        #Aplicar el filtro moda a la imagen
-        pass
-        
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro de moda con un kernel de 3x3
+        image_filtered = cv2.medianBlur(image_array, 3)
+
+        image = Image.fromarray(image_filtered)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMedia(self):
         if hasattr(self, "imagen_procesada"):
@@ -430,26 +422,21 @@ class ImageProcessingApp:
 
         image = np.array(image)
 
-
-        image = cv2.blur(image,(3,3))
+        image = cv2.blur(image, (3, 3))
         image = Image.fromarray(image)
         self.imagen_procesada = image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-
-        
-
-
 
     def FiltroMediana(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
             image = self.imagen
-        
+
         image = np.array(image)
 
-        image = cv2.medianBlur(image,3)
+        image = cv2.medianBlur(image, 3)
         image = Image.fromarray(image)
         self.imagen_procesada = image
         self.mostrar_imagen(self.imagen_procesada)
@@ -457,30 +444,45 @@ class ImageProcessingApp:
         pass
 
     def FiltroGausiano(self):
-
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
             image = self.imagen
-        
+
         image = np.array(image)
 
-        image = cv2.GaussianBlur(image,(3,3),0)
+        image = cv2.GaussianBlur(image, (3, 3), 0)
         image = Image.fromarray(image)
         self.imagen_procesada = image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def FiltroMaxMin(self):
-        pass
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Aplicar el filtro de máximos y mínimos con un kernel de 3x3
+        image_max = cv2.dilate(image_array, None, iterations=1)
+        image_min = cv2.erode(image_array, None, iterations=1)
+
+        # Seleccionar el valor máximo y mínimo de cada píxel
+        image_filtered = cv2.min(image_max, image_min)
+
+        image = Image.fromarray(image_filtered)
+        self.imagen_procesada = image
+        self.mostrar_imagen(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroLaplaciano(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
             image = self.imagen
-        
+
         image_array = np.array(image)
 
         # Aplicar el filtro Laplaciano a la imagen
@@ -496,14 +498,11 @@ class ImageProcessingApp:
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
-        
-
     def FiltroPrewitt(self):
         if hasattr(self, "imagen_procesada"):
-                image = self.imagen_procesada
+            image = self.imagen_procesada
         else:
-                image = self.imagen
+            image = self.imagen
 
         image_array = np.array(image)
 
@@ -512,9 +511,11 @@ class ImageProcessingApp:
         kernel_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
         filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
         filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
-        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+        filtered_image = cv2.addWeighted(
+            filtered_image_x, 0.5, filtered_image_y, 0.5, 0
+        )
 
-            # Crear una imagen de Pillow a partir del array resultante
+        # Crear una imagen de Pillow a partir del array resultante
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
@@ -532,7 +533,9 @@ class ImageProcessingApp:
         # Aplicar el filtro Sobel a la imagen
         filtered_image_x = cv2.Sobel(image_array, cv2.CV_64F, 1, 0, ksize=3)
         filtered_image_y = cv2.Sobel(image_array, cv2.CV_64F, 0, 1, ksize=3)
-        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+        filtered_image = cv2.addWeighted(
+            filtered_image_x, 0.5, filtered_image_y, 0.5, 0
+        )
 
         # Escalar los valores para que estén en el rango 0-255
         filtered_image = cv2.convertScaleAbs(filtered_image)
@@ -543,7 +546,6 @@ class ImageProcessingApp:
         self.imagen_procesada = filtered_image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-
 
     def FiltroRoberts(self):
         if hasattr(self, "imagen_procesada"):
@@ -558,7 +560,9 @@ class ImageProcessingApp:
         kernel_y = np.array([[0, 1], [-1, 0]])
         filtered_image_x = cv2.filter2D(image_array, -1, kernel_x)
         filtered_image_y = cv2.filter2D(image_array, -1, kernel_y)
-        filtered_image = cv2.addWeighted(filtered_image_x, 0.5, filtered_image_y, 0.5, 0)
+        filtered_image = cv2.addWeighted(
+            filtered_image_x, 0.5, filtered_image_y, 0.5, 0
+        )
 
         # Crear una imagen de Pillow a partir del array resultante
         filtered_image = Image.fromarray(filtered_image)
@@ -585,7 +589,6 @@ class ImageProcessingApp:
         self.imagen_procesada = eroded_image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-       
 
     def Dilatar(self):
         if hasattr(self, "imagen_procesada"):
@@ -646,7 +649,7 @@ class ImageCollageApp:
         self.load_images_button = tk.Button(
             self.root, text="Cargar Imágenes", command=self.load_images
         )
-        self.load_images_button.grid(row=2, column=0, columnspan=2, pady=10)
+        self.load_images_button.grid(row=2, column=0, columnspan=1, pady=10)
 
     def load_images(self):
         collage_images = []
@@ -684,9 +687,4 @@ class ImageCollageApp:
 if __name__ == "__main__":
     ventana = tk.Tk()
     app_processing = ImageProcessingApp(ventana)
-
-    # Crear una ventana secundaria para ImageCollageApp
-    ventana_collage = tk.Toplevel(ventana)
-    app_collage = ImageCollageApp(ventana_collage, app_processing)
-
     ventana.mainloop()
