@@ -7,7 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-from rotate import rotate_image
+# from rotate import rotate_image
+from text import *
 
 # TODO
 # BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
@@ -33,7 +34,8 @@ class ImageProcessingApp:
         self.create_content_frame()
         self.desactivar_botones()
         self.create_functionbotones()
-        self.create_help_frame()
+        # self.create_help_frame()
+        # self.create_help_frame()
         # collage frame
         # self.create_collage_frame()
 
@@ -45,6 +47,9 @@ class ImageProcessingApp:
     def create_content_frame(self):
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_frame.pack(expand=True, fill="both")
+
+        self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.contenido_help_frame.pack(expand=True, fill="both")
 
         self.label = tk.Label(
             self.contenido_frame,
@@ -69,39 +74,30 @@ class ImageProcessingApp:
         self.botonUndo.image = photo
         self.botonUndo.place(x=0, y=0)
 
-    # def create_help_frame(self):
+    def call_help_frames(self):
+        if not hasattr(self, "help_frame"):  # Verificar si help_frame ya existe
+            self.help_frame = tk.Frame(self.contenido_help_frame, bg=self.colorbg)
+            self.label_help = tk.Label(
+                self.help_frame,
+                text=PROCESAMIENTO_IMAGENES,
+                font=("Montserrat", 15),
+                bg=self.colorbg,
+                fg="White",
+            )
+            self.label_help.pack(expand=True, fill="both")
+            self.help_frame.pack(expand=True, fill="both")
 
-    #     pass
+    def toggle_frames(self):
+        self.call_help_frames()
+        if self.contenido_frame.winfo_ismapped():
+            self.contenido_frame.pack_forget()
+            self.contenido_help_frame.pack(expand=True, fill="both")
+        else:
+            self.contenido_help_frame.pack_forget()
+            self.contenido_frame.pack(expand=True, fill="both")
 
     def create_help_frame(self):
-        self.help_frame = tk.Frame(self.root, bg=self.colorbg)
-        self.help_frame.pack(expand=True, fill="both")
-        self.label_help = tk.Label(
-            self.help_frame,
-            text="fasd",
-            font=("Montserrat", 25),
-            bg=self.colorbg,
-            fg=self.colorbg,
-            # wraplength=self.help_frame.winfo_width(),
-        )
-        self.label_help.pack(expand=True, fill="both")
-
-    def show_help_frame(self):
-        self.hide_frames()
-        self.help_frame.pack()
-
-    def show_content_frame(self):
-        self.hide_frames()
-        self.contenido_frame.pack()
-        self.botonUndo.pack()
-
-    def hide_frames(self):
-        self.contenido_frame.pack_forget()
-        self.help_frame.pack_forget()
-
-    def exit_help(self):
-        self.regresar()
-        self.show_content_frame()
+        pass
 
     def create_collage_frame(self):
         pass
@@ -237,8 +233,8 @@ class ImageProcessingApp:
 
         self.boton_width = 20
         buttons_data = [
-            ("Procesamiento de Imágenes", self.show_help_frame),
-            ("Contenido", self.show_content_frame),
+            ("Procesamiento de Imágenes", self.toggle_frames),
+            ("Contenido", self.toggle_frames),
         ]
         # mostrar los botones para elegir el tipo de collage
         for text, command in buttons_data:
@@ -256,8 +252,7 @@ class ImageProcessingApp:
         botonRegresar_1 = tk.Button(
             self.menuCollage,
             text="Regresar",
-            command=self.exit_help,
-            # command=self.regresar,
+            command=self.regresar,
             width=self.boton_width,
             bg="#0F2C59",
             fg="White",
@@ -377,6 +372,17 @@ class ImageProcessingApp:
         )
         botonRegresar.config(state="normal")
         botonRegresar.pack(side="bottom")
+
+        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.collage_frame.pack(expand=True, fill="both")
+        self.label_collage = tk.Label(
+            self.collage_frame,
+            text="aqui va el collage",
+            font=("Montserrat", 25),
+            bg=self.colorbg,
+            fg="White",
+        )
+        self.label_collage.pack(expand=True, fill="both")
 
     def basic(self):
         # ventana_collage = tk.Toplevel(ventana)
