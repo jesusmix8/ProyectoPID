@@ -34,10 +34,6 @@ class ImageProcessingApp:
         self.create_content_frame()
         self.desactivar_botones()
         self.create_functionbotones()
-        # self.create_help_frame()
-        # self.create_help_frame()
-        # collage frame
-        # self.create_collage_frame()
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
@@ -87,6 +83,12 @@ class ImageProcessingApp:
             self.label_help.pack(expand=True, fill="both")
             self.help_frame.pack(expand=True, fill="both")
 
+    def create_help_frame(self):
+        pass
+
+    def create_collage_frame(self):
+        pass
+
     def toggle_frames(self):
         self.call_help_frames()
         if self.contenido_frame.winfo_ismapped():
@@ -95,12 +97,6 @@ class ImageProcessingApp:
         else:
             self.contenido_help_frame.pack_forget()
             self.contenido_frame.pack(expand=True, fill="both")
-
-    def create_help_frame(self):
-        pass
-
-    def create_collage_frame(self):
-        pass
 
     def create_buttons(self):
         self.boton_width = 20
