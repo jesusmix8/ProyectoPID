@@ -450,12 +450,24 @@ class ImageProcessingApp:
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
-            image = self.imagen_procesada
+            original_image = self.imagen_procesada
         else:
-            image = self.imagen
+            original_image = self.imagen
 
-        imagenEspejo = image.transpose(Image.FLIP_LEFT_RIGHT)
-        self.imagen_procesada = imagenEspejo
+        bottom_left = original_image
+        top_left = original_image.rotate(180).transpose(Image.FLIP_LEFT_RIGHT)
+        top_right = original_image.rotate(180)
+        bottom_right = original_image.transpose(Image.FLIP_LEFT_RIGHT)
+
+        mosaic_image = Image.new(
+            "RGB", (original_image.width * 2, original_image.height * 2)
+        )
+        mosaic_image.paste(bottom_left, (0, original_image.height))
+        mosaic_image.paste(top_left, (0, 0))
+        mosaic_image.paste(top_right, (original_image.width, 0))
+        mosaic_image.paste(bottom_right, (original_image.width, original_image.height))
+
+        self.imagen_procesada = mosaic_image
         self.mostrar_imagen(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
