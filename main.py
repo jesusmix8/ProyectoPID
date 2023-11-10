@@ -47,6 +47,9 @@ class ImageProcessingApp:
         self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_help_frame.pack(expand=True, fill="both")
 
+        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.collage_frame.pack(expand=True, fill="both")
+
         self.label = tk.Label(
             self.contenido_frame,
             text="Cargue una imagen para empezar",
@@ -83,12 +86,6 @@ class ImageProcessingApp:
             self.label_help.pack(expand=True, fill="both")
             self.help_frame.pack(expand=True, fill="both")
 
-    def create_help_frame(self):
-        pass
-
-    def create_collage_frame(self):
-        pass
-
     def toggle_frames(self):
         self.call_help_frames()
         if self.contenido_frame.winfo_ismapped():
@@ -96,6 +93,62 @@ class ImageProcessingApp:
             self.contenido_help_frame.pack(expand=True, fill="both")
         else:
             self.contenido_help_frame.pack_forget()
+            self.contenido_frame.pack(expand=True, fill="both")
+
+    def call_collage_frame(self):
+        if not hasattr(self, "collage_frame_in"):
+            self.collage_frame_in = tk.Frame(self.collage_frame, bg=self.colorbg)
+
+            self.frames = []
+
+            for _ in range(2):
+                frame = tk.Frame(self.collage_frame_in, width=400, height=400)
+                frame.pack(side="left", padx=5, pady=5)
+                self.frames.append(frame)
+
+            self.load_images_button = tk.Button(
+                self.collage_frame_in, text="Cargar Imágenes", command=self.load_images
+            )
+            self.load_images_button.pack(side="bottom", pady=5)
+
+            self.collage_frame_in.pack(expand=True, fill="both", anchor="center")
+
+    def load_images(self):
+        collage_images = []
+
+        for _ in range(2):
+            image_path = filedialog.askopenfilename(
+                title="Seleccione una imagen",
+                filetypes=[("Archivos de imagen", "*.jpg; *.png")],
+            )
+            if image_path:
+                image = Image.open(image_path)
+                collage_images.append(image)
+
+        self.display_images(collage_images)
+
+    def display_images(self, images):
+        photo_images = []
+
+        for frame, image in zip(self.frames, images):
+            image = image.resize((400, 400), Image.ANTIALIAS)
+            photo = ImageTk.PhotoImage(image)
+
+            label = tk.Label(frame, image=photo)
+            label.image = photo
+            label.pack()
+
+            photo_images.append(photo)
+
+        self.root.photo_images = photo_images
+
+    def toggle_frames_collage(self):
+        self.call_collage_frame()
+        if self.contenido_frame.winfo_ismapped():
+            self.contenido_frame.pack_forget()
+            self.collage_frame.pack(expand=True, fill="both")
+        else:
+            self.collage_frame.pack_forget()
             self.contenido_frame.pack(expand=True, fill="both")
 
     def create_buttons(self):
@@ -257,9 +310,6 @@ class ImageProcessingApp:
         botonRegresar_1.config(state="normal")
         botonRegresar_1.pack(side="bottom")
 
-    def helpProcesamiento(self):
-        pass
-
     def mostrar_imagen(self, imagen):
         if imagen:
             max_width = 1000
@@ -341,8 +391,8 @@ class ImageProcessingApp:
 
         self.boton_width = 20
         buttons_data = [
-            ("Basic", self.basic),
-            ("Panel", self.panel),
+            ("Basic", self.toggle_frames_collage),
+            ("Panel", self.toggle_frames_collage),
         ]
         # mostrar los botones para elegir el tipo de collage
         for text, command in buttons_data:
@@ -369,17 +419,6 @@ class ImageProcessingApp:
         botonRegresar.config(state="normal")
         botonRegresar.pack(side="bottom")
 
-        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
-        self.collage_frame.pack(expand=True, fill="both")
-        self.label_collage = tk.Label(
-            self.collage_frame,
-            text="aqui va el collage",
-            font=("Montserrat", 25),
-            bg=self.colorbg,
-            fg="White",
-        )
-        self.label_collage.pack(expand=True, fill="both")
-
     def basic(self):
         # ventana_collage = tk.Toplevel(ventana)
         # app_collage = ImageCollageApp(ventana_collage, app_processing)
@@ -396,51 +435,18 @@ class ImageProcessingApp:
         self.botonLoadImage.destroy()
         self.activar_botones()
 
-    # def Rotar(self):
-    #     if hasattr(self, "imagen_procesada"):
-    #         # Si ya hay una imagen procesada, úsala como base
-    #         image = self.imagen_procesada.copy()  # Copia la imagen procesada
-    #     else:
-    #         # Si no, usa la imagen original
-    #         image = self.imagen
-
-    #     # Define el ángulo de rotación en radianes (45 grados)
-    #     angulo = math.radians(45)
-
-    #     # Aplica la rotación
-    #     imagen_rotada = image.transform(
-    #         image.size,
-    #         Image.AFFINE,
-    #         (
-    #             math.cos(angulo),
-    #             -math.sin(angulo),
-    #             0,
-    #             math.sin(angulo),
-    #             math.cos(angulo),
-    #             0,
-    #         ),
-    #         resample=Image.BICUBIC,
-    #     )
-
-    #     self.imagen_procesada = imagen_rotada
-    #     self.mostrar_imagen(self.imagen_procesada)
-    #     self.HistorialdeCambios(self.imagen_procesada)
-
     def Rotar(self):
-        pass
+        # Rotar la imagen 45 grados
+        if hasattr(self, "imagen_procesada"):
+            self.imagen_procesada = self.imagen_procesada.rotate(45)
+        else:
+            self.imagen = self.imagen.rotate(45)
 
-    # def Rotar(self):
-    #     if hasattr(self, "imagen_procesada"):
-    #         image_np = np.array(self.imagen_procesada)
-    #         angle = 45
-    #         rotated_image = rotate_image(image_np, angle)
+        # Mostrar la imagen rotada
+        self.mostrar_imagen(self.imagen_procesada)
 
-    #         # Convertir la imagen rotada a formato PIL para mostrarla en Tkinter
-    #         rotated_image_pil = Image.fromarray(rotated_image)
-
-    #         # Actualizar la imagen mostrada
-    #         self.mostrar_imagen(rotated_image_pil)
-    #         self.HistorialdeCambios(self.imagen_procesada)
+        # Actualizar el historial de cambios
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def Espejo(self):
         if hasattr(self, "imagen_procesada"):
@@ -727,60 +733,6 @@ class ImageProcessingApp:
         for widget in self.menu_frame.winfo_children():
             if isinstance(widget, tk.Button):
                 widget.config(state="normal")
-
-
-class ImageCollageApp:
-    def __init__(self, root, image_processing_app):
-        self.root = root
-        self.root.title("Collage de Imágenes")
-        self.root.geometry("800x600")
-
-        self.image_processing_app = image_processing_app
-
-        self.frames = []
-
-        for i in range(2):
-            for j in range(2):
-                frame = tk.Frame(self.root, width=400, height=300)
-                frame.grid(row=i, column=j, padx=5, pady=5)
-                self.frames.append(frame)
-
-        self.load_images_button = tk.Button(
-            self.root, text="Cargar Imágenes", command=self.load_images
-        )
-        self.load_images_button.grid(row=2, column=0, columnspan=1, pady=10)
-
-    def load_images(self):
-        collage_images = []
-
-        for _ in range(4):
-            image_path = filedialog.askopenfilename(
-                title="Seleccione una imagen",
-                filetypes=[("Archivos de imagen", "*.jpg; *.png")],
-            )
-            if image_path:
-                image = Image.open(image_path)
-                collage_images.append(image)
-
-        self.display_images(collage_images)
-
-    def display_images(self, images):
-        photo_images = []
-
-        for frame, image in zip(self.frames, images):
-            image = image.resize((200, 150), Image.ANTIALIAS)
-            photo = ImageTk.PhotoImage(image)
-
-            label = tk.Label(frame, image=photo)
-            label.image = photo
-            label.pack()
-
-            photo_images.append(photo)
-
-        self.root.photo_images = photo_images
-
-        # Aquí llamamos a la función de la clase ImageProcessingApp para mostrar la imagen
-        self.image_processing_app.mostrar_imagen(images[0])
 
 
 if __name__ == "__main__":
