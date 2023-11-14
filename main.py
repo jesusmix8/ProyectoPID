@@ -12,12 +12,12 @@ from text import *
 
 # TODO
 #       Cambiar todas las imagenes a jpg Pablo
-#       Convertir a escala de gris Cesar 
+#       Convertir a escala de gris Cesar  
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para la presentacion de imagenes Jesus
 #       Arreglar los fitlros de solo blur Jesus
 #       Maximo y minimo separado Pablo
-#       Filtro de orden n (Popup) Cesar
+#       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Cesar
 #       Sustraccion Jesus
 #       Inversion Jesus
