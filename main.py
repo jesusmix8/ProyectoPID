@@ -5,16 +5,29 @@ from PIL import Image, ImageTk
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import math
+
 
 # from rotate import rotate_image
 from text import *
 
 # TODO
-# BUG    Arreglar la rotacion de la imagen para que no se pierda informacion
-#       Implementar opciones de erosionar y dilatar
-#       Implementar la modificacion de color de ojos
-#       Implementar la segmentacion para N renglones
+#       Cambiar todas las imagenes a jpg Pablo
+#       Convertir a escala de gris Cesar 
+#       Rescalar las imagenes para mejor presentacion Cesar
+#       Modificar el frame para la presentacion de imagenes Jesus
+#       Arreglar los fitlros de solo blur Jesus
+#       Maximo y minimo separado Pablo
+#       Filtro de orden n (Popup) Cesar
+#       Filtros de vecinos 4 y 8 Cesar
+#       Sustraccion Jesus
+#       Inversion Jesus
+#       Modificar los kenrels segun el usuario Pablo
+#       Falta collage Pablo Jesus
+
+
+
+#       Implementar la modificacion de color de ojos  Vemos
+#       Implementar la segmentacion para N renglones Cesarin Tilin
 
 
 class ImageProcessingApp:
@@ -131,7 +144,7 @@ class ImageProcessingApp:
         photo_images = []
 
         for frame, image in zip(self.frames, images):
-            image = image.resize((400, 400), Image.ANTIALIAS)
+            image = image.resize((400, 400))
             photo = ImageTk.PhotoImage(image)
 
             label = tk.Label(frame, image=photo)
@@ -370,6 +383,8 @@ class ImageProcessingApp:
 
         plt.show()
 
+
+
     def InversionB(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -381,6 +396,8 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def inversionF(self):
+        #Inversion fotografica
+
         pass
 
     def collage(self):
