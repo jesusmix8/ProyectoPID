@@ -15,13 +15,16 @@ from text import *
 #       Cambiar todas las imagenes a jpg Pablo
 #       Convertir a escala de gris Cesar  
 #       Rescalar las imagenes para mejor presentacion Cesar
+#       Modificar el frame para mayor presentacion Jesus ✅
+#       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
 #       Arreglar los fitlros de solo blur Jesus
 #       Maximo y minimo separado Pablo
 #       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Cesar
 #       Sustraccion Jesus
 #       Adicion Jesus
-#       Inversion Jesus
+#       Inversion fotgrafica Jesus ✅
+#       Inversion binaria Jesus ✅ 
 #       Modificar los kenrels segun el usuario Pablo
 #       Falta collage Pablo Jesus
 
@@ -375,13 +378,27 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
+
+        # Convertir la imagen a escala de grises (blanco y negro)
+        image = image.convert("L")
+
+        # Invertir los colores (inversión binaria)
+        image = Image.eval(image, lambda x: 255 if x < 128 else 0)
+
+        self.imagen_procesada = image
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+        pass
+
+    def inversionF(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
         self.invertida = Image.eval(image, lambda x: 255 - x)
         self.imagen_procesada = self.invertida
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-
-    def inversionF(self):
-        #Inversion fotografica
 
         pass
 
