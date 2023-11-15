@@ -20,6 +20,7 @@ from text import *
 #       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Cesar
 #       Sustraccion Jesus
+#       Adicion Jesus
 #       Inversion Jesus
 #       Modificar los kenrels segun el usuario Pablo
 #       Falta collage Pablo Jesus
@@ -48,9 +49,12 @@ class ImageProcessingApp:
         self.desactivar_botones()
         self.create_functionbotones()
 
+        
+
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
         self.menu_frame.pack(side="left", fill="y")
+
         self.create_buttons()
 
     def create_content_frame(self):
@@ -71,20 +75,6 @@ class ImageProcessingApp:
             fg="White",
         )
         self.label.pack(expand=True, fill="both")
-
-        self.imagen = Image.open("img/undo.png")
-        self.imagen = self.imagen.resize((50, 50), Image.BOX)
-        photo = ImageTk.PhotoImage(self.imagen)
-
-        self.botonUndo = tk.Button(
-            self.contenido_frame,
-            image=photo,
-            command=self.undo,
-            bg=self.colorbg,
-            fg="White",
-        )
-        self.botonUndo.image = photo
-        self.botonUndo.place(x=0, y=0)
 
     def call_help_frames(self):
         if not hasattr(self, "help_frame"):  # Verificar si help_frame ya existe
@@ -178,7 +168,6 @@ class ImageProcessingApp:
             ("Dilatar", self.Dilatar),
             ("Modificar color de ojos", self.CambiodeColordeOjos),
             ("Segmentación para \n N renglones", self.Segmentación),
-            ("Reset imagen", self.reset),
         ]
 
         for text, command in buttons_data:
@@ -193,6 +182,26 @@ class ImageProcessingApp:
             button.pack()
 
     def create_functionbotones(self):
+        menu_superior = tk.Menu(self.root)
+        opcion1 = tk.Menu(menu_superior, tearoff=0)
+        opcion1.add_command(label="Reiniciar", command=self.reset)
+        opcion1.add_command(label="Cargar una nueva imagen", command=self.cargar_imagen)
+        opcion1.add_command(label="Guardar imagen", command=self.save_image)
+        menu_superior.add_cascade(label="Archivo", menu=opcion1)
+        
+        self.root.config(menu=menu_superior)
+        opcion2 = tk.Menu(menu_superior, tearoff=0)
+        opcion2.add_command(label="Ayuda", command=self.help_buttons)
+        menu_superior.add_cascade(label="Ayuda", menu=opcion2)
+
+        menu_superior.add_command(
+            label="Deshacer ultimo cambio", command=self.undo,compound="left"
+        )
+
+
+
+
+
         self.botonLoadImage = tk.Button(
             self.contenido_frame,
             text="Cargar imagen",
@@ -205,53 +214,6 @@ class ImageProcessingApp:
         )
         self.botonLoadImage.pack(pady=75)
 
-        botonSalir = tk.Button(
-            self.menu_frame,
-            text="Salir",
-            command=self.root.destroy,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonSalir.config(state="normal")
-        botonSalir.pack(side="bottom")
-
-        botonLoadNewImage = tk.Button(
-            self.menu_frame,
-            text="Cargar una nueva imagen",
-            command=self.cargar_imagen,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonLoadNewImage.config(state="disabled")
-        botonLoadNewImage.pack(side="bottom")
-
-        boton_save_image = tk.Button(
-            self.menu_frame,
-            text="Guardar imagen",
-            command=self.save_image,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        boton_save_image.config(state="disabled")
-        boton_save_image.pack(side="bottom")
-
-        help_button = tk.Button(
-            self.menu_frame,
-            text="Ayuda",
-            command=self.help_buttons,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        help_button.config(state="disabled")
-        help_button.pack(side="bottom")
 
     def cargar_imagen(self):
         if hasattr(self, "image_label"):
@@ -789,5 +751,6 @@ class ImageProcessingApp:
 
 if __name__ == "__main__":
     ventana = tk.Tk()
+    
     app_processing = ImageProcessingApp(ventana)
     ventana.mainloop()
