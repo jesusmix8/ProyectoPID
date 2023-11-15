@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -14,7 +15,6 @@ from text import *
 #       Cambiar todas las imagenes a jpg Pablo
 #       Convertir a escala de gris Cesar  
 #       Rescalar las imagenes para mejor presentacion Cesar
-#       Modificar el frame para la presentacion de imagenes Jesus
 #       Arreglar los fitlros de solo blur Jesus
 #       Maximo y minimo separado Pablo
 #       Filtro de orden n (Popup) Cesar mi primera chamba
@@ -49,7 +49,7 @@ class ImageProcessingApp:
         self.create_functionbotones()
 
     def create_menu_frame(self):
-        self.menu_frame = tk.Frame(self.root, width=150, bg=self.sidemenucolorbg)
+        self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
         self.menu_frame.pack(side="left", fill="y")
         self.create_buttons()
 
@@ -60,8 +60,8 @@ class ImageProcessingApp:
         self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_help_frame.pack(expand=True, fill="both")
 
-        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
-        self.collage_frame.pack(expand=True, fill="both")
+        # self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
+        # self.collage_frame.pack(expand=True, fill="both")
 
         self.label = tk.Label(
             self.contenido_frame,
@@ -256,6 +256,11 @@ class ImageProcessingApp:
     def cargar_imagen(self):
         if hasattr(self, "image_label"):
             self.image_label.destroy()
+            self.image_labelProcesada.destroy()
+
+        self.image_labelProcesada = tk.Label(self.contenido_frame)
+        # Para mostrar la imagen procesada de lado derecho
+        self.image_labelProcesada.pack(side="right")
 
         self.image_label = tk.Label(self.contenido_frame)  # Para mostrar la imagen
         self.image_label.pack()
@@ -337,7 +342,25 @@ class ImageProcessingApp:
             photo = ImageTk.PhotoImage(imagen)
             self.image_label.config(image=photo)
             self.image_label.image = photo
-            self.image_label.pack(expand=True, anchor="center")
+            self.image_label.pack(expand=True, anchor="center", padx=50, pady=50)
+        self.label.destroy()
+
+    def mostrar_imagenProcesada(self, imagen):
+
+        if imagen:
+            max_width = 1000
+            max_height = 600
+            width, height = imagen.size
+            if width > max_width or height > max_height:
+                ratio = min(max_width / width, max_height / height)
+                new_width = int(width * ratio)
+                new_height = int(height * ratio)
+                imagen = imagen.resize((new_width, new_height))
+
+            photo = ImageTk.PhotoImage(imagen)
+            self.image_labelProcesada.config(image=photo)
+            self.image_labelProcesada.image = photo
+            self.image_labelProcesada.pack(expand=True, anchor="center", padx=50, pady=50)
         self.label.destroy()
 
     def undo(self):
@@ -346,7 +369,7 @@ class ImageProcessingApp:
             ultimaimagen = self.historial[-1]
             self.imagen_procesada = ultimaimagen
             self.imagen = ultimaimagen
-            self.mostrar_imagen(ultimaimagen)
+            self.mostrar_imagenProcesada(ultimaimagen)
         else:
             messagebox.showerror("Error", "No hay cambios que deshacer")
 
@@ -371,7 +394,7 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
         fig, axes = plt.subplots(1, 2, figsize=(10, 4))
@@ -392,7 +415,7 @@ class ImageProcessingApp:
             image = self.imagen
         self.invertida = Image.eval(image, lambda x: 255 - x)
         self.imagen_procesada = self.invertida
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def inversionF(self):
@@ -460,7 +483,7 @@ class ImageProcessingApp:
             self.imagen = self.imagen.rotate(45)
 
         # Mostrar la imagen rotada
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
 
         # Actualizar el historial de cambios
         self.HistorialdeCambios(self.imagen_procesada)
@@ -485,7 +508,7 @@ class ImageProcessingApp:
         mosaic_image.paste(bottom_right, (original_image.width, original_image.height))
 
         self.imagen_procesada = mosaic_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Filtros(self):
@@ -545,7 +568,7 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image_filtered)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMedia(self):
@@ -559,7 +582,7 @@ class ImageProcessingApp:
         image = cv2.blur(image, (3, 3))
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMediana(self):
@@ -573,7 +596,7 @@ class ImageProcessingApp:
         image = cv2.medianBlur(image, 3)
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
         pass
 
@@ -588,7 +611,7 @@ class ImageProcessingApp:
         image = cv2.GaussianBlur(image, (3, 3), 0)
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMaxMin(self):
@@ -608,7 +631,7 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image_filtered)
         self.imagen_procesada = image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroLaplaciano(self):
@@ -629,7 +652,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroPrewitt(self):
@@ -653,7 +676,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroSobel(self):
@@ -678,7 +701,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroRoberts(self):
@@ -702,7 +725,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Erosionar(self):
@@ -721,7 +744,7 @@ class ImageProcessingApp:
         eroded_image = Image.fromarray(eroded_image)
 
         self.imagen_procesada = eroded_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Dilatar(self):
@@ -740,7 +763,7 @@ class ImageProcessingApp:
         dilated_image = Image.fromarray(dilated_image)
 
         self.imagen_procesada = dilated_image
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def CambiodeColordeOjos(self):
@@ -751,7 +774,7 @@ class ImageProcessingApp:
 
     def reset(self):
         self.imagen_procesada = self.imagen
-        self.mostrar_imagen(self.imagen_procesada)
+        self.mostrar_imagenProcesada(self.imagen_procesada)
 
     def desactivar_botones(self):
         for widget in self.menu_frame.winfo_children():
