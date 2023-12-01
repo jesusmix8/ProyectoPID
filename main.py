@@ -18,12 +18,12 @@ from text import *
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
-#       Arreglar los fitlros de solo blur Jesus
+#       Arreglar los fitlros Jesus ✅
 #       Maximo y minimo separado Pablo
 #       Filtro de orden n (Popup) Cesar mi primera chamba
-#       Filtros de vecinos 4 y 8 Cesar
-#       Sustraccion Jesus
-#       Adicion Jesus
+#       Filtros de vecinos 4 y 8 Jesus ✅
+#       Sustraccion Jesus ✅
+#       Adicion Jesus ✅
 #       Inversion fotgrafica Jesus ✅
 #       Inversion binaria Jesus ✅ 
 #       Modificar los kenrels segun el usuario Pablo
@@ -165,6 +165,8 @@ class ImageProcessingApp:
             ("Inversion binaria", self.InversionB),
             ("Inversión fotográfica", self.inversionF),
             ("Crear collage", self.collage),
+            ("Adición", self.adicion),
+            ("Sustracción", self.sustraccion),
             ("Rotar imagen 45°", self.Rotar),
             ("Espejo", self.Espejo),
             ("Filtros", self.Filtros),
@@ -402,6 +404,86 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
         pass
+
+    def seleccionar_imagen(self):
+            # Abrir una ventana de diálogo para seleccionar la imagen
+            ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")])
+
+            if not ruta_imagen:
+                print("No se seleccionó ninguna imagen.")
+                return None
+
+            return Image.open(ruta_imagen)
+
+    def seleccionar_imagen(self):
+        # Abrir una ventana de diálogo para seleccionar la imagen
+        ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")])
+
+        if not ruta_imagen:
+            print("No se seleccionó ninguna imagen.")
+            return None
+
+        return Image.open(ruta_imagen)
+
+    def adicion(self):
+        if hasattr(self, "imagen_procesada"):
+            imagen_base = self.imagen_procesada
+        else:
+            imagen_base = self.imagen
+
+        # Seleccionar una nueva imagen
+        nueva_imagen = self.seleccionar_imagen()
+
+        if nueva_imagen is None:
+            return
+
+        # Redimensionar la nueva imagen para que tenga las mismas dimensiones que la imagen base
+        nueva_imagen = nueva_imagen.resize(imagen_base.size)
+
+        # Convertir ambas imágenes a arrays NumPy
+        base_array = np.array(imagen_base)
+        nueva_imagen_array = np.array(nueva_imagen)
+
+        # Combinar las dos imágenes, por ejemplo, sumando los valores de píxeles
+        imagen_combinada_array = np.clip(base_array + nueva_imagen_array, 0, 255)
+
+        # Convertir el array combinado de nuevo a una imagen Pillow
+        imagen_combinada = Image.fromarray(np.array(imagen_combinada_array, dtype=np.uint8))
+
+        self.imagen_procesada = imagen_combinada
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+
+
+    def sustraccion(self):
+        if hasattr(self, "imagen_procesada"):
+            imagen_base = self.imagen_procesada
+        else:
+            imagen_base = self.imagen
+
+        # Seleccionar una nueva imagen
+        segunda_imagen = self.seleccionar_imagen()
+
+        if segunda_imagen is None:
+            return
+
+        # Redimensionar la segunda imagen para que tenga las mismas dimensiones que la imagen base
+        segunda_imagen = segunda_imagen.resize(imagen_base.size)
+
+        # Convertir ambas imágenes a arrays NumPy
+        base_array = np.array(imagen_base)
+        segunda_imagen_array = np.array(segunda_imagen)
+
+        # Realizar la operación de sustracción de píxeles
+        imagen_sustraida_array = np.clip(base_array - segunda_imagen_array, 0, 255)
+
+        # Convertir el array resultante de nuevo a una imagen Pillow
+        imagen_sustraida = Image.fromarray(np.array(imagen_sustraida_array, dtype=np.uint8))
+
+        self.imagen_procesada = imagen_sustraida
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self):
         for widget in self.menu_frame.winfo_children():
