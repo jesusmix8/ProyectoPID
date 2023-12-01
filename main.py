@@ -2,10 +2,11 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 
 # from rotate import rotate_image
@@ -503,8 +504,10 @@ class ImageProcessingApp:
             ("Filtro Media", self.FiltroMedia),
             ("Filtro mediana", self.FiltroMediana),
             ("Filtro Gausiano", self.FiltroGausiano),
-            ("Filtro Maximos y minimos", self.FiltroMaxMin),
-            ("Filtro Laplaciano", self.FiltroLaplaciano),
+            ("Filtro Min", self.FiltroMin),
+            ("Filtro Max", self.FiltroMax),
+            ("Filtro Laplaciano 4 Vecinos", self.FiltroLaplaciano4Vecinos),
+            ("Filtro Laplaciano 8 Vecinos", self.FiltroLaplaciano8Vecinos),
             ("Filtro Prewitt", self.FiltroPrewitt),
             ("Filtro Sobel", self.FiltroSobel),
             ("Filtro Roberts", self.FiltroRoberts),
@@ -542,29 +545,34 @@ class ImageProcessingApp:
 
         image_array = np.array(image)
 
-        # Aplicar el filtro de moda con un kernel de 3x3
-        image_filtered = cv2.medianBlur(image_array, 3)
+        # Apply the mode filter
+        imagemoda_array = Image.fromarray(image_array).filter(ImageFilter.ModeFilter(3))
 
-        image = Image.fromarray(image_filtered)
-        self.imagen_procesada = image
+        # Convert the filtered array back to a Pillow Image
+        imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
+
+        self.imagen_procesada = imagemoda
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
+        
+
 
     def FiltroMedia(self):
+        print ("Filtro Media")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
             image = self.imagen
 
         image = np.array(image)
-
-        image = cv2.blur(image, (3, 3))
+        image = cv2.filter2D(image, -1, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]) / 9)
         image = Image.fromarray(image)
         self.imagen_procesada = image
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMediana(self):
+        print ("Filtro Mediana")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -577,8 +585,8 @@ class ImageProcessingApp:
         self.imagen_procesada = image
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-        pass
 
+        
     def FiltroGausiano(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -593,7 +601,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def FiltroMaxMin(self):
+    def FiltroMin(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -601,19 +609,18 @@ class ImageProcessingApp:
 
         image_array = np.array(image)
 
-        # Aplicar el filtro de máximos y mínimos con un kernel de 3x3
-        image_max = cv2.dilate(image_array, None, iterations=1)
-        image_min = cv2.erode(image_array, None, iterations=1)
+        # Apply the mode filter
+        imagemoda_array = Image.fromarray(image_array).filter(ImageFilter.MinFilter(3))
 
-        # Seleccionar el valor máximo y mínimo de cada píxel
-        image_filtered = cv2.min(image_max, image_min)
+        # Convert the filtered array back to a Pillow Image
+        imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
-        image = Image.fromarray(image_filtered)
-        self.imagen_procesada = image
+        self.imagen_procesada = imagemoda
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def FiltroLaplaciano(self):
+
+    def FiltroMax(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -621,16 +628,60 @@ class ImageProcessingApp:
 
         image_array = np.array(image)
 
-        # Aplicar el filtro Laplaciano a la imagen
-        filtered_image = cv2.Laplacian(image_array, cv2.CV_64F)
+        # Apply the mode filter
+        imagemoda_array = Image.fromarray(image_array).filter(ImageFilter.MaxFilter(3))
 
-        # Escalar los valores para que estén en el rango 0-255
-        filtered_image = cv2.convertScaleAbs(filtered_image)
+        # Convert the filtered array back to a Pillow Image
+        imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
-        # Crear una imagen de Pillow a partir del array resultante
-        filtered_image = Image.fromarray(filtered_image)
+        self.imagen_procesada = imagemoda
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
 
-        self.imagen_procesada = filtered_image
+
+    def FiltroLaplaciano4Vecinos(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Definir el kernel para el filtro laplaciano de 4 vecinos
+        kernel_laplaciano = np.array([[0, 1, 0],
+                                      [1, -4, 1],
+                                      [0, 1, 0]])
+
+        # Aplicar el filtro laplaciano utilizando la función filter2D de OpenCV
+        imagen_laplaciano_array = cv2.filter2D(image_array, -1, kernel_laplaciano)
+
+        # Convertir el array filtrado de nuevo a una imagen Pillow
+        imagen_laplaciano = Image.fromarray(np.array(imagen_laplaciano_array, dtype=np.uint8))
+
+        self.imagen_procesada = imagen_laplaciano
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+    def FiltroLaplaciano8Vecinos(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Definir el kernel para el filtro laplaciano de 8 vecinos
+        kernel_laplaciano = np.array([[1, 1, 1],
+                                      [1, -8, 1],
+                                      [1, 1, 1]])
+
+        # Aplicar el filtro laplaciano utilizando la función filter2D de OpenCV
+        imagen_laplaciano_array = cv2.filter2D(image_array, -1, kernel_laplaciano)
+
+        # Convertir el array filtrado de nuevo a una imagen Pillow
+        imagen_laplaciano = Image.fromarray(np.array(imagen_laplaciano_array, dtype=np.uint8))
+
+        self.imagen_procesada = imagen_laplaciano
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
