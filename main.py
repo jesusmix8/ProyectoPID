@@ -6,7 +6,6 @@ from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from tkinter import colorchooser
 
 
 
@@ -277,7 +276,6 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
@@ -305,8 +303,6 @@ class ImageProcessingApp:
         image = Image.eval(image, lambda x: 255 if x < 128 else 0)
 
         self.imagen_procesada = image
-        print(type(image))
-        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
         pass
@@ -755,87 +751,9 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    
-
-    def detectar_ojos(self, image):
-        gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
-        clasificador_ojos = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-        ojos = clasificador_ojos.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=6, minSize=(5, 5) ,flags=cv2.CASCADE_SCALE_IMAGE)
-        return ojos
-
-    def seleccionar_color(self):
-        color = colorchooser.askcolor()[0]
-        return tuple(map(int, color))
-
-    def cambiar_color_ojos(self, imagen, ojos, nuevo_color):
-        for (x, y, w, h) in ojos:
-        # Extraer la región de la pupila del ojo
-            region_pupila = imagen[y:y+h, x:x+w]
-            region_pupila_gray = cv2.cvtColor(region_pupila, cv2.COLOR_RGB2GRAY)
-            _, mascara = cv2.threshold(region_pupila_gray, 1, 255, cv2.THRESH_BINARY)
-
-            nuevo_color = np.array(nuevo_color, dtype=np.uint8)
-            imagen_color = np.ones_like(region_pupila) * nuevo_color
-            region_pupila = cv2.bitwise_and(region_pupila, region_pupila, mask=mascara)
-            region_pupila = cv2.addWeighted(region_pupila, 1.0, np.zeros_like(region_pupila), 0.0, 0.0)
-            region_pupila = cv2.addWeighted(region_pupila, 1.0, imagen_color, 1.0, 0.0)
-            imagen[y:y+h, x:x+w] = region_pupila
-        return imagen
-    
-
-    def cambiar_color_iris(self, imagen, ojo):
-        # Convertir la imagen a escala de grises
-        gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
-
-        # Definir las coordenadas de la región del iris (puedes ajustar esto según tus necesidades)
-        x, y, w, h = ojo
-        margen = 10  # Puedes ajustar este margen para incluir más área alrededor del iris
-        iris_region = gris[y+margen:y+h-margen, x+margen:x+w-margen]
-
-        # Aplicar algún método de segmentación para resaltar el iris
-        _, iris_binario = cv2.threshold(iris_region, 50, 255, cv2.THRESH_BINARY)
-
-        # Cambiar el color de la región del iris
-        nuevo_color_iris = (0, 255, 0)  # Puedes ajustar este color según tus preferencias
-        imagen[y+margen:y+h-margen, x+margen:x+w-margen][iris_binario > 0] = nuevo_color_iris
-
-        return imagen
-
-
     def CambiodeColordeOjos(self):
-        if hasattr(self, "imagen_procesada"):
-            image = self.imagen_procesada
-        else:
-            image = self.imagen
+        pass
 
-        if not isinstance(image, np.ndarray):
-            print("La imagen no es una matriz NumPy válida. Convirtiendo...")
-            image = np.array(image)
-
-        if len(image.shape) != 3 or image.shape[2] != 3:
-            messagebox.showerror("Error", "La imagen debe ser de 3 canales (RGB).")
-            return
-
-        ojos = self.detectar_ojos(image)
-
-        if len(ojos) > 0:
-            nuevo_color = self.seleccionar_color()
-            if nuevo_color:
-                imagen_con_ojos_coloreados = self.cambiar_color_ojos(image.copy(), ojos, nuevo_color)
-                self.imagen_procesada = imagen_con_ojos_coloreados
-                imagen_con_ojos_coloreadosPIL = Image.fromarray(imagen_con_ojos_coloreados)
-
-                self.imagen_procesada = imagen_con_ojos_coloreadosPIL
-
-                self.mostrar_imagenProcesada(self.imagen_procesada)
-                self.HistorialdeCambios(self.imagen_procesada)
-        else:
-            messagebox.showerror("Error", "No se detectaron ojos en la imagen.")
-        
-
-        
-
-    
     def Segmentación(self):
         pass
 
