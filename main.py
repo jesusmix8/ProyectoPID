@@ -6,6 +6,7 @@ from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from tkinter import colorchooser
 
 
 
@@ -68,6 +69,9 @@ class ImageProcessingApp:
         self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_help_frame.pack(expand=True, fill="both")
 
+        # self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
+        # self.collage_frame.pack(expand=True, fill="both")
+
         self.label = tk.Label(
             self.contenido_frame,
             text="Cargue una imagen para empezar",
@@ -77,8 +81,83 @@ class ImageProcessingApp:
         )
         self.label.pack(expand=True, fill="both")
 
+    def call_help_frames(self):
+        if not hasattr(self, "help_frame"):  # Verificar si help_frame ya existe
+            self.help_frame = tk.Frame(self.contenido_help_frame, bg=self.colorbg)
+            self.label_help = tk.Label(
+                self.help_frame,
+                text=PROCESAMIENTO_IMAGENES,
+                font=("Montserrat", 15),
+                bg=self.colorbg,
+                fg="White",
+            )
+            self.label_help.pack(expand=True, fill="both")
+            self.help_frame.pack(expand=True, fill="both")
 
+    def toggle_frames(self):
+        self.call_help_frames()
+        if self.contenido_frame.winfo_ismapped():
+            self.contenido_frame.pack_forget()
+            self.contenido_help_frame.pack(expand=True, fill="both")
+        else:
+            self.contenido_help_frame.pack_forget()
+            self.contenido_frame.pack(expand=True, fill="both")
 
+    def call_collage_frame(self):
+        if not hasattr(self, "collage_frame_in"):
+            self.collage_frame_in = tk.Frame(self.collage_frame, bg=self.colorbg)
+
+            self.frames = []
+
+            for _ in range(2):
+                frame = tk.Frame(self.collage_frame_in, width=400, height=400)
+                frame.pack(side="left", padx=5, pady=5)
+                self.frames.append(frame)
+
+            self.load_images_button = tk.Button(
+                self.collage_frame_in, text="Cargar Imágenes", command=self.load_images
+            )
+            self.load_images_button.pack(side="bottom", pady=5)
+
+            self.collage_frame_in.pack(expand=True, fill="both", anchor="center")
+
+    def load_images(self):
+        collage_images = []
+
+        for _ in range(2):
+            image_path = filedialog.askopenfilename(
+                title="Seleccione una imagen",
+                filetypes=[("Archivos de imagen", "*.jpg; *.png")],
+            )
+            if image_path:
+                image = Image.open(image_path)
+                collage_images.append(image)
+
+        self.display_images(collage_images)
+
+    def display_images(self, images):
+        photo_images = []
+
+        for frame, image in zip(self.frames, images):
+            image = image.resize((400, 400))
+            photo = ImageTk.PhotoImage(image)
+
+            label = tk.Label(frame, image=photo)
+            label.image = photo
+            label.pack()
+
+            photo_images.append(photo)
+
+        self.root.photo_images = photo_images
+
+    def toggle_frames_collage(self):
+        self.call_collage_frame()
+        if self.contenido_frame.winfo_ismapped():
+            self.contenido_frame.pack_forget()
+            self.collage_frame.pack(expand=True, fill="both")
+        else:
+            self.collage_frame.pack_forget()
+            self.contenido_frame.pack(expand=True, fill="both")
 
     def create_buttons(self):
         self.boton_width = 20
@@ -166,17 +245,9 @@ class ImageProcessingApp:
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
             self.historial.append(self.imagen)
-            
-            # Convertir la imagen a formato jpg
-            self.imagen.save(self.rutadeArchivo + ".jpg", "JPEG")
-            
-            self.botonLoadImage.destroy()
-            self.label.destroy()
-            self.activar_botones()
-        else:
-            messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
-            
-
+        self.botonLoadImage.destroy()
+        self.label.destroy()
+        self.activar_botones()
 
     def save_image(self):
         if hasattr(self, "imagen_procesada"):
@@ -193,13 +264,29 @@ class ImageProcessingApp:
     def help_buttons(self):
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
+        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y")
 
-        self.menuAyuda = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        self.menuAyuda.pack(side="left", fill="y")
+        self.boton_width = 20
+        buttons_data = [
+            ("Procesamiento de Imágenes", self.toggle_frames),
+            ("Contenido", self.toggle_frames),
+        ]
+        # mostrar los botones para elegir el tipo de collage
+        for text, command in buttons_data:
+            button = tk.Button(
+                self.menuCollage,
+                text=text,
+                command=command,
+                width=self.boton_width,
+                font=("Montserrat"),
+                bg=self.botonesbg,
+            )
+            button.pack()
 
         # boton para regresar al menu principal
         botonRegresar_1 = tk.Button(
-            self.menuAyuda,
+            self.menuCollage,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -276,6 +363,7 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image)
         self.imagen_procesada = image
+        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
@@ -303,6 +391,8 @@ class ImageProcessingApp:
         image = Image.eval(image, lambda x: 255 if x < 128 else 0)
 
         self.imagen_procesada = image
+        print(type(image))
+        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
         pass
@@ -400,6 +490,47 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self):
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuCollage.pack(side="left", fill="y")
+
+        self.boton_width = 20
+        buttons_data = [
+            ("Basic", self.toggle_frames_collage),
+            ("Panel", self.toggle_frames_collage),
+        ]
+        # mostrar los botones para elegir el tipo de collage
+        for text, command in buttons_data:
+            button = tk.Button(
+                self.menuCollage,
+                text=text,
+                command=command,
+                width=self.boton_width,
+                font=("Montserrat"),
+                bg=self.botonesbg,
+            )
+            button.pack()
+
+        # boton para regresar al menu principal
+        botonRegresar = tk.Button(
+            self.menuCollage,
+            text="Regresar",
+            command=self.regresar,
+            width=self.boton_width,
+            bg="#0F2C59",
+            fg="White",
+            font=("Montserrat"),
+        )
+        botonRegresar.config(state="normal")
+        botonRegresar.pack(side="bottom")
+
+    def basic(self):
+        # ventana_collage = tk.Toplevel(ventana)
+        # app_collage = ImageCollageApp(ventana_collage, app_processing)
+        pass
+
+    def panel(self):
         pass
 
     def regresar(self):
@@ -751,9 +882,87 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def CambiodeColordeOjos(self):
-        pass
+    
 
+    def detectar_ojos(self, image):
+        gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
+        clasificador_ojos = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        ojos = clasificador_ojos.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=6, minSize=(5, 5) ,flags=cv2.CASCADE_SCALE_IMAGE)
+        return ojos
+
+    def seleccionar_color(self):
+        color = colorchooser.askcolor()[0]
+        return tuple(map(int, color))
+
+    def cambiar_color_ojos(self, imagen, ojos, nuevo_color):
+        for (x, y, w, h) in ojos:
+        # Extraer la región de la pupila del ojo
+            region_pupila = imagen[y:y+h, x:x+w]
+            region_pupila_gray = cv2.cvtColor(region_pupila, cv2.COLOR_RGB2GRAY)
+            _, mascara = cv2.threshold(region_pupila_gray, 1, 255, cv2.THRESH_BINARY)
+
+            nuevo_color = np.array(nuevo_color, dtype=np.uint8)
+            imagen_color = np.ones_like(region_pupila) * nuevo_color
+            region_pupila = cv2.bitwise_and(region_pupila, region_pupila, mask=mascara)
+            region_pupila = cv2.addWeighted(region_pupila, 1.0, np.zeros_like(region_pupila), 0.0, 0.0)
+            region_pupila = cv2.addWeighted(region_pupila, 1.0, imagen_color, 1.0, 0.0)
+            imagen[y:y+h, x:x+w] = region_pupila
+        return imagen
+    
+
+    def cambiar_color_iris(self, imagen, ojo):
+        # Convertir la imagen a escala de grises
+        gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+
+        # Definir las coordenadas de la región del iris (puedes ajustar esto según tus necesidades)
+        x, y, w, h = ojo
+        margen = 10  # Puedes ajustar este margen para incluir más área alrededor del iris
+        iris_region = gris[y+margen:y+h-margen, x+margen:x+w-margen]
+
+        # Aplicar algún método de segmentación para resaltar el iris
+        _, iris_binario = cv2.threshold(iris_region, 50, 255, cv2.THRESH_BINARY)
+
+        # Cambiar el color de la región del iris
+        nuevo_color_iris = (0, 255, 0)  # Puedes ajustar este color según tus preferencias
+        imagen[y+margen:y+h-margen, x+margen:x+w-margen][iris_binario > 0] = nuevo_color_iris
+
+        return imagen
+
+
+    def CambiodeColordeOjos(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        if not isinstance(image, np.ndarray):
+            print("La imagen no es una matriz NumPy válida. Convirtiendo...")
+            image = np.array(image)
+
+        if len(image.shape) != 3 or image.shape[2] != 3:
+            messagebox.showerror("Error", "La imagen debe ser de 3 canales (RGB).")
+            return
+
+        ojos = self.detectar_ojos(image)
+
+        if len(ojos) > 0:
+            nuevo_color = self.seleccionar_color()
+            if nuevo_color:
+                imagen_con_ojos_coloreados = self.cambiar_color_ojos(image.copy(), ojos, nuevo_color)
+                self.imagen_procesada = imagen_con_ojos_coloreados
+                imagen_con_ojos_coloreadosPIL = Image.fromarray(imagen_con_ojos_coloreados)
+
+                self.imagen_procesada = imagen_con_ojos_coloreadosPIL
+
+                self.mostrar_imagenProcesada(self.imagen_procesada)
+                self.HistorialdeCambios(self.imagen_procesada)
+        else:
+            messagebox.showerror("Error", "No se detectaron ojos en la imagen.")
+        
+
+        
+
+    
     def Segmentación(self):
         pass
 
