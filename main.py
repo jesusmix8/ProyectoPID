@@ -14,13 +14,13 @@ from tkinter import colorchooser
 from text import *
 
 # TODO
-#       Cambiar todas las imagenes a jpg Pablo
+#       Cambiar todas las imagenes a jpg Jesus ✅
 #       Convertir a escala de gris Cesar  
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
 #       Arreglar los fitlros Jesus ✅
-#       Maximo y minimo separado Pablo
+#       Maximo y minimo separado Jesus  ✅ 
 #       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Jesus ✅
 #       Sustraccion Jesus ✅
@@ -32,7 +32,7 @@ from text import *
 
 
 
-#       Implementar la modificacion de color de ojos  Vemos
+#       Implementar la modificacion de color de ojos Jesus ✅ 
 #       Implementar la segmentacion para N renglones Cesarin Tilin
 
 
@@ -69,9 +69,6 @@ class ImageProcessingApp:
         self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_help_frame.pack(expand=True, fill="both")
 
-        # self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
-        # self.collage_frame.pack(expand=True, fill="both")
-
         self.label = tk.Label(
             self.contenido_frame,
             text="Cargue una imagen para empezar",
@@ -81,83 +78,8 @@ class ImageProcessingApp:
         )
         self.label.pack(expand=True, fill="both")
 
-    def call_help_frames(self):
-        if not hasattr(self, "help_frame"):  # Verificar si help_frame ya existe
-            self.help_frame = tk.Frame(self.contenido_help_frame, bg=self.colorbg)
-            self.label_help = tk.Label(
-                self.help_frame,
-                text=PROCESAMIENTO_IMAGENES,
-                font=("Montserrat", 15),
-                bg=self.colorbg,
-                fg="White",
-            )
-            self.label_help.pack(expand=True, fill="both")
-            self.help_frame.pack(expand=True, fill="both")
 
-    def toggle_frames(self):
-        self.call_help_frames()
-        if self.contenido_frame.winfo_ismapped():
-            self.contenido_frame.pack_forget()
-            self.contenido_help_frame.pack(expand=True, fill="both")
-        else:
-            self.contenido_help_frame.pack_forget()
-            self.contenido_frame.pack(expand=True, fill="both")
 
-    def call_collage_frame(self):
-        if not hasattr(self, "collage_frame_in"):
-            self.collage_frame_in = tk.Frame(self.collage_frame, bg=self.colorbg)
-
-            self.frames = []
-
-            for _ in range(2):
-                frame = tk.Frame(self.collage_frame_in, width=400, height=400)
-                frame.pack(side="left", padx=5, pady=5)
-                self.frames.append(frame)
-
-            self.load_images_button = tk.Button(
-                self.collage_frame_in, text="Cargar Imágenes", command=self.load_images
-            )
-            self.load_images_button.pack(side="bottom", pady=5)
-
-            self.collage_frame_in.pack(expand=True, fill="both", anchor="center")
-
-    def load_images(self):
-        collage_images = []
-
-        for _ in range(2):
-            image_path = filedialog.askopenfilename(
-                title="Seleccione una imagen",
-                filetypes=[("Archivos de imagen", "*.jpg; *.png")],
-            )
-            if image_path:
-                image = Image.open(image_path)
-                collage_images.append(image)
-
-        self.display_images(collage_images)
-
-    def display_images(self, images):
-        photo_images = []
-
-        for frame, image in zip(self.frames, images):
-            image = image.resize((400, 400))
-            photo = ImageTk.PhotoImage(image)
-
-            label = tk.Label(frame, image=photo)
-            label.image = photo
-            label.pack()
-
-            photo_images.append(photo)
-
-        self.root.photo_images = photo_images
-
-    def toggle_frames_collage(self):
-        self.call_collage_frame()
-        if self.contenido_frame.winfo_ismapped():
-            self.contenido_frame.pack_forget()
-            self.collage_frame.pack(expand=True, fill="both")
-        else:
-            self.collage_frame.pack_forget()
-            self.contenido_frame.pack(expand=True, fill="both")
 
     def create_buttons(self):
         self.boton_width = 20
@@ -245,9 +167,17 @@ class ImageProcessingApp:
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
             self.historial.append(self.imagen)
-        self.botonLoadImage.destroy()
-        self.label.destroy()
-        self.activar_botones()
+            
+            # Convertir la imagen a formato jpg
+            self.imagen.save(self.rutadeArchivo + ".jpg", "JPEG")
+            
+            self.botonLoadImage.destroy()
+            self.label.destroy()
+            self.activar_botones()
+        else:
+            messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
+            
+
 
     def save_image(self):
         if hasattr(self, "imagen_procesada"):
@@ -264,29 +194,13 @@ class ImageProcessingApp:
     def help_buttons(self):
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
-        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        self.menuCollage.pack(side="left", fill="y")
 
-        self.boton_width = 20
-        buttons_data = [
-            ("Procesamiento de Imágenes", self.toggle_frames),
-            ("Contenido", self.toggle_frames),
-        ]
-        # mostrar los botones para elegir el tipo de collage
-        for text, command in buttons_data:
-            button = tk.Button(
-                self.menuCollage,
-                text=text,
-                command=command,
-                width=self.boton_width,
-                font=("Montserrat"),
-                bg=self.botonesbg,
-            )
-            button.pack()
+        self.menuAyuda = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        self.menuAyuda.pack(side="left", fill="y")
 
         # boton para regresar al menu principal
         botonRegresar_1 = tk.Button(
-            self.menuCollage,
+            self.menuAyuda,
             text="Regresar",
             command=self.regresar,
             width=self.boton_width,
@@ -490,47 +404,6 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self):
-        for widget in self.menu_frame.winfo_children():
-            widget.destroy()
-        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        self.menuCollage.pack(side="left", fill="y")
-
-        self.boton_width = 20
-        buttons_data = [
-            ("Basic", self.toggle_frames_collage),
-            ("Panel", self.toggle_frames_collage),
-        ]
-        # mostrar los botones para elegir el tipo de collage
-        for text, command in buttons_data:
-            button = tk.Button(
-                self.menuCollage,
-                text=text,
-                command=command,
-                width=self.boton_width,
-                font=("Montserrat"),
-                bg=self.botonesbg,
-            )
-            button.pack()
-
-        # boton para regresar al menu principal
-        botonRegresar = tk.Button(
-            self.menuCollage,
-            text="Regresar",
-            command=self.regresar,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonRegresar.config(state="normal")
-        botonRegresar.pack(side="bottom")
-
-    def basic(self):
-        # ventana_collage = tk.Toplevel(ventana)
-        # app_collage = ImageCollageApp(ventana_collage, app_processing)
-        pass
-
-    def panel(self):
         pass
 
     def regresar(self):
