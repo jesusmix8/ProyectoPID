@@ -6,6 +6,7 @@ from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import tkinter.simpledialog
 from tkinter import colorchooser
 
 
@@ -32,7 +33,7 @@ from text import *
 
 
 
-#       Implementar la modificacion de color de ojos  Vemos
+#       Implementar la modificacion de color de ojos  Jesus  ✅ 
 #       Implementar la segmentacion para N renglones Cesarin Tilin
 
 
@@ -345,6 +346,93 @@ class ImageProcessingApp:
     def HistorialdeCambios(self, Image):
         self.historial.append(Image)
 
+    def open_kernel_dialog(self):
+        kernel_size = tkinter.simpledialog.askinteger(
+            "Tamaño del kernel",
+            "Ingrese el tamaño del kernel (entre 3 y 10):",
+            initialvalue=3,
+            minvalue=3,
+            maxvalue=10
+        )
+
+        
+
+        if kernel_size is not None:
+            # Verificar si el tamaño del kernel es válido
+            if 3 <= kernel_size <= 10:
+                self.apply_erosion_with_custom_kernel(kernel_size)
+            else:
+                messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
+
+        
+
+
+    def apply_erosion_with_custom_kernel(self, kernel_size):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image_array = np.array(image)
+
+        # Crear una ventana para que el usuario defina los valores del kernel
+        kernel_dialog = tk.Toplevel(self.root)
+        kernel_dialog.title("Definir Kernel")
+        kernel_dialog.geometry("300x300")
+        kernel_dialog.minsize(300, 300)
+
+
+
+        # Crear una matriz de Entry para que el usuario ingrese los valores del kernel
+        entries = []
+        for i in range(kernel_size):
+            row_entries = []
+            for j in range(kernel_size):
+                entry = tk.Entry(kernel_dialog, width=5)
+                entry.grid(row=i, column=j, padx=5, pady=5)
+                row_entries.append(entry)
+            entries.append(row_entries)
+
+        def get_custom_kernel():
+            custom_kernel = []
+            for row in entries:
+                row_values = [int(entry.get()) for entry in row]
+                
+                # Verificar que los valores del kernel estén entre 0 y 1, y no aplicar la erosion si no es así
+                if not all(0 <= value <= 1 for value in row_values):
+                    messagebox.showerror("Error", "Los valores del kernel deben estar entre 0 y 1")
+                    pass
+                
+                #Si hay valores vacios en el kernel, mostrar error y no aplicar la erosion
+                if not all(row_values):
+                    messagebox.showerror("Error", "El kernel no puede tener valores vacíos")
+                    pass
+
+                # Convertir los valores de la fila a uint8
+                row_values = np.array(row_values, dtype=np.uint8)
+                custom_kernel.append(row_values)
+            # Convertir la lista de listas a una matriz numpy y devolverla
+            return np.array(custom_kernel)
+
+
+
+        def apply_custom_erosion():
+            custom_kernel = get_custom_kernel()
+            eroded_image = cv2.erode(image_array, custom_kernel, iterations=1)
+            eroded_image = Image.fromarray(eroded_image)
+            self.imagen_procesada = eroded_image
+            self.mostrar_imagenProcesada(self.imagen_procesada)
+            self.HistorialdeCambios(self.imagen_procesada)
+            kernel_dialog.destroy()
+
+        apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_custom_erosion)
+        apply_button.grid(row=kernel_size, columnspan=kernel_size, pady=10)
+
+        kernel_dialog.mainloop()
+
+    def Erosionar(self):
+        self.open_kernel_dialog()
+        
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -844,24 +932,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def Erosionar(self):
-        if hasattr(self, "imagen_procesada"):
-            image = self.imagen_procesada
-        else:
-            image = self.imagen
 
-        image_array = np.array(image)
-
-        # Aplicar la operación de erosión a la imagen
-        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
-        eroded_image = cv2.erode(image_array, kernel, iterations=1)
-
-        # Crear una imagen de Pillow a partir del array resultante
-        eroded_image = Image.fromarray(eroded_image)
-
-        self.imagen_procesada = eroded_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
 
     def Dilatar(self):
         if hasattr(self, "imagen_procesada"):
