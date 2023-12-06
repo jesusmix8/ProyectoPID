@@ -14,13 +14,13 @@ from tkinter import colorchooser
 from text import *
 
 # TODO
-#       Cambiar todas las imagenes a jpg Pablo
+#       Cambiar todas las imagenes a jpg Jesus ✅
 #       Convertir a escala de gris Cesar  
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
 #       Arreglar los fitlros Jesus ✅
-#       Maximo y minimo separado Pablo
+#       Maximo y minimo separado Jesus  ✅ 
 #       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Jesus ✅
 #       Sustraccion Jesus ✅
@@ -32,7 +32,7 @@ from text import *
 
 
 
-#       Implementar la modificacion de color de ojos  Vemos
+#       Implementar la modificacion de color de ojos Jesus ✅ 
 #       Implementar la segmentacion para N renglones Cesarin Tilin
 
 
@@ -245,9 +245,14 @@ class ImageProcessingApp:
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
             self.historial.append(self.imagen)
+            
+            # Convertir la imagen a formato jpg
+            self.imagen.save(self.rutadeArchivo + ".jpg", "JPEG")
+            
         self.botonLoadImage.destroy()
         self.label.destroy()
         self.activar_botones()
+
 
     def save_image(self):
         if hasattr(self, "imagen_procesada"):
