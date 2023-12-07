@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -10,27 +9,25 @@ import tkinter.simpledialog
 from tkinter import colorchooser
 
 
-
 # from rotate import rotate_image
 from text import *
 
 # TODO
-#       Cambiar todas las imagenes a jpg Pablo
-#       Convertir a escala de gris Cesar  
+#       Cambiar todas las imagenes a jpg Pablo ✅
+#       Convertir a escala de gris Cesar
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
 #       Arreglar los fitlros Jesus ✅
-#       Maximo y minimo separado Pablo
+#       Maximo y minimo separado Pablo ✅
 #       Filtro de orden n (Popup) Cesar mi primera chamba
 #       Filtros de vecinos 4 y 8 Jesus ✅
 #       Sustraccion Jesus ✅
 #       Adicion Jesus ✅
 #       Inversion fotgrafica Jesus ✅
-#       Inversion binaria Jesus ✅ 
-#       Modificar los kenrels segun el usuario Jesus (erosion) ✅ 
+#       Inversion binaria Jesus ✅
+#       Modificar los kenrels segun el usuario Jesus (erosion) ✅
 #       Falta collage Pablo Jesus
-
 
 
 #       Implementar la modificacion de color de ojos  Jesus  🚧
@@ -55,8 +52,6 @@ class ImageProcessingApp:
         self.desactivar_botones()
         self.create_functionbotones()
 
-        
-
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
         self.menu_frame.pack(side="left", fill="y")
@@ -70,8 +65,8 @@ class ImageProcessingApp:
         self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_help_frame.pack(expand=True, fill="both")
 
-        # self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
-        # self.collage_frame.pack(expand=True, fill="both")
+        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
+        self.collage_frame.pack(expand=True, fill="both")
 
         self.label = tk.Label(
             self.contenido_frame,
@@ -111,7 +106,7 @@ class ImageProcessingApp:
             self.frames = []
 
             for _ in range(2):
-                frame = tk.Frame(self.collage_frame_in, width=400, height=400)
+                frame = tk.Frame(self.collage_frame_in, width=450, height=450)
                 frame.pack(side="left", padx=5, pady=5)
                 self.frames.append(frame)
 
@@ -128,10 +123,13 @@ class ImageProcessingApp:
         for _ in range(2):
             image_path = filedialog.askopenfilename(
                 title="Seleccione una imagen",
-                filetypes=[("Archivos de imagen", "*.jpg; *.png")],
+                filetypes=[("Archivos de imagen", "*.*")],
             )
             if image_path:
                 image = Image.open(image_path)
+                if image.format != "JPEG" or image.format != "JPG":
+                    image = image.convert("RGB")
+
                 collage_images.append(image)
 
         self.display_images(collage_images)
@@ -196,19 +194,15 @@ class ImageProcessingApp:
         opcion1.add_command(label="Cargar una nueva imagen", command=self.cargar_imagen)
         opcion1.add_command(label="Guardar imagen", command=self.save_image)
         menu_superior.add_cascade(label="Archivo", menu=opcion1)
-        
+
         self.root.config(menu=menu_superior)
         opcion2 = tk.Menu(menu_superior, tearoff=0)
         opcion2.add_command(label="Ayuda", command=self.help_buttons)
         menu_superior.add_cascade(label="Ayuda", menu=opcion2)
 
         menu_superior.add_command(
-            label="Deshacer ultimo cambio", command=self.undo,compound="left"
+            label="Deshacer ultimo cambio", command=self.undo, compound="left"
         )
-
-
-
-
 
         self.botonLoadImage = tk.Button(
             self.contenido_frame,
@@ -221,7 +215,6 @@ class ImageProcessingApp:
             command=self.cargar_imagen,
         )
         self.botonLoadImage.pack(pady=75)
-
 
     def cargar_imagen(self):
         if hasattr(self, "image_label"):
@@ -316,7 +309,6 @@ class ImageProcessingApp:
         self.label.destroy()
 
     def mostrar_imagenProcesada(self, imagen):
-
         if imagen:
             max_width = 1000
             max_height = 600
@@ -330,7 +322,9 @@ class ImageProcessingApp:
             photo = ImageTk.PhotoImage(imagen)
             self.image_labelProcesada.config(image=photo)
             self.image_labelProcesada.image = photo
-            self.image_labelProcesada.pack(expand=True, anchor="center", padx=50, pady=50)
+            self.image_labelProcesada.pack(
+                expand=True, anchor="center", padx=50, pady=50
+            )
         self.label.destroy()
 
     def undo(self):
@@ -346,8 +340,6 @@ class ImageProcessingApp:
     def HistorialdeCambios(self, Image):
         self.historial.append(Image)
 
-
-        
     def Ecualización(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -378,8 +370,6 @@ class ImageProcessingApp:
         axes[1].set_title("Histograma Ecualizado")
 
         plt.show()
-
-
 
     def InversionB(self):
         if hasattr(self, "imagen_procesada"):
@@ -413,18 +403,24 @@ class ImageProcessingApp:
         pass
 
     def seleccionar_imagen(self):
-            # Abrir una ventana de diálogo para seleccionar la imagen
-            ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")])
+        # Abrir una ventana de diálogo para seleccionar la imagen
+        ruta_imagen = filedialog.askopenfilename(
+            title="Seleccionar imagen",
+            filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")],
+        )
 
-            if not ruta_imagen:
-                print("No se seleccionó ninguna imagen.")
-                return None
+        if not ruta_imagen:
+            print("No se seleccionó ninguna imagen.")
+            return None
 
-            return Image.open(ruta_imagen)
+        return Image.open(ruta_imagen)
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
-        ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")])
+        ruta_imagen = filedialog.askopenfilename(
+            title="Seleccionar imagen",
+            filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif")],
+        )
 
         if not ruta_imagen:
             print("No se seleccionó ninguna imagen.")
@@ -455,13 +451,13 @@ class ImageProcessingApp:
         imagen_combinada_array = np.clip(base_array + nueva_imagen_array, 0, 255)
 
         # Convertir el array combinado de nuevo a una imagen Pillow
-        imagen_combinada = Image.fromarray(np.array(imagen_combinada_array, dtype=np.uint8))
+        imagen_combinada = Image.fromarray(
+            np.array(imagen_combinada_array, dtype=np.uint8)
+        )
 
         self.imagen_procesada = imagen_combinada
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-
-
 
     def sustraccion(self):
         if hasattr(self, "imagen_procesada"):
@@ -486,7 +482,9 @@ class ImageProcessingApp:
         imagen_sustraida_array = np.clip(base_array - segunda_imagen_array, 0, 255)
 
         # Convertir el array resultante de nuevo a una imagen Pillow
-        imagen_sustraida = Image.fromarray(np.array(imagen_sustraida_array, dtype=np.uint8))
+        imagen_sustraida = Image.fromarray(
+            np.array(imagen_sustraida_array, dtype=np.uint8)
+        )
 
         self.imagen_procesada = imagen_sustraida
         self.mostrar_imagenProcesada(self.imagen_procesada)
@@ -643,11 +641,9 @@ class ImageProcessingApp:
         self.imagen_procesada = imagemoda
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-        
-
 
     def FiltroMedia(self):
-        print ("Filtro Media")
+        print("Filtro Media")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -661,7 +657,7 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMediana(self):
-        print ("Filtro Mediana")
+        print("Filtro Mediana")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -675,7 +671,6 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-        
     def FiltroGausiano(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -708,7 +703,6 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def FiltroMax(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -727,7 +721,6 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def FiltroLaplaciano4Vecinos(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -737,15 +730,15 @@ class ImageProcessingApp:
         image_array = np.array(image)
 
         # Definir el kernel para el filtro laplaciano de 4 vecinos
-        kernel_laplaciano = np.array([[0, 1, 0],
-                                      [1, -4, 1],
-                                      [0, 1, 0]])
+        kernel_laplaciano = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
 
         # Aplicar el filtro laplaciano utilizando la función filter2D de OpenCV
         imagen_laplaciano_array = cv2.filter2D(image_array, -1, kernel_laplaciano)
 
         # Convertir el array filtrado de nuevo a una imagen Pillow
-        imagen_laplaciano = Image.fromarray(np.array(imagen_laplaciano_array, dtype=np.uint8))
+        imagen_laplaciano = Image.fromarray(
+            np.array(imagen_laplaciano_array, dtype=np.uint8)
+        )
 
         self.imagen_procesada = imagen_laplaciano
         self.mostrar_imagenProcesada(self.imagen_procesada)
@@ -760,15 +753,15 @@ class ImageProcessingApp:
         image_array = np.array(image)
 
         # Definir el kernel para el filtro laplaciano de 8 vecinos
-        kernel_laplaciano = np.array([[1, 1, 1],
-                                      [1, -8, 1],
-                                      [1, 1, 1]])
+        kernel_laplaciano = np.array([[1, 1, 1], [1, -8, 1], [1, 1, 1]])
 
         # Aplicar el filtro laplaciano utilizando la función filter2D de OpenCV
         imagen_laplaciano_array = cv2.filter2D(image_array, -1, kernel_laplaciano)
 
         # Convertir el array filtrado de nuevo a una imagen Pillow
-        imagen_laplaciano = Image.fromarray(np.array(imagen_laplaciano_array, dtype=np.uint8))
+        imagen_laplaciano = Image.fromarray(
+            np.array(imagen_laplaciano_array, dtype=np.uint8)
+        )
 
         self.imagen_procesada = imagen_laplaciano
         self.mostrar_imagenProcesada(self.imagen_procesada)
@@ -847,27 +840,23 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def open_kernel_dialog(self):
         kernel_size = tkinter.simpledialog.askinteger(
             "Tamaño del kernel",
             "Ingrese el tamaño del kernel (entre 3 y 10):",
             initialvalue=3,
             minvalue=3,
-            maxvalue=10
+            maxvalue=10,
         )
-
-        
 
         if kernel_size is not None:
             # Verificar si el tamaño del kernel es válido
             if 3 <= kernel_size <= 10:
                 self.apply_erosion_with_custom_kernel(kernel_size)
             else:
-                messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
-
-        
-
+                messagebox.showerror(
+                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
+                )
 
     def apply_erosion_with_custom_kernel(self, kernel_size):
         if hasattr(self, "imagen_procesada"):
@@ -883,8 +872,6 @@ class ImageProcessingApp:
         kernel_dialog.geometry("300x300")
         kernel_dialog.minsize(300, 300)
 
-
-
         # Crear una matriz de Entry para que el usuario ingrese los valores del kernel
         entries = []
         for i in range(kernel_size):
@@ -898,18 +885,18 @@ class ImageProcessingApp:
         def get_custom_kernel():
             custom_kernel = []
             for row in entries:
-                row_values = [int(entry.get()) if entry.get().strip() != '' else 0 for entry in row]
+                row_values = [
+                    int(entry.get()) if entry.get().strip() != "" else 0
+                    for entry in row
+                ]
 
-                #Que todos los valores del kernel estén entre 0 y 1
-
+                # Que todos los valores del kernel estén entre 0 y 1
 
                 # Convertir los valores de la fila a uint8
                 row_values = np.array(row_values, dtype=np.uint8)
                 custom_kernel.append(row_values)
             # Convertir la lista de listas a una matriz numpy y devolverla
             return np.array(custom_kernel)
-
-
 
         def apply_custom_erosion():
             custom_kernel = get_custom_kernel()
@@ -922,16 +909,19 @@ class ImageProcessingApp:
                 self.HistorialdeCambios(self.imagen_procesada)
                 kernel_dialog.destroy()
             else:
-                messagebox.showerror("Error", "Todos los valores del kernel deben estar entre 0 y 1")
+                messagebox.showerror(
+                    "Error", "Todos los valores del kernel deben estar entre 0 y 1"
+                )
 
-        apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_custom_erosion)
+        apply_button = tk.Button(
+            kernel_dialog, text="Aplicar", command=apply_custom_erosion
+        )
         apply_button.grid(row=kernel_size, columnspan=kernel_size, pady=10)
 
         kernel_dialog.mainloop()
 
     def Erosionar(self):
         self.open_kernel_dialog()
-
 
     def Dilatar(self):
         if hasattr(self, "imagen_procesada"):
@@ -952,7 +942,6 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
     def CambiodeColordeOjos(self):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -964,31 +953,48 @@ class ImageProcessingApp:
         gris = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
 
         # Usar un clasificador de ojos más preciso
-        cascade_ojos = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye.xml")
+        cascade_ojos = cv2.CascadeClassifier(
+            cv2.data.haarcascades + "haarcascade_eye.xml"
+        )
 
         # Ajustar los parámetros de detectMultiScale
-        ojos = cascade_ojos.detectMultiScale(gris, scaleFactor=1.4, minNeighbors=7, minSize=(30, 30))
+        ojos = cascade_ojos.detectMultiScale(
+            gris, scaleFactor=1.4, minNeighbors=7, minSize=(30, 30)
+        )
 
         colorseleccionado = colorchooser.askcolor()[0]
-        colorseleccionado = tuple(int(c) for c in colorseleccionado)  # Convertir a entero
+        colorseleccionado = tuple(
+            int(c) for c in colorseleccionado
+        )  # Convertir a entero
 
         # Crear una copia de la imagen original para dibujar los círculos de color
         image_circulos = image_array.copy()
 
         # Recorrer los ojos detectados
-        for (x, y, w, h) in ojos:
+        for x, y, w, h in ojos:
             # Extraer el ojo de la imagen
-            ojo = gris[y:y+h, x:x+w]
+            ojo = gris[y : y + h, x : x + w]
 
             # Ajustar los parámetros de HoughCircles
-            circulos = cv2.HoughCircles(ojo, cv2.HOUGH_GRADIENT, dp=1.5, minDist=250, param1=120, param2=30, minRadius=10, maxRadius=50)
+            circulos = cv2.HoughCircles(
+                ojo,
+                cv2.HOUGH_GRADIENT,
+                dp=1.5,
+                minDist=250,
+                param1=120,
+                param2=30,
+                minRadius=10,
+                maxRadius=50,
+            )
 
             if circulos is not None:
                 circulos = np.round(circulos[0, :]).astype("int")
 
-                for (cx, cy, radio) in circulos:
+                for cx, cy, radio in circulos:
                     # Dibujar un círculo en la imagen de los círculos con el color seleccionado por el usuario
-                    cv2.circle(image_circulos, (x+cx, y+cy), radio, colorseleccionado, -1)
+                    cv2.circle(
+                        image_circulos, (x + cx, y + cy), radio, colorseleccionado, -1
+                    )
 
         # Combinar la imagen original con la imagen de los círculos
         image_array = cv2.addWeighted(image_array, 0.7, image_circulos, 0.3, 0)
@@ -998,10 +1004,6 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-
-
-
-    
     def Segmentación(self):
         pass
 
@@ -1022,6 +1024,6 @@ class ImageProcessingApp:
 
 if __name__ == "__main__":
     ventana = tk.Tk()
-    
+
     app_processing = ImageProcessingApp(ventana)
     ventana.mainloop()
