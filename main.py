@@ -52,18 +52,23 @@ class ImageProcessingApp:
         self.desactivar_botones()
         self.create_functionbotones()
 
-        
+        self.root.bind("<Control-o>", lambda event: self.cargar_imagen(event))  # Ctrl+O para cargar imagen
         self.root.bind("<Control-z>", lambda event: self.undo(event))  # Ctrl+Z para deshacer
         self.root.bind("<Control-e>", lambda event: self.Ecualización(event))  # Ctrl+E para Ecualización
         self.root.bind("<Control-i>", lambda event: self.InversionB(event))  # Ctrl+I para Inversion Binaria
         self.root.bind("<Control-f>", lambda event: self.inversionF(event)) # Ctrl+F para Inversion Fotografica
         self.root.bind("<Control-c>", lambda event: self.collage(event))    # Ctrl+C para collage
         self.root.bind("<Control-a>", lambda event: self.adicion(event))    # Ctrl+A para Adición
-        self.root.bind("<Control-s>", lambda event: self.Ecualización(event)) # Ctrl+E para Ecualización
+        self.root.bind("<Control-s>", lambda event: self.sustraccion(event)) # Ctrl+E para Sustracción
         self.root.bind("<Control-r>", lambda event: self.Rotar(event))  # Ctrl+R para rotar 45°
         self.root.bind("<Control-m>", lambda event: self.Espejo(event)) # Ctrl+M para Espejo
         self.root.bind("<Control-l>", lambda event: self.Filtros(event)) # Ctrl+L para Filtros
-        self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+S para Sustracción
+        self.root.bind("<Alt-r>", lambda event: self.Erosionar(event)) # Ctrl+E para Erosionar
+        self.root.bind("<Alt-d>", lambda event: self.Dilatar(event)) # Ctrl+D para Dilatar
+        self.root.bind("<Alt-o>", lambda event: self.CambiodeColordeOjos(event)) # Ctrl+O para Cambio de color de ojos
+
+
+        self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+G para Guardar
         
 
 
@@ -234,7 +239,7 @@ class ImageProcessingApp:
         )
         self.botonLoadImage.pack(pady=75)
 
-    def cargar_imagen(self):
+    def cargar_imagen(self , event=None):
         if hasattr(self, "image_label"):
             self.image_label.destroy()
             self.image_labelProcesada.destroy()
@@ -938,10 +943,10 @@ class ImageProcessingApp:
 
         kernel_dialog.mainloop()
 
-    def Erosionar(self):
+    def Erosionar(self, event=None):
         self.open_kernel_dialog()
 
-    def Dilatar(self):
+    def Dilatar(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -960,7 +965,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def CambiodeColordeOjos(self):
+    def CambiodeColordeOjos(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
