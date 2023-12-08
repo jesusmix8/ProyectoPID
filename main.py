@@ -30,7 +30,7 @@ from text import *
 #       Falta collage Pablo Jesus
 
 
-#       Implementar la modificacion de color de ojos  Jesus  🚧
+#       Implementar la modificacion de color de ojos  Jesus  ✅
 #       Implementar la segmentacion para N renglones Cesarin Tilin
 
 
@@ -51,6 +51,22 @@ class ImageProcessingApp:
         self.create_content_frame()
         self.desactivar_botones()
         self.create_functionbotones()
+
+        
+        self.root.bind("<Control-z>", lambda event: self.undo(event))  # Ctrl+Z para deshacer
+        self.root.bind("<Control-e>", lambda event: self.Ecualización(event))  # Ctrl+E para Ecualización
+        self.root.bind("<Control-i>", lambda event: self.InversionB(event))  # Ctrl+I para Inversion Binaria
+        self.root.bind("<Control-f>", lambda event: self.inversionF(event)) # Ctrl+F para Inversion Fotografica
+        self.root.bind("<Control-c>", lambda event: self.collage(event))    # Ctrl+C para collage
+        self.root.bind("<Control-a>", lambda event: self.adicion(event))    # Ctrl+A para Adición
+        self.root.bind("<Control-s>", lambda event: self.Ecualización(event)) # Ctrl+E para Ecualización
+        self.root.bind("<Control-r>", lambda event: self.Rotar(event))  # Ctrl+R para rotar 45°
+        self.root.bind("<Control-m>", lambda event: self.Espejo(event)) # Ctrl+M para Espejo
+        self.root.bind("<Control-l>", lambda event: self.Filtros(event)) # Ctrl+L para Filtros
+        self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+S para Sustracción
+        
+
+
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
@@ -139,6 +155,7 @@ class ImageProcessingApp:
 
         for frame, image in zip(self.frames, images):
             image = image.resize((400, 400))
+            
             photo = ImageTk.PhotoImage(image)
 
             label = tk.Label(frame, image=photo)
@@ -175,6 +192,7 @@ class ImageProcessingApp:
             ("Modificar color de ojos", self.CambiodeColordeOjos),
             ("Segmentación para \n N renglones", self.Segmentación),
         ]
+
 
         for text, command in buttons_data:
             button = tk.Button(
@@ -243,7 +261,7 @@ class ImageProcessingApp:
         self.label.destroy()
         self.activar_botones()
 
-    def save_image(self):
+    def save_image(self, event=None):
         if hasattr(self, "imagen_procesada"):
             filetypes = [("Archivos de imagen", "*.png"), ("Todos los archivos", "*.*")]
             ruta_guardado = filedialog.asksaveasfilename(
@@ -327,7 +345,7 @@ class ImageProcessingApp:
             )
         self.label.destroy()
 
-    def undo(self):
+    def undo(self , event=None):
         if len(self.historial) > 1:
             self.historial.pop()
             ultimaimagen = self.historial[-1]
@@ -340,7 +358,7 @@ class ImageProcessingApp:
     def HistorialdeCambios(self, Image):
         self.historial.append(Image)
 
-    def Ecualización(self):
+    def Ecualización(self , event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -371,7 +389,7 @@ class ImageProcessingApp:
 
         plt.show()
 
-    def InversionB(self):
+    def InversionB(self , event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -390,7 +408,7 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
         pass
 
-    def inversionF(self):
+    def inversionF(self , event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -428,7 +446,7 @@ class ImageProcessingApp:
 
         return Image.open(ruta_imagen)
 
-    def adicion(self):
+    def adicion(self , event=None):
         if hasattr(self, "imagen_procesada"):
             imagen_base = self.imagen_procesada
         else:
@@ -459,7 +477,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def sustraccion(self):
+    def sustraccion(self , event=None):
         if hasattr(self, "imagen_procesada"):
             imagen_base = self.imagen_procesada
         else:
@@ -490,7 +508,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def collage(self):
+    def collage(self , event=None):
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
         self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
@@ -542,7 +560,7 @@ class ImageProcessingApp:
         self.botonLoadImage.destroy()
         self.activar_botones()
 
-    def Rotar(self):
+    def Rotar(self , event=None):
         # Rotar la imagen 45 grados
         if hasattr(self, "imagen_procesada"):
             self.imagen_procesada = self.imagen_procesada.rotate(45)
@@ -555,7 +573,7 @@ class ImageProcessingApp:
         # Actualizar el historial de cambios
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def Espejo(self):
+    def Espejo(self, event=None):
         if hasattr(self, "imagen_procesada"):
             original_image = self.imagen_procesada
         else:
@@ -578,7 +596,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def Filtros(self):
+    def Filtros(self, event=None):
         # Deleete buttons from menu_frame
         for widget in self.menu_frame.winfo_children():
             widget.destroy()
