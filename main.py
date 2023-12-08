@@ -14,7 +14,7 @@ from text import *
 
 # TODO
 #       Cambiar todas las imagenes a jpg Pablo ✅
-#       Convertir a escala de gris Cesar
+#       Convertir a escala de gris Cesar 
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
@@ -27,8 +27,10 @@ from text import *
 #       Inversion fotgrafica Jesus ✅
 #       Inversion binaria Jesus ✅
 #       Modificar los kenrels segun el usuario Jesus (erosion) ✅
+#       Modificar los kenrels segun el usuario Jesus (dilatacion) ✅
 #       Falta collage Pablo Jesus
-
+#       Shortcut para las funciones Jesus ✅
+#       Implementar la informacion de las imagen manipulada y original 
 
 #       Implementar la modificacion de color de ojos  Jesus  ✅
 #       Implementar la segmentacion para N renglones Cesarin Tilin
@@ -319,16 +321,23 @@ class ImageProcessingApp:
             max_width = 1000
             max_height = 600
             width, height = imagen.size
-            if width > max_width or height > max_height:
-                ratio = min(max_width / width, max_height / height)
-                new_width = int(width * ratio)
-                new_height = int(height * ratio)
-                imagen = imagen.resize((new_width, new_height))
 
+            # Calcula el factor de escala para ajustar la imagen a la ventana
+            width_ratio = max_width / width
+            height_ratio = max_height / height
+            ratio = min(width_ratio, height_ratio)
+
+            # Redimensiona la imagen proporcionalmente
+            new_width = int(width * ratio)
+            new_height = int(height * ratio)
+            imagen = imagen.resize((new_width, new_height))
+
+            # Muestra la imagen
             photo = ImageTk.PhotoImage(imagen)
             self.image_label.config(image=photo)
             self.image_label.image = photo
             self.image_label.pack(expand=True, anchor="center", padx=50, pady=50)
+        
         self.label.destroy()
 
     def mostrar_imagenProcesada(self, imagen):
@@ -336,18 +345,23 @@ class ImageProcessingApp:
             max_width = 1000
             max_height = 600
             width, height = imagen.size
-            if width > max_width or height > max_height:
-                ratio = min(max_width / width, max_height / height)
-                new_width = int(width * ratio)
-                new_height = int(height * ratio)
-                imagen = imagen.resize((new_width, new_height))
 
+            # Calcula el factor de escala para ajustar la imagen a la ventana
+            width_ratio = max_width / width
+            height_ratio = max_height / height
+            ratio = min(width_ratio, height_ratio)
+
+            # Redimensiona la imagen proporcionalmente
+            new_width = int(width * ratio)
+            new_height = int(height * ratio)
+            imagen = imagen.resize((new_width, new_height))
+
+            # Muestra la imagen
             photo = ImageTk.PhotoImage(imagen)
             self.image_labelProcesada.config(image=photo)
             self.image_labelProcesada.image = photo
-            self.image_labelProcesada.pack(
-                expand=True, anchor="center", padx=50, pady=50
-            )
+            self.image_labelProcesada.pack(expand=True, anchor="center", padx=50, pady=50)
+        
         self.label.destroy()
 
     def undo(self , event=None):
@@ -946,7 +960,7 @@ class ImageProcessingApp:
     def Erosionar(self, event=None):
         self.open_kernel_dialog()
 
-    def Dilatar(self, event=None):
+    def apply_dilation_with_custom_kernel(self, kernel_size):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -954,16 +968,80 @@ class ImageProcessingApp:
 
         image_array = np.array(image)
 
-        # Aplicar la operación de dilatación a la imagen
-        kernel = np.ones((3, 3), np.uint8)  # Puedes ajustar el tamaño del kernel
-        dilated_image = cv2.dilate(image_array, kernel, iterations=1)
+        # Crear una ventana para que el usuario defina los valores del kernel
+        kernel_dialog = tk.Toplevel(self.root)
+        kernel_dialog.title("Definir Kernel")
+        kernel_dialog.geometry("300x300")
+        kernel_dialog.minsize(300, 300)
 
-        # Crear una imagen de Pillow a partir del array resultante
-        dilated_image = Image.fromarray(dilated_image)
+        # Crear una matriz de Entry para que el usuario ingrese los valores del kernel
+        entries = []
+        for i in range(kernel_size):
+            row_entries = []
+            for j in range(kernel_size):
+                entry = tk.Entry(kernel_dialog, width=5)
+                entry.grid(row=i, column=j, padx=5, pady=5)
+                row_entries.append(entry)
+            entries.append(row_entries)
 
-        self.imagen_procesada = dilated_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        def get_custom_kernel():
+            custom_kernel = []
+            for row in entries:
+                row_values = [
+                    int(entry.get()) if entry.get().strip() != "" else 0
+                    for entry in row
+                ]
+
+                # Que todos los valores del kernel estén entre 0 y 1
+
+                # Convertir los valores de la fila a uint8
+                row_values = np.array(row_values, dtype=np.uint8)
+                custom_kernel.append(row_values)
+            # Convertir la lista de listas a una matriz numpy y devolverla
+            return np.array(custom_kernel)
+
+        def apply_custom_dilation():
+            custom_kernel = get_custom_kernel()
+
+            if all(0 <= value <= 1 for value in custom_kernel.flatten()):
+                dilated_image = cv2.dilate(image_array, custom_kernel, iterations=1)
+                dilated_image = Image.fromarray(dilated_image)
+                self.imagen_procesada = dilated_image
+                self.mostrar_imagenProcesada(self.imagen_procesada)
+                self.HistorialdeCambios(self.imagen_procesada)
+                kernel_dialog.destroy()
+            else:
+                messagebox.showerror(
+                    "Error", "Todos los valores del kernel deben estar entre 0 y 1"
+                )
+
+        apply_button = tk.Button(
+            kernel_dialog, text="Aplicar", command=apply_custom_dilation
+        )
+        apply_button.grid(row=kernel_size, columnspan=kernel_size, pady=10)
+
+        kernel_dialog.mainloop()
+
+    def Dilatar(self, event=None):
+        self.open_kernel_dialog_for_dilation()
+        
+    def open_kernel_dialog_for_dilation(self):
+        kernel_size = tkinter.simpledialog.askinteger(
+            "Tamaño del kernel",
+            "Ingrese el tamaño del kernel (entre 3 y 10):",
+            initialvalue=3,
+            minvalue=3,
+            maxvalue=10,
+        )
+
+        if kernel_size is not None:
+            # Verificar si el tamaño del kernel es válido
+            if 3 <= kernel_size <= 10:
+                self.apply_dilation_with_custom_kernel(kernel_size)
+            else:
+                messagebox.showerror(
+                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
+                )
 
     def CambiodeColordeOjos(self, event=None):
         if hasattr(self, "imagen_procesada"):
