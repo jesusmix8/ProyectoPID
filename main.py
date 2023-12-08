@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -7,8 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tkinter.simpledialog
 from tkinter import colorchooser
-
-
+from tkinter import simpledialog
+import time
 # from rotate import rotate_image
 from text import *
 
@@ -20,7 +21,7 @@ from text import *
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
 #       Arreglar los fitlros Jesus ✅
 #       Maximo y minimo separado Pablo ✅
-#       Filtro de orden n (Popup) Cesar mi primera chamba
+#       Filtro de orden n (Popup) Cesar mi primera chamba ✅
 #       Filtros de vecinos 4 y 8 Jesus ✅
 #       Sustraccion Jesus ✅
 #       Adicion Jesus ✅
@@ -218,6 +219,7 @@ class ImageProcessingApp:
         opcion1.add_command(label="Reiniciar", command=self.reset)
         opcion1.add_command(label="Cargar una nueva imagen", command=self.cargar_imagen)
         opcion1.add_command(label="Guardar imagen", command=self.save_image)
+        opcion1.add_command(label="Informacion de la imagen", command=self.info)
         menu_superior.add_cascade(label="Archivo", menu=opcion1)
 
         self.root.config(menu=menu_superior)
@@ -279,6 +281,52 @@ class ImageProcessingApp:
                 messagebox.showinfo("Guardado", "La imagen se ha guardado.")
         else:
             messagebox.showerror("Error", "No hay una imagen procesada para guardar.")
+
+    def info(self):
+        print("Informacion de la imagen")
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+        
+
+        # Obtener el tamaño de la imagen
+        width, height = image.size
+
+        # Obtener el modo de la imagen
+        mode = image.mode
+
+        # Obtener el formato de la imagen
+        format = image.format
+
+        # Obtener el nombre del archivo
+        filename = self.rutadeArchivo
+
+        # Obtener el tamaño del archivo
+        file_size = os.path.getsize(filename)
+
+        # Obtener la fecha de modificación del archivo
+        file_date = time.ctime(os.path.getmtime(filename))
+
+        # Obtener el nombre del archivo
+        file_name = os.path.basename(filename)
+
+        # Obtener el directorio del archivo
+        file_dir = os.path.dirname(filename)
+
+
+
+
+        print("Tamaño de la imagen: {} x {}".format(width, height))
+        print("Modo de la imagen: {}".format(mode))
+        print("Formato de la imagen: {}".format(format))
+        print("Tamaño del archivo: {}".format(file_size))
+        print("Fecha de modificación: {}".format(file_date))
+        print("Nombre del archivo: {}".format(file_name))
+        print("Directorio del archivo: {}".format(file_dir))
+
+        messagebox.showinfo("Informacion de la imagen", "Tamaño de la imagen: {} x {}\nModo de la imagen: {}\nFormato de la imagen: {}\nTamaño del archivo: {}\nFecha de modificación: {}\nNombre del archivo: {}\nDirectorio del archivo: {}".format(width, height, mode, format, file_size, file_date, file_name, file_dir))
+        
 
     def help_buttons(self):
         for widget in self.menu_frame.winfo_children():
@@ -630,6 +678,7 @@ class ImageProcessingApp:
             ("Filtro Gausiano", self.FiltroGausiano),
             ("Filtro Min", self.FiltroMin),
             ("Filtro Max", self.FiltroMax),
+            ("Filtro de orden n", self.filtroOrdenN),
             ("Filtro Laplaciano 4 Vecinos", self.FiltroLaplaciano4Vecinos),
             ("Filtro Laplaciano 8 Vecinos", self.FiltroLaplaciano8Vecinos),
             ("Filtro Prewitt", self.FiltroPrewitt),
@@ -692,6 +741,29 @@ class ImageProcessingApp:
         self.imagen_procesada = image
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
+
+    def filtroOrdenN(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+            
+        image_array = np.array(image)
+
+        # Solicitar al usuario que ingrese el valor de n
+        n = simpledialog.askinteger("Valor de n", "Ingrese el valor de n (1-9):", minvalue=1, maxvalue=9)
+
+        if n is not None:
+            size = 3
+            rank = min((size * size - 1), n)
+
+            imagemoda_array = Image.fromarray(image_array).filter(ImageFilter.RankFilter(size=size, rank=rank))
+
+            imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
+
+            self.imagen_procesada = imagemoda
+            self.mostrar_imagenProcesada(self.imagen_procesada)
+            self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMediana(self):
         print("Filtro Mediana")
