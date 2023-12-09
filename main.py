@@ -1,7 +1,9 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+import webbrowser
 from PIL import Image, ImageTk, ImageFilter
 import cv2
 import numpy as np
@@ -69,7 +71,7 @@ class ImageProcessingApp:
         self.root.bind("<Alt-r>", lambda event: self.Erosionar(event)) # Ctrl+E para Erosionar
         self.root.bind("<Alt-d>", lambda event: self.Dilatar(event)) # Ctrl+D para Dilatar
         self.root.bind("<Alt-o>", lambda event: self.CambiodeColordeOjos(event)) # Ctrl+O para Cambio de color de ojos
-
+        self.root.bind("<Alt-i>", lambda event: self.info(event)) # Alt+I para Informacion de la imagen
 
         self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+G para Guardar
         
@@ -282,8 +284,7 @@ class ImageProcessingApp:
         else:
             messagebox.showerror("Error", "No hay una imagen procesada para guardar.")
 
-    def info(self):
-        print("Informacion de la imagen")
+    def info(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -314,55 +315,26 @@ class ImageProcessingApp:
         # Obtener el directorio del archivo
         file_dir = os.path.dirname(filename)
 
-
-
-
-        print("Tamaño de la imagen: {} x {}".format(width, height))
-        print("Modo de la imagen: {}".format(mode))
-        print("Formato de la imagen: {}".format(format))
-        print("Tamaño del archivo: {}".format(file_size))
-        print("Fecha de modificación: {}".format(file_date))
-        print("Nombre del archivo: {}".format(file_name))
-        print("Directorio del archivo: {}".format(file_dir))
-
         messagebox.showinfo("Informacion de la imagen", "Tamaño de la imagen: {} x {}\nModo de la imagen: {}\nFormato de la imagen: {}\nTamaño del archivo: {}\nFecha de modificación: {}\nNombre del archivo: {}\nDirectorio del archivo: {}".format(width, height, mode, format, file_size, file_date, file_name, file_dir))
         
 
     def help_buttons(self):
-        for widget in self.menu_frame.winfo_children():
-            widget.destroy()
-        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        self.menuCollage.pack(side="left", fill="y")
+        # Use sys._MEIPASS when running from PyInstaller executable
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(os.path.dirname(__file__))
 
-        self.boton_width = 20
-        buttons_data = [
-            ("Procesamiento de Imágenes", self.toggle_frames),
-            ("Contenido", self.toggle_frames),
-        ]
-        # mostrar los botones para elegir el tipo de collage
-        for text, command in buttons_data:
-            button = tk.Button(
-                self.menuCollage,
-                text=text,
-                command=command,
-                width=self.boton_width,
-                font=("Montserrat"),
-                bg=self.botonesbg,
-            )
-            button.pack()
+        # Construct the full path to the HTML file
+        html_path = os.path.join(base_path, 'help.html')
 
-        # boton para regresar al menu principal
-        botonRegresar_1 = tk.Button(
-            self.menuCollage,
-            text="Regresar",
-            command=self.regresar,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonRegresar_1.config(state="normal")
-        botonRegresar_1.pack(side="bottom")
+        # Check if the HTML file exists before trying to open it
+        if os.path.exists(html_path):
+            # Open the HTML file in the default web browser
+            webbrowser.open('file://' + html_path, new=2)
+        else:
+            print(f"The HTML file '{html_path}' does not exist.")
+        
 
     def mostrar_imagen(self, imagen):
         if imagen:
@@ -443,7 +415,6 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
@@ -469,8 +440,6 @@ class ImageProcessingApp:
         image = Image.eval(image, lambda x: 255 if x < 128 else 0)
 
         self.imagen_procesada = image
-        print(type(image))
-        print(type(self.imagen_procesada))
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
         pass
@@ -480,12 +449,18 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
+        
+        #evaluar si a la imagen tiene canales suficientes para una inversion fotografica
+        if image.shape == 2:
+            print("La imagen tiene un solo canal")
+        elif image.shape == 3:
+            print("La imagen tiene 3 caneles")
+
         self.invertida = Image.eval(image, lambda x: 255 - x)
         self.imagen_procesada = self.invertida
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-        pass
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
@@ -495,7 +470,7 @@ class ImageProcessingApp:
         )
 
         if not ruta_imagen:
-            print("No se seleccionó ninguna imagen.")
+            messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
             return None
 
         return Image.open(ruta_imagen)
@@ -508,7 +483,8 @@ class ImageProcessingApp:
         )
 
         if not ruta_imagen:
-            print("No se seleccionó ninguna imagen.")
+            messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
+
             return None
 
         return Image.open(ruta_imagen)
@@ -729,7 +705,6 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMedia(self):
-        print("Filtro Media")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -766,7 +741,6 @@ class ImageProcessingApp:
             self.HistorialdeCambios(self.imagen_procesada)
 
     def FiltroMediana(self):
-        print("Filtro Mediana")
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -1123,7 +1097,11 @@ class ImageProcessingApp:
 
         image_array = np.array(image)
 
-        gris = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
+        try:
+            gris = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
+        except:
+            messagebox.showerror("Error", "La imagen debe estar en formato RGB")
+            return   
 
         # Usar un clasificador de ojos más preciso
         cascade_ojos = cv2.CascadeClassifier(
