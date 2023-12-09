@@ -266,11 +266,20 @@ class ImageProcessingApp:
         opcion1.add_command(label="Cargar una nueva imagen", command=self.cargar_imagen)
         opcion1.add_command(label="Guardar imagen", command=self.save_image)
         opcion1.add_command(label="Informacion de la imagen", command=self.info)
+        opcion1.add_separator()
+        opcion1.add_command(label="Convertir a \n escala de grises", command=self.ConvertirEscaladeGrises)
+        opcion1.add_separator()
+        opcion1.add_command(label="Salir", command=self.root.quit)
         menu_superior.add_cascade(label="Archivo", menu=opcion1)
 
         self.root.config(menu=menu_superior)
         opcion2 = tk.Menu(menu_superior, tearoff=0)
         opcion2.add_command(label="Ayuda", command=self.help_buttons)
+
+
+
+        
+
         menu_superior.add_cascade(label="Ayuda", menu=opcion2)
 
         menu_superior.add_command(
@@ -430,6 +439,10 @@ class ImageProcessingApp:
 
         self.label.destroy()
 
+    def ShowImageandSave(self, imagen):
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
     def undo(self, event=None):
         if len(self.historial) > 1:
             self.historial.pop()
@@ -461,8 +474,7 @@ class ImageProcessingApp:
 
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
         fig, axes = plt.subplots(1, 2, figsize=(10, 4))
         axes[0].plot(histoOriginal, color="black")
@@ -486,8 +498,7 @@ class ImageProcessingApp:
         image = Image.eval(image, lambda x: 255 if x < 128 else 0)
 
         self.imagen_procesada = image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
         pass
 
     def inversionF(self, event=None):
@@ -504,8 +515,7 @@ class ImageProcessingApp:
 
         self.invertida = Image.eval(image, lambda x: 255 - x)
         self.imagen_procesada = self.invertida
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
 
     def seleccionar_imagen(self):
@@ -554,17 +564,24 @@ class ImageProcessingApp:
         base_array = np.array(imagen_base)
         nueva_imagen_array = np.array(nueva_imagen)
 
-        # Combinar las dos imágenes, por ejemplo, sumando los valores de píxeles
-        imagen_combinada_array = np.clip(base_array + nueva_imagen_array, 0, 255)
+        if base_array.shape != nueva_imagen_array.shape:
+            messagebox.showerror(
+                "Error",
+                "Las imágenes deben tener la misma cantidad de. Por favor, seleccione otra imagen.",
+            )
+            return
+        else:
+            # Combinar las dos imágenes, por ejemplo, sumando los valores de píxeles
+            imagen_combinada_array = np.clip(base_array + nueva_imagen_array, 0, 255)
 
-        # Convertir el array combinado de nuevo a una imagen Pillow
-        imagen_combinada = Image.fromarray(
-            np.array(imagen_combinada_array, dtype=np.uint8)
-        )
+            # Convertir el array combinado de nuevo a una imagen Pillow
+            imagen_combinada = Image.fromarray(
+                np.array(imagen_combinada_array, dtype=np.uint8)
+            )
 
-        self.imagen_procesada = imagen_combinada
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+            self.imagen_procesada = imagen_combinada
+            self.mostrar_imagenProcesada(self.imagen_procesada)
+            self.HistorialdeCambios(self.imagen_procesada)
 
     def sustraccion(self, event=None):
         if hasattr(self, "imagen_procesada"):
@@ -594,44 +611,9 @@ class ImageProcessingApp:
         )
 
         self.imagen_procesada = imagen_sustraida
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def collage(self, event=None):
-        # for widget in self.menu_frame.winfo_children():
-        #     widget.destroy()
-        # self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        # self.menuCollage.pack(side="left", fill="y")
-
-        # self.boton_width = 20
-        # buttons_data = [
-        #     ("Basic", self.toggle_frames_collage),
-        #     ("Panel", self.toggle_frames_collage),
-        # ]
-        # # mostrar los botones para elegir el tipo de collage
-        # for text, command in buttons_data:
-        #     button = tk.Button(
-        #         self.menuCollage,
-        #         text=text,
-        #         command=command,
-        #         width=self.boton_width,
-        #         font=("Montserrat"),
-        #         bg=self.botonesbg,
-        #     )
-        #     button.pack()
-
-        # # boton para regresar al menu principal
-        # botonRegresar = tk.Button(
-        #     self.menuCollage,
-        #     text="Regresar",
-        #     command=self.regresar,
-        #     width=self.boton_width,
-        #     bg="#0F2C59",
-        #     fg="White",
-        #     font=("Montserrat"),
-        # )
-        # botonRegresar.config(state="normal")
-        # botonRegresar.pack(side="bottom")
 
         # llamar a la clase de collage
         self.ventana_collage = tk.Toplevel(ventana)
@@ -691,8 +673,7 @@ class ImageProcessingApp:
         mosaic_image.paste(bottom_right, (original_image.width, original_image.height))
 
         self.imagen_procesada = mosaic_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def Filtros(self, event=None):
         # Deleete buttons from menu_frame
@@ -756,8 +737,7 @@ class ImageProcessingApp:
         imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
         self.imagen_procesada = imagemoda
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroMedia(self):
         if hasattr(self, "imagen_procesada"):
@@ -769,8 +749,7 @@ class ImageProcessingApp:
         image = cv2.filter2D(image, -1, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]) / 9)
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def filtroOrdenN(self):
         if hasattr(self, "imagen_procesada"):
@@ -806,8 +785,7 @@ class ImageProcessingApp:
         image = cv2.medianBlur(image, 3)
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroGausiano(self):
         if hasattr(self, "imagen_procesada"):
@@ -820,8 +798,7 @@ class ImageProcessingApp:
         image = cv2.GaussianBlur(image, (3, 3), 0)
         image = Image.fromarray(image)
         self.imagen_procesada = image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroMin(self):
         if hasattr(self, "imagen_procesada"):
@@ -838,8 +815,7 @@ class ImageProcessingApp:
         imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
         self.imagen_procesada = imagemoda
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroMax(self):
         if hasattr(self, "imagen_procesada"):
@@ -856,8 +832,7 @@ class ImageProcessingApp:
         imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
         self.imagen_procesada = imagemoda
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroLaplaciano4Vecinos(self):
         if hasattr(self, "imagen_procesada"):
@@ -879,8 +854,7 @@ class ImageProcessingApp:
         )
 
         self.imagen_procesada = imagen_laplaciano
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroLaplaciano8Vecinos(self):
         if hasattr(self, "imagen_procesada"):
@@ -902,8 +876,7 @@ class ImageProcessingApp:
         )
 
         self.imagen_procesada = imagen_laplaciano
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroPrewitt(self):
         if hasattr(self, "imagen_procesada"):
@@ -926,8 +899,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroSobel(self):
         if hasattr(self, "imagen_procesada"):
@@ -951,8 +923,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def FiltroRoberts(self):
         if hasattr(self, "imagen_procesada"):
@@ -975,8 +946,7 @@ class ImageProcessingApp:
         filtered_image = Image.fromarray(filtered_image)
 
         self.imagen_procesada = filtered_image
-        self.mostrar_imagenProcesada(self.imagen_procesada)
-        self.HistorialdeCambios(self.imagen_procesada)
+        self.ShowImageandSave(self.imagen_procesada)
 
     def open_kernel_dialog(self):
         kernel_size = tkinter.simpledialog.askinteger(
@@ -1144,6 +1114,16 @@ class ImageProcessingApp:
                     "Error", "El tamaño del kernel debe estar entre 3 y 10"
                 )
 
+    def ConvertirEscaladeGrises(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image = image.convert("L")
+        self.imagen_procesada = image
+        self.ShowImageandSave(self.imagen_procesada)
+
     def CambiodeColordeOjos(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
@@ -1207,11 +1187,29 @@ class ImageProcessingApp:
 
         image_array = Image.fromarray(image_array)
         self.imagen_procesada = image_array
+        self.ShowImageandSave(self.imagen_procesada)
+
+    def Segmentación(self):
+        # Utilizar operador ternario para simplificar la asignación de la imagen
+        image = self.imagen_procesada if hasattr(self, "imagen_procesada") else self.imagen
+
+        image = image.convert("L")
+
+        _, threshold_image = cv2.threshold(np.array(image), 128, 255, cv2.THRESH_BINARY_INV)
+
+        contours, _ = cv2.findContours(threshold_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        image_with_contours_np = np.array(self.imagen)
+
+        # Utilizar list comprehension para simplificar el dibujo de rectángulos
+        [cv2.rectangle(image_with_contours_np, (x, y), (x + w, y + h), (0, 255, 0), 2) for x, y, w, h in [cv2.boundingRect(contour) for contour in contours]]
+
+        self.imagen_procesada = Image.fromarray(image_with_contours_np)
+
+        # Llamar a los métodos directamente con la imagen procesada
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def Segmentación(self):
-        pass
 
     def reset(self):
         self.imagen_procesada = self.imagen
