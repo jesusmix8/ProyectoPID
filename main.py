@@ -17,7 +17,7 @@ from text import *
 
 # TODO
 #       Cambiar todas las imagenes a jpg Pablo ✅
-#       Convertir a escala de gris Cesar 
+#       Convertir a escala de gris Cesar
 #       Rescalar las imagenes para mejor presentacion Cesar
 #       Modificar el frame para mayor presentacion Jesus ✅
 #       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
@@ -33,7 +33,7 @@ from text import *
 #       Modificar los kenrels segun el usuario Jesus (dilatacion) ✅
 #       Falta collage Pablo Jesus
 #       Shortcut para las funciones Jesus ✅
-#       Implementar la informacion de las imagen manipulada y original 
+#       Implementar la informacion de las imagen manipulada y original
 
 #       Implementar la modificacion de color de ojos  Jesus  ✅
 #       Implementar la segmentacion para N renglones Cesarin Tilin
@@ -76,7 +76,52 @@ class ImageProcessingApp:
         self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+G para Guardar
         
 
+        self.root.bind(
+            "<Control-o>", lambda event: self.cargar_imagen(event)
+        )  # Ctrl+O para cargar imagen
+        self.root.bind(
+            "<Control-z>", lambda event: self.undo(event)
+        )  # Ctrl+Z para deshacer
+        self.root.bind(
+            "<Control-e>", lambda event: self.Ecualización(event)
+        )  # Ctrl+E para Ecualización
+        self.root.bind(
+            "<Control-i>", lambda event: self.InversionB(event)
+        )  # Ctrl+I para Inversion Binaria
+        self.root.bind(
+            "<Control-f>", lambda event: self.inversionF(event)
+        )  # Ctrl+F para Inversion Fotografica
+        self.root.bind(
+            "<Control-c>", lambda event: self.collage(event)
+        )  # Ctrl+C para collage
+        self.root.bind(
+            "<Control-a>", lambda event: self.adicion(event)
+        )  # Ctrl+A para Adición
+        self.root.bind(
+            "<Control-s>", lambda event: self.sustraccion(event)
+        )  # Ctrl+E para Sustracción
+        self.root.bind(
+            "<Control-r>", lambda event: self.Rotar(event)
+        )  # Ctrl+R para rotar 45°
+        self.root.bind(
+            "<Control-m>", lambda event: self.Espejo(event)
+        )  # Ctrl+M para Espejo
+        self.root.bind(
+            "<Control-l>", lambda event: self.Filtros(event)
+        )  # Ctrl+L para Filtros
+        self.root.bind(
+            "<Alt-r>", lambda event: self.Erosionar(event)
+        )  # Ctrl+E para Erosionar
+        self.root.bind(
+            "<Alt-d>", lambda event: self.Dilatar(event)
+        )  # Ctrl+D para Dilatar
+        self.root.bind(
+            "<Alt-o>", lambda event: self.CambiodeColordeOjos(event)
+        )  # Ctrl+O para Cambio de color de ojos
 
+        self.root.bind(
+            "<Control-g>", lambda event: self.save_image(event)
+        )  # Ctrl+G para Guardar
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
@@ -165,7 +210,7 @@ class ImageProcessingApp:
 
         for frame, image in zip(self.frames, images):
             image = image.resize((400, 400))
-            
+
             photo = ImageTk.PhotoImage(image)
 
             label = tk.Label(frame, image=photo)
@@ -202,7 +247,6 @@ class ImageProcessingApp:
             ("Modificar color de ojos", self.CambiodeColordeOjos),
             ("Segmentación para \n N renglones", self.Segmentación),
         ]
-
 
         for text, command in buttons_data:
             button = tk.Button(
@@ -245,7 +289,7 @@ class ImageProcessingApp:
         )
         self.botonLoadImage.pack(pady=75)
 
-    def cargar_imagen(self , event=None):
+    def cargar_imagen(self, event=None):
         if hasattr(self, "image_label"):
             self.image_label.destroy()
             self.image_labelProcesada.destroy()
@@ -357,7 +401,7 @@ class ImageProcessingApp:
             self.image_label.config(image=photo)
             self.image_label.image = photo
             self.image_label.pack(expand=True, anchor="center", padx=50, pady=50)
-        
+
         self.label.destroy()
 
     def mostrar_imagenProcesada(self, imagen):
@@ -380,11 +424,13 @@ class ImageProcessingApp:
             photo = ImageTk.PhotoImage(imagen)
             self.image_labelProcesada.config(image=photo)
             self.image_labelProcesada.image = photo
-            self.image_labelProcesada.pack(expand=True, anchor="center", padx=50, pady=50)
-        
+            self.image_labelProcesada.pack(
+                expand=True, anchor="center", padx=50, pady=50
+            )
+
         self.label.destroy()
 
-    def undo(self , event=None):
+    def undo(self, event=None):
         if len(self.historial) > 1:
             self.historial.pop()
             ultimaimagen = self.historial[-1]
@@ -397,7 +443,7 @@ class ImageProcessingApp:
     def HistorialdeCambios(self, Image):
         self.historial.append(Image)
 
-    def Ecualización(self , event=None):
+    def Ecualización(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -427,7 +473,7 @@ class ImageProcessingApp:
 
         plt.show()
 
-    def InversionB(self , event=None):
+    def InversionB(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -444,7 +490,7 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
         pass
 
-    def inversionF(self , event=None):
+    def inversionF(self, event=None):
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
@@ -489,7 +535,7 @@ class ImageProcessingApp:
 
         return Image.open(ruta_imagen)
 
-    def adicion(self , event=None):
+    def adicion(self, event=None):
         if hasattr(self, "imagen_procesada"):
             imagen_base = self.imagen_procesada
         else:
@@ -520,7 +566,7 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def sustraccion(self , event=None):
+    def sustraccion(self, event=None):
         if hasattr(self, "imagen_procesada"):
             imagen_base = self.imagen_procesada
         else:
@@ -551,41 +597,50 @@ class ImageProcessingApp:
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
-    def collage(self , event=None):
-        for widget in self.menu_frame.winfo_children():
-            widget.destroy()
-        self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
-        self.menuCollage.pack(side="left", fill="y")
+    def collage(self, event=None):
+        # for widget in self.menu_frame.winfo_children():
+        #     widget.destroy()
+        # self.menuCollage = tk.Frame(self.menu_frame, width=150, bg=self.sidemenucolorbg)
+        # self.menuCollage.pack(side="left", fill="y")
 
-        self.boton_width = 20
-        buttons_data = [
-            ("Basic", self.toggle_frames_collage),
-            ("Panel", self.toggle_frames_collage),
-        ]
-        # mostrar los botones para elegir el tipo de collage
-        for text, command in buttons_data:
-            button = tk.Button(
-                self.menuCollage,
-                text=text,
-                command=command,
-                width=self.boton_width,
-                font=("Montserrat"),
-                bg=self.botonesbg,
-            )
-            button.pack()
+        # self.boton_width = 20
+        # buttons_data = [
+        #     ("Basic", self.toggle_frames_collage),
+        #     ("Panel", self.toggle_frames_collage),
+        # ]
+        # # mostrar los botones para elegir el tipo de collage
+        # for text, command in buttons_data:
+        #     button = tk.Button(
+        #         self.menuCollage,
+        #         text=text,
+        #         command=command,
+        #         width=self.boton_width,
+        #         font=("Montserrat"),
+        #         bg=self.botonesbg,
+        #     )
+        #     button.pack()
 
-        # boton para regresar al menu principal
-        botonRegresar = tk.Button(
-            self.menuCollage,
-            text="Regresar",
-            command=self.regresar,
-            width=self.boton_width,
-            bg="#0F2C59",
-            fg="White",
-            font=("Montserrat"),
-        )
-        botonRegresar.config(state="normal")
-        botonRegresar.pack(side="bottom")
+        # # boton para regresar al menu principal
+        # botonRegresar = tk.Button(
+        #     self.menuCollage,
+        #     text="Regresar",
+        #     command=self.regresar,
+        #     width=self.boton_width,
+        #     bg="#0F2C59",
+        #     fg="White",
+        #     font=("Montserrat"),
+        # )
+        # botonRegresar.config(state="normal")
+        # botonRegresar.pack(side="bottom")
+
+        # llamar a la clase de collage
+        self.ventana_collage = tk.Toplevel(ventana)
+        # generar un frame para ventana_collage
+        # dar tamaño a ventana collage
+        self.ventana_collage.geometry("1250x650")
+        # generar un frame para ventana_collage
+        frame = tk.Frame(self.ventana_collage)
+        frame.pack(expand=True, fill="both")
 
     def basic(self):
         # ventana_collage = tk.Toplevel(ventana)
@@ -603,7 +658,7 @@ class ImageProcessingApp:
         self.botonLoadImage.destroy()
         self.activar_botones()
 
-    def Rotar(self , event=None):
+    def Rotar(self, event=None):
         # Rotar la imagen 45 grados
         if hasattr(self, "imagen_procesada"):
             self.imagen_procesada = self.imagen_procesada.rotate(45)
@@ -1070,7 +1125,7 @@ class ImageProcessingApp:
 
     def Dilatar(self, event=None):
         self.open_kernel_dialog_for_dilation()
-        
+
     def open_kernel_dialog_for_dilation(self):
         kernel_size = tkinter.simpledialog.askinteger(
             "Tamaño del kernel",
@@ -1171,6 +1226,13 @@ class ImageProcessingApp:
         for widget in self.menu_frame.winfo_children():
             if isinstance(widget, tk.Button):
                 widget.config(state="normal")
+
+
+class Collage:
+    def __init__(self, image, n_rows, n_cols):
+        self.image = image
+        self.n_rows = n_rows
+        self.n_cols = n_cols
 
 
 if __name__ == "__main__":
