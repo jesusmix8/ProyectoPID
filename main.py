@@ -18,7 +18,8 @@ from tkinter import PhotoImage
 # TODO
 
 
-#       Falta collage Pablo Jesus 
+#       Falta collage Pablo Jesus
+
 
 class ImageProcessingApp:
     def __init__(self, root):
@@ -88,7 +89,6 @@ class ImageProcessingApp:
             "<Control-g>", lambda event: self.save_image(event)
         )  # Ctrl+G para Guardar
 
-
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
         self.menu_frame.pack(side="left", fill="y")
@@ -99,10 +99,6 @@ class ImageProcessingApp:
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_frame.pack(expand=True, fill="both")
 
-
-
-       
-
         self.label = tk.Label(
             self.contenido_frame,
             text="Cargue una imagen para empezar",
@@ -111,9 +107,6 @@ class ImageProcessingApp:
             fg="White",
         )
         self.label.pack(expand=True, fill="both")
-
-
-
 
     def create_buttons(self):
         self.boton_width = 20
@@ -183,11 +176,9 @@ class ImageProcessingApp:
         self.botonLoadImage.pack(pady=75)
 
     def cargar_imagen(self, event=None):
-        #Verificar que se selecciono una imagen
+        # Verificar que se selecciono una imagen
 
-
-
-        #Verificar si cargo una imagen anteriormente
+        # Verificar si cargo una imagen anteriormente
         if hasattr(self, "image_label"):
             # Eliminar la imagen anterior junto con el historial de cambios
             self.image_label.destroy()
@@ -211,7 +202,7 @@ class ImageProcessingApp:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
-            self.historial.append(self.imagen)     
+            self.historial.append(self.imagen)
             self.botonLoadImage.destroy()
             self.label.destroy()
             self.activar_botones()
@@ -219,7 +210,7 @@ class ImageProcessingApp:
         else:
             messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
             return None
-        
+
     def save_image(self, event=None):
         if hasattr(self, "imagen_procesada"):
             filetypes = [
@@ -409,8 +400,8 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
-        
-        #evaluar si a la imagen tiene canales suficientes para una inversion fotografica
+
+        # evaluar si a la imagen tiene canales suficientes para una inversion fotografica
         if image.shape == 2:
             print("La imagen tiene un solo canal")
         elif image.shape == 3:
@@ -514,7 +505,9 @@ class ImageProcessingApp:
                 segunda_imagen_array = np.array(segunda_imagen)
 
                 # Realizar la operación de sustracción de píxeles
-                imagen_sustraida_array = np.clip(base_array - segunda_imagen_array, 0, 255)
+                imagen_sustraida_array = np.clip(
+                    base_array - segunda_imagen_array, 0, 255
+                )
 
                 # Convertir el array resultante de nuevo a una imagen Pillow
                 imagen_sustraida = Image.fromarray(
@@ -526,12 +519,9 @@ class ImageProcessingApp:
                 self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self, event=None):
-        # llamar a la clase de collage
         self.ventana_collage = tk.Toplevel(ventana)
-        # generar un frame para ventana_collage
-        # dar tamaño a ventana collage
         self.ventana_collage.geometry("1250x650")
-        # generar un frame para ventana_collage
+        self.ventana_collage.resizable(False, False)
         frames = []
         for i in range(2):
             for j in range(3):
@@ -539,70 +529,64 @@ class ImageProcessingApp:
                 frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
                 frames.append(frame)
 
-        # para este label cargar una imagen
         imagen_1x1 = PhotoImage(file="img/2x2.png")
-        # Crear Label con la imagen
         self.label_1x1 = tk.Label(frames[0], image=imagen_1x1)
-        self.label_1x1.image = (
-            imagen_1x1  # Mantener referencia para evitar que la imagen sea eliminada
-        )
+        self.label_1x1.image = imagen_1x1
         self.label_1x1.pack(expand=True, fill="both")
-        self.boton_1x1 = tk.Button(frames[0], text="Cargar imagen", command=self.basic)
+        self.boton_1x1 = tk.Button(
+            frames[0], text="Seleccionar", command=self.collage_2_2
+        )
         self.boton_1x1.pack()
 
-        # para el frame 1 2
         imagen_2x3 = PhotoImage(file="img/2x3.png")
-        # Crear Label con la imagen
         self.label_2x3 = tk.Label(frames[1], image=imagen_2x3)
-        self.label_2x3.image = (
-            imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
-        )
+        self.label_2x3.image = imagen_2x3
         self.label_2x3.pack(expand=True, fill="both")
-        self.boton_1x2 = tk.Button(frames[1], text="Cargar imagen", command=self.panel)
+        self.boton_1x2 = tk.Button(
+            frames[1], text="Seleccionar", command=self.collage_3_2
+        )
         self.boton_1x2.pack()
 
-        # para el frame 1 3
         imagen_3x3 = PhotoImage(file="img/3x3.png")
-        # Crear Label con la imagen
         self.label_3x3 = tk.Label(frames[2], image=imagen_3x3)
-        self.label_3x3.image = (
-            imagen_3x3  # Mantener referencia para evitar que la imagen sea eliminada
-        )
+        self.label_3x3.image = imagen_3x3
         self.label_3x3.pack(expand=True, fill="both")
-        self.boton_1x3 = tk.Button(frames[2], text="Cargar imagen", command=self.basic)
+        self.boton_1x3 = tk.Button(
+            frames[2], text="Seleccionar", command=self.collage_5_2
+        )
         self.boton_1x3.pack()
 
-        # para el frame 2 1
         imagen_2x1 = PhotoImage(file="img/4x3.png")
-        # Crear Label con la imagen
         self.label_2x1 = tk.Label(frames[3], image=imagen_2x1)
         self.label_2x1.image = (
             imagen_2x1  # Mantener referencia para evitar que la imagen sea eliminada
         )
         self.label_2x1.pack(expand=True, fill="both")
-        self.boton_2x1 = tk.Button(frames[3], text="Cargar imagen", command=self.basic)
+        self.boton_2x1 = tk.Button(
+            frames[3], text="Seleccionar", command=self.collage_6_2
+        )
         self.boton_2x1.pack()
 
-        # para el frame 2 2
         imagen_2x2 = PhotoImage(file="img/7.png")
-        # Crear Label con la imagen
         self.label_2x2 = tk.Label(frames[4], image=imagen_2x2)
         self.label_2x2.image = (
             imagen_2x2  # Mantener referencia para evitar que la imagen sea eliminada
         )
         self.label_2x2.pack(expand=True, fill="both")
-        self.boton_2x2 = tk.Button(frames[4], text="Cargar imagen", command=self.basic)
+        self.boton_2x2 = tk.Button(
+            frames[4], text="Seleccionar", command=self.ccollage_7_3
+        )
         self.boton_2x2.pack()
 
-        # para el frame 2 3
         imagen_2x3 = PhotoImage(file="img/8.png")
-        # Crear Label con la imagen
         self.label_2x3 = tk.Label(frames[5], image=imagen_2x3)
         self.label_2x3.image = (
             imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
         )
         self.label_2x3.pack(expand=True, fill="both")
-        self.boton_2x3 = tk.Button(frames[5], text="Cargar imagen", command=self.basic)
+        self.boton_2x3 = tk.Button(
+            frames[5], text="Seleccionar", command=self.collage_8_3
+        )
         self.boton_2x3.pack()
 
         # Configurar el peso de las filas y columnas para que se expandan con la ventana
@@ -611,13 +595,41 @@ class ImageProcessingApp:
         for j in range(3):
             self.ventana_collage.grid_columnconfigure(j, weight=1)
 
-    def basic(self):
-        # ventana_collage = tk.Toplevel(ventana)
-        # app_collage = ImageCollageApp(ventana_collage, app_processing)
-        pass
+    def collage_2_2(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_2x2 = tk.Toplevel(ventana)
+        self.ventana_collage_2x2.geometry("1250x650")
+        self.ventana_collage_2x2.resizable(False, False)
 
-    def panel(self):
-        pass
+    def collage_3_2(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_3x2 = tk.Toplevel(ventana)
+        self.ventana_collage_3x2.geometry("1250x650")
+        self.ventana_collage_3x2.resizable(False, False)
+
+    def collage_5_2(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_5x2 = tk.Toplevel(ventana)
+        self.ventana_collage_5x2.geometry("1250x650")
+        self.ventana_collage_5x2.resizable(False, False)
+
+    def collage_6_2(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_6x2 = tk.Toplevel(ventana)
+        self.ventana_collage_6x2.geometry("1250x650")
+        self.ventana_collage_6x2.resizable(False, False)
+
+    def ccollage_7_3(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_7x3 = tk.Toplevel(ventana)
+        self.ventana_collage_7x3.geometry("1250x650")
+        self.ventana_collage_7x3.resizable(False, False)
+
+    def collage_8_3(self):
+        self.ventana_collage.destroy()
+        self.ventana_collage_8x3 = tk.Toplevel(ventana)
+        self.ventana_collage_8x3.geometry("1250x650")
+        self.ventana_collage_8x3.resizable(False, False)
 
     def regresar(self):
         for widget in self.menu_frame.winfo_children():
