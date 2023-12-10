@@ -12,6 +12,8 @@ import tkinter.simpledialog
 from tkinter import colorchooser
 from tkinter import simpledialog
 import time
+from tkinter import PhotoImage
+
 
 # TODO
 
@@ -36,24 +38,55 @@ class ImageProcessingApp:
         self.desactivar_botones()
         self.create_functionbotones()
 
-        self.root.bind("<Control-o>", lambda event: self.cargar_imagen(event))  # Ctrl+O para cargar imagen
-        self.root.bind("<Control-z>", lambda event: self.undo(event))  # Ctrl+Z para deshacer
-        self.root.bind("<Control-e>", lambda event: self.Ecualización(event))  # Ctrl+E para Ecualización
-        self.root.bind("<Control-i>", lambda event: self.InversionB(event))  # Ctrl+I para Inversion Binaria
-        self.root.bind("<Control-f>", lambda event: self.inversionF(event)) # Ctrl+F para Inversion Fotografica
-        self.root.bind("<Control-c>", lambda event: self.collage(event))    # Ctrl+C para collage
-        self.root.bind("<Control-a>", lambda event: self.adicion(event))    # Ctrl+A para Adición
-        self.root.bind("<Control-s>", lambda event: self.sustraccion(event)) # Ctrl+E para Sustracción
-        self.root.bind("<Control-r>", lambda event: self.Rotar(event))  # Ctrl+R para rotar 45°
-        self.root.bind("<Control-m>", lambda event: self.Espejo(event)) # Ctrl+M para Espejo
-        self.root.bind("<Control-l>", lambda event: self.Filtros(event)) # Ctrl+L para Filtros
-        self.root.bind("<Alt-r>", lambda event: self.Erosionar(event)) # Ctrl+E para Erosionar
-        self.root.bind("<Alt-d>", lambda event: self.Dilatar(event)) # Ctrl+D para Dilatar
-        self.root.bind("<Alt-o>", lambda event: self.CambiodeColordeOjos(event)) # Ctrl+O para Cambio de color de ojos
-        self.root.bind("<Alt-i>", lambda event: self.info(event)) # Alt+I para Informacion de la imagen
+        self.root.bind(
+            "<Control-o>", lambda event: self.cargar_imagen(event)
+        )  # Ctrl+O para cargar imagen
+        self.root.bind(
+            "<Control-z>", lambda event: self.undo(event)
+        )  # Ctrl+Z para deshacer
+        self.root.bind(
+            "<Control-e>", lambda event: self.Ecualización(event)
+        )  # Ctrl+E para Ecualización
+        self.root.bind(
+            "<Control-i>", lambda event: self.InversionB(event)
+        )  # Ctrl+I para Inversion Binaria
+        self.root.bind(
+            "<Control-f>", lambda event: self.inversionF(event)
+        )  # Ctrl+F para Inversion Fotografica
+        self.root.bind(
+            "<Control-c>", lambda event: self.collage(event)
+        )  # Ctrl+C para collage
+        self.root.bind(
+            "<Control-a>", lambda event: self.adicion(event)
+        )  # Ctrl+A para Adición
+        self.root.bind(
+            "<Control-s>", lambda event: self.sustraccion(event)
+        )  # Ctrl+E para Sustracción
+        self.root.bind(
+            "<Control-r>", lambda event: self.Rotar(event)
+        )  # Ctrl+R para rotar 45°
+        self.root.bind(
+            "<Control-m>", lambda event: self.Espejo(event)
+        )  # Ctrl+M para Espejo
+        self.root.bind(
+            "<Control-l>", lambda event: self.Filtros(event)
+        )  # Ctrl+L para Filtros
+        self.root.bind(
+            "<Alt-r>", lambda event: self.Erosionar(event)
+        )  # Ctrl+E para Erosionar
+        self.root.bind(
+            "<Alt-d>", lambda event: self.Dilatar(event)
+        )  # Ctrl+D para Dilatar
+        self.root.bind(
+            "<Alt-o>", lambda event: self.CambiodeColordeOjos(event)
+        )  # Ctrl+O para Cambio de color de ojos
+        self.root.bind(
+            "<Alt-i>", lambda event: self.info(event)
+        )  # Alt+I para Informacion de la imagen
 
-        self.root.bind("<Control-g>", lambda event: self.save_image(event)) # Ctrl+G para Guardar
-        
+        self.root.bind(
+            "<Control-g>", lambda event: self.save_image(event)
+        )  # Ctrl+G para Guardar
 
 
     def create_menu_frame(self):
@@ -119,7 +152,10 @@ class ImageProcessingApp:
         opcion1.add_command(label="Guardar imagen", command=self.save_image)
         opcion1.add_command(label="Informacion de la imagen", command=self.info)
         opcion1.add_separator()
-        opcion1.add_command(label="Convertir a \n escala de grises", command=self.ConvertirEscaladeGrises)
+        opcion1.add_command(
+            label="Convertir a \n escala de grises",
+            command=self.ConvertirEscaladeGrises,
+        )
         opcion1.add_separator()
         opcion1.add_command(label="Salir", command=self.root.quit)
         menu_superior.add_cascade(label="Archivo", menu=opcion1)
@@ -127,10 +163,6 @@ class ImageProcessingApp:
         self.root.config(menu=menu_superior)
         opcion2 = tk.Menu(menu_superior, tearoff=0)
         opcion2.add_command(label="Ayuda", command=self.help_buttons)
-
-
-
-        
 
         menu_superior.add_cascade(label="Ayuda", menu=opcion2)
 
@@ -211,7 +243,6 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
-        
 
         # Obtener el tamaño de la imagen
         width, height = image.size
@@ -237,26 +268,29 @@ class ImageProcessingApp:
         # Obtener el directorio del archivo
         file_dir = os.path.dirname(filename)
 
-        messagebox.showinfo("Informacion de la imagen", "Tamaño de la imagen: {} x {}\nModo de la imagen: {}\nFormato de la imagen: {}\nTamaño del archivo: {}\nFecha de modificación: {}\nNombre del archivo: {}\nDirectorio del archivo: {}".format(width, height, mode, format, file_size, file_date, file_name, file_dir))
-        
+        messagebox.showinfo(
+            "Informacion de la imagen",
+            "Tamaño de la imagen: {} x {}\nModo de la imagen: {}\nFormato de la imagen: {}\nTamaño del archivo: {}\nFecha de modificación: {}\nNombre del archivo: {}\nDirectorio del archivo: {}".format(
+                width, height, mode, format, file_size, file_date, file_name, file_dir
+            ),
+        )
 
     def help_buttons(self):
         # Use sys._MEIPASS when running from PyInstaller executable
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             base_path = sys._MEIPASS
         else:
             base_path = os.path.abspath(os.path.dirname(__file__))
 
         # Construct the full path to the HTML file
-        html_path = os.path.join(base_path, 'help.html')
+        html_path = os.path.join(base_path, "help.html")
 
         # Check if the HTML file exists before trying to open it
         if os.path.exists(html_path):
             # Open the HTML file in the default web browser
-            webbrowser.open('file://' + html_path, new=2)
+            webbrowser.open("file://" + html_path, new=2)
         else:
             print(f"The HTML file '{html_path}' does not exist.")
-        
 
     def mostrar_imagen(self, imagen):
         if imagen:
@@ -375,17 +409,16 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
+        
+        #evaluar si a la imagen tiene canales suficientes para una inversion fotografica
+        if image.shape == 2:
+            print("La imagen tiene un solo canal")
+        elif image.shape == 3:
+            print("La imagen tiene 3 caneles")
 
-        # Verificar si la imagen tiene canales RGB
-        if image.mode == 'RGB':
-            # La imagen tiene canales RGB
-            self.invertida = Image.eval(image, lambda x: 255 - x)
-            self.imagen_procesada = self.invertida
-            self.ShowImageandSave(self.imagen_procesada)
-        else:
-            # La imagen no tiene canales RGB, manejar según sea necesario
-            messagebox.showinfo("Info", "La imagen no tiene canales RGB. No se puede aplicar la inversión fotográfica.")
-
+        self.invertida = Image.eval(image, lambda x: 255 - x)
+        self.imagen_procesada = self.invertida
+        self.ShowImageandSave(self.imagen_procesada)
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
@@ -493,16 +526,106 @@ class ImageProcessingApp:
                 self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self, event=None):
-
         # llamar a la clase de collage
         self.ventana_collage = tk.Toplevel(ventana)
         # generar un frame para ventana_collage
         # dar tamaño a ventana collage
         self.ventana_collage.geometry("1250x650")
         # generar un frame para ventana_collage
-        frame = tk.Frame(self.ventana_collage)
-        frame.pack(expand=True, fill="both")
+        frames = []
+        for i in range(2):
+            for j in range(3):
+                frame = tk.Frame(self.ventana_collage)
+                frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
+                frames.append(frame)
 
+        # para este label cargar una imagen
+        imagen_1x1 = PhotoImage(file="img/2x2.png")
+        # Crear Label con la imagen
+        self.label_1x1 = tk.Label(frames[0], image=imagen_1x1)
+        self.label_1x1.image = (
+            imagen_1x1  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_1x1.pack(expand=True, fill="both")
+        self.boton_1x1 = tk.Button(frames[0], text="Cargar imagen", command=self.basic)
+        self.boton_1x1.pack()
+
+        # para el frame 1 2
+        imagen_2x3 = PhotoImage(file="img/2x3.png")
+        # Crear Label con la imagen
+        self.label_2x3 = tk.Label(frames[1], image=imagen_2x3)
+        self.label_2x3.image = (
+            imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_2x3.pack(expand=True, fill="both")
+        self.boton_1x2 = tk.Button(frames[1], text="Cargar imagen", command=self.panel)
+        self.boton_1x2.pack()
+
+        # para el frame 1 3
+        imagen_3x3 = PhotoImage(file="img/3x3.png")
+        # Crear Label con la imagen
+        self.label_3x3 = tk.Label(frames[2], image=imagen_3x3)
+        self.label_3x3.image = (
+            imagen_3x3  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_3x3.pack(expand=True, fill="both")
+        self.boton_1x3 = tk.Button(frames[2], text="Cargar imagen", command=self.basic)
+        self.boton_1x3.pack()
+
+        # para el frame 2 1
+        imagen_2x1 = PhotoImage(file="img/4x3.png")
+        # Crear Label con la imagen
+        self.label_2x1 = tk.Label(frames[3], image=imagen_2x1)
+        self.label_2x1.image = (
+            imagen_2x1  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_2x1.pack(expand=True, fill="both")
+        self.boton_2x1 = tk.Button(frames[3], text="Cargar imagen", command=self.basic)
+        self.boton_2x1.pack()
+
+        # para el frame 2 2
+        imagen_2x2 = PhotoImage(file="img/7.png")
+        # Crear Label con la imagen
+        self.label_2x2 = tk.Label(frames[4], image=imagen_2x2)
+        self.label_2x2.image = (
+            imagen_2x2  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_2x2.pack(expand=True, fill="both")
+        self.boton_2x2 = tk.Button(frames[4], text="Cargar imagen", command=self.basic)
+        self.boton_2x2.pack()
+
+        # para el frame 2 3
+        imagen_2x3 = PhotoImage(file="img/8.png")
+        # Crear Label con la imagen
+        self.label_2x3 = tk.Label(frames[5], image=imagen_2x3)
+        self.label_2x3.image = (
+            imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
+        )
+        self.label_2x3.pack(expand=True, fill="both")
+        self.boton_2x3 = tk.Button(frames[5], text="Cargar imagen", command=self.basic)
+        self.boton_2x3.pack()
+
+        # Configurar el peso de las filas y columnas para que se expandan con la ventana
+        for i in range(2):
+            self.ventana_collage.grid_rowconfigure(i, weight=1)
+        for j in range(3):
+            self.ventana_collage.grid_columnconfigure(j, weight=1)
+
+    def basic(self):
+        # ventana_collage = tk.Toplevel(ventana)
+        # app_collage = ImageCollageApp(ventana_collage, app_processing)
+        pass
+
+    def panel(self):
+        pass
+
+    def regresar(self):
+        for widget in self.menu_frame.winfo_children():
+            widget.destroy()
+        self.create_buttons()
+        self.create_functionbotones()
+        self.botonLoadImage.destroy()
+        self.activar_botones()
 
     def Rotar(self, event=None):
         # Rotar la imagen 45 grados
@@ -620,17 +743,21 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
-            
+
         image_array = np.array(image)
 
         # Solicitar al usuario que ingrese el valor de n
-        n = simpledialog.askinteger("Valor de n", "Ingrese el valor de n (1-9):", minvalue=1, maxvalue=9)
+        n = simpledialog.askinteger(
+            "Valor de n", "Ingrese el valor de n (1-9):", minvalue=1, maxvalue=9
+        )
 
         if n is not None:
             size = 3
             rank = min((size * size - 1), n)
 
-            imagemoda_array = Image.fromarray(image_array).filter(ImageFilter.RankFilter(size=size, rank=rank))
+            imagemoda_array = Image.fromarray(image_array).filter(
+                ImageFilter.RankFilter(size=size, rank=rank)
+            )
 
             imagemoda = Image.fromarray(np.array(imagemoda_array, dtype=np.uint8))
 
@@ -1000,7 +1127,7 @@ class ImageProcessingApp:
             gris = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
         except:
             messagebox.showerror("Error", "La imagen debe estar en formato RGB")
-            return   
+            return
 
         # Usar un clasificador de ojos más preciso
         cascade_ojos = cv2.CascadeClassifier(
@@ -1055,25 +1182,35 @@ class ImageProcessingApp:
 
     def Segmentación(self):
         # Utilizar operador ternario para simplificar la asignación de la imagen
-        image = self.imagen_procesada if hasattr(self, "imagen_procesada") else self.imagen
+        image = (
+            self.imagen_procesada if hasattr(self, "imagen_procesada") else self.imagen
+        )
 
         image = image.convert("L")
 
-        _, threshold_image = cv2.threshold(np.array(image), 128, 255, cv2.THRESH_BINARY_INV)
+        _, threshold_image = cv2.threshold(
+            np.array(image), 128, 255, cv2.THRESH_BINARY_INV
+        )
 
-        contours, _ = cv2.findContours(threshold_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(
+            threshold_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
 
         image_with_contours_np = np.array(self.imagen)
 
         # Utilizar list comprehension para simplificar el dibujo de rectángulos
-        [cv2.rectangle(image_with_contours_np, (x, y), (x + w, y + h), (0, 255, 0), 2) for x, y, w, h in [cv2.boundingRect(contour) for contour in contours]]
+        [
+            cv2.rectangle(
+                image_with_contours_np, (x, y), (x + w, y + h), (0, 255, 0), 2
+            )
+            for x, y, w, h in [cv2.boundingRect(contour) for contour in contours]
+        ]
 
         self.imagen_procesada = Image.fromarray(image_with_contours_np)
 
         # Llamar a los métodos directamente con la imagen procesada
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
-
 
     def reset(self):
         self.imagen_procesada = self.imagen
