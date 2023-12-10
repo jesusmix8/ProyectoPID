@@ -519,6 +519,38 @@ class ImageProcessingApp:
                 self.mostrar_imagenProcesada(self.imagen_procesada)
                 self.HistorialdeCambios(self.imagen_procesada)
 
+    def seleccionar_imagen_collage(self):
+        collage_images = []
+
+        for _ in range(2):
+            image_path = filedialog.askopenfilename(
+                title="Seleccione una imagen",
+                filetypes=[("Archivos de imagen", "*.*")],
+            )
+            if image_path:
+                image = Image.open(image_path)
+                if image.format != "JPEG" or image.format != "JPG":
+                    image = image.convert("RGB")
+
+                collage_images.append(image)
+        self.display_images(collage_images)
+
+    def display_images(self, images):
+        photo_images = []
+
+        for frame, image in zip(self.frames, images):
+            image = image.resize((400, 400))
+
+            photo = ImageTk.PhotoImage(image)
+
+            label = tk.Label(frame, image=photo)
+            label.image = photo
+            label.pack()
+
+            photo_images.append(photo)
+
+        self.root.photo_images = photo_images
+
     def collage(self, event=None):
         self.ventana_collage = tk.Toplevel(ventana)
         self.ventana_collage.geometry("1250x650")
@@ -601,6 +633,23 @@ class ImageProcessingApp:
         self.ventana_collage_2x2 = tk.Toplevel(ventana)
         self.ventana_collage_2x2.geometry("1250x650")
         self.ventana_collage_2x2.resizable(False, False)
+
+        # genera un frame en la ventana
+        self.frame_2x2 = tk.Frame(self.ventana_collage_2x2)
+        self.frame_2x2.pack()
+        # dentro de este frame genera 2x2 frames para mostrar las imganes
+        frames = []
+        for i in range(2):
+            for j in range(2):
+                frame = tk.Frame(self.frame_2x2)
+                frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
+                frames.append(frame)
+
+        # se crean los botones para seleccionar las imagenes
+        self.boton_1 = tk.Button(
+            frames[0], text="Seleccionar", command=self.seleccionar_imagen_collage
+        )
+        self.boton_1.pack()
 
     def collage_3_2(self):
         self.ventana_collage.destroy()
