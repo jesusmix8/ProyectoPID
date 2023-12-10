@@ -209,6 +209,7 @@ class ImageProcessingApp:
 
         else:
             messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
+            self.desactivar_botones()
             return None
 
     def save_image(self, event=None):
@@ -460,7 +461,7 @@ class ImageProcessingApp:
         if base_array.shape != nueva_imagen_array.shape:
             messagebox.showerror(
                 "Error",
-                "Las imágenes deben tener la misma cantidad de caneles. Por favor, seleccione otra imagen.",
+                "Las imágenes deben tener la misma cantidad de canales. Por favor, seleccione otra imagen.",
             )
             return
         else:
