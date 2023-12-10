@@ -14,32 +14,11 @@ from tkinter import simpledialog
 import time
 from tkinter import PhotoImage
 
-# from rotate import rotate_image
-from text import *
 
 # TODO
-#       Cambiar todas las imagenes a jpg Pablo ✅
-#       Convertir a escala de gris Cesar
-#       Rescalar las imagenes para mejor presentacion Cesar
-#       Modificar el frame para mayor presentacion Jesus ✅
-#       Agregar un menu superior para guardar y cargar imagenes Jesus ✅
-#       Arreglar los fitlros Jesus ✅
-#       Maximo y minimo separado Pablo ✅
-#       Filtro de orden n (Popup) Cesar mi primera chamba ✅
-#       Filtros de vecinos 4 y 8 Jesus ✅
-#       Sustraccion Jesus ✅
-#       Adicion Jesus ✅
-#       Inversion fotgrafica Jesus ✅
-#       Inversion binaria Jesus ✅
-#       Modificar los kenrels segun el usuario Jesus (erosion) ✅
-#       Modificar los kenrels segun el usuario Jesus (dilatacion) ✅
-#       Falta collage Pablo Jesus
-#       Shortcut para las funciones Jesus ✅
-#       Implementar la informacion de las imagen manipulada y original
 
-#       Implementar la modificacion de color de ojos  Jesus  ✅
-#       Implementar la segmentacion para N renglones Cesarin Tilin
 
+#       Falta collage Pablo Jesus 
 
 class ImageProcessingApp:
     def __init__(self, root):
@@ -109,52 +88,6 @@ class ImageProcessingApp:
             "<Control-g>", lambda event: self.save_image(event)
         )  # Ctrl+G para Guardar
 
-        self.root.bind(
-            "<Control-o>", lambda event: self.cargar_imagen(event)
-        )  # Ctrl+O para cargar imagen
-        self.root.bind(
-            "<Control-z>", lambda event: self.undo(event)
-        )  # Ctrl+Z para deshacer
-        self.root.bind(
-            "<Control-e>", lambda event: self.Ecualización(event)
-        )  # Ctrl+E para Ecualización
-        self.root.bind(
-            "<Control-i>", lambda event: self.InversionB(event)
-        )  # Ctrl+I para Inversion Binaria
-        self.root.bind(
-            "<Control-f>", lambda event: self.inversionF(event)
-        )  # Ctrl+F para Inversion Fotografica
-        self.root.bind(
-            "<Control-c>", lambda event: self.collage(event)
-        )  # Ctrl+C para collage
-        self.root.bind(
-            "<Control-a>", lambda event: self.adicion(event)
-        )  # Ctrl+A para Adición
-        self.root.bind(
-            "<Control-s>", lambda event: self.sustraccion(event)
-        )  # Ctrl+E para Sustracción
-        self.root.bind(
-            "<Control-r>", lambda event: self.Rotar(event)
-        )  # Ctrl+R para rotar 45°
-        self.root.bind(
-            "<Control-m>", lambda event: self.Espejo(event)
-        )  # Ctrl+M para Espejo
-        self.root.bind(
-            "<Control-l>", lambda event: self.Filtros(event)
-        )  # Ctrl+L para Filtros
-        self.root.bind(
-            "<Alt-r>", lambda event: self.Erosionar(event)
-        )  # Ctrl+E para Erosionar
-        self.root.bind(
-            "<Alt-d>", lambda event: self.Dilatar(event)
-        )  # Ctrl+D para Dilatar
-        self.root.bind(
-            "<Alt-o>", lambda event: self.CambiodeColordeOjos(event)
-        )  # Ctrl+O para Cambio de color de ojos
-
-        self.root.bind(
-            "<Control-g>", lambda event: self.save_image(event)
-        )  # Ctrl+G para Guardar
 
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, width=150, bg=self.botonesbg)
@@ -166,11 +99,9 @@ class ImageProcessingApp:
         self.contenido_frame = tk.Frame(self.root, bg=self.colorbg)
         self.contenido_frame.pack(expand=True, fill="both")
 
-        self.contenido_help_frame = tk.Frame(self.root, bg=self.colorbg)
-        self.contenido_help_frame.pack(expand=True, fill="both")
 
-        self.collage_frame = tk.Frame(self.root, bg=self.colorbg)
-        self.collage_frame.pack(expand=True, fill="both")
+
+       
 
         self.label = tk.Label(
             self.contenido_frame,
@@ -181,87 +112,8 @@ class ImageProcessingApp:
         )
         self.label.pack(expand=True, fill="both")
 
-    def call_help_frames(self):
-        if not hasattr(self, "help_frame"):  # Verificar si help_frame ya existe
-            self.help_frame = tk.Frame(self.contenido_help_frame, bg=self.colorbg)
-            self.label_help = tk.Label(
-                self.help_frame,
-                text=PROCESAMIENTO_IMAGENES,
-                font=("Montserrat", 15),
-                bg=self.colorbg,
-                fg="White",
-            )
-            self.label_help.pack(expand=True, fill="both")
-            self.help_frame.pack(expand=True, fill="both")
 
-    def toggle_frames(self):
-        self.call_help_frames()
-        if self.contenido_frame.winfo_ismapped():
-            self.contenido_frame.pack_forget()
-            self.contenido_help_frame.pack(expand=True, fill="both")
-        else:
-            self.contenido_help_frame.pack_forget()
-            self.contenido_frame.pack(expand=True, fill="both")
 
-    def call_collage_frame(self):
-        if not hasattr(self, "collage_frame_in"):
-            self.collage_frame_in = tk.Frame(self.collage_frame, bg=self.colorbg)
-
-            self.frames = []
-
-            for _ in range(2):
-                frame = tk.Frame(self.collage_frame_in, width=450, height=450)
-                frame.pack(side="left", padx=5, pady=5)
-                self.frames.append(frame)
-
-            self.load_images_button = tk.Button(
-                self.collage_frame_in, text="Cargar Imágenes", command=self.load_images
-            )
-            self.load_images_button.pack(side="bottom", pady=5)
-
-            self.collage_frame_in.pack(expand=True, fill="both", anchor="center")
-
-    def load_images(self):
-        collage_images = []
-
-        for _ in range(2):
-            image_path = filedialog.askopenfilename(
-                title="Seleccione una imagen",
-                filetypes=[("Archivos de imagen", "*.*")],
-            )
-            if image_path:
-                image = Image.open(image_path)
-                if image.format != "JPEG" or image.format != "JPG":
-                    image = image.convert("RGB")
-
-                collage_images.append(image)
-
-        self.display_images(collage_images)
-
-    def display_images(self, images):
-        photo_images = []
-
-        for frame, image in zip(self.frames, images):
-            image = image.resize((400, 400))
-
-            photo = ImageTk.PhotoImage(image)
-
-            label = tk.Label(frame, image=photo)
-            label.image = photo
-            label.pack()
-
-            photo_images.append(photo)
-
-        self.root.photo_images = photo_images
-
-    def toggle_frames_collage(self):
-        self.call_collage_frame()
-        if self.contenido_frame.winfo_ismapped():
-            self.contenido_frame.pack_forget()
-            self.collage_frame.pack(expand=True, fill="both")
-        else:
-            self.collage_frame.pack_forget()
-            self.contenido_frame.pack(expand=True, fill="both")
 
     def create_buttons(self):
         self.boton_width = 20
@@ -331,9 +183,16 @@ class ImageProcessingApp:
         self.botonLoadImage.pack(pady=75)
 
     def cargar_imagen(self, event=None):
+        #Verificar que se selecciono una imagen
+
+
+
+        #Verificar si cargo una imagen anteriormente
         if hasattr(self, "image_label"):
+            # Eliminar la imagen anterior junto con el historial de cambios
             self.image_label.destroy()
             self.image_labelProcesada.destroy()
+            self.historial = []
 
         self.image_labelProcesada = tk.Label(self.contenido_frame)
         # Para mostrar la imagen procesada de lado derecho
@@ -352,14 +211,24 @@ class ImageProcessingApp:
             self.imagen = Image.open(self.rutadeArchivo)
             self.mostrar_imagen(self.imagen)
             self.imagen_procesada = self.imagen
-            self.historial.append(self.imagen)
-        self.botonLoadImage.destroy()
-        self.label.destroy()
-        self.activar_botones()
+            self.historial.append(self.imagen)     
+            self.botonLoadImage.destroy()
+            self.label.destroy()
+            self.activar_botones()
 
+        else:
+            messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
+            return None
+        
     def save_image(self, event=None):
         if hasattr(self, "imagen_procesada"):
-            filetypes = [("Archivos de imagen", "*.png"), ("Todos los archivos", "*.*")]
+            filetypes = [
+                ("Archivos de imagen", "*.jpg;*.png;*.tif;*.bmp"),
+                ("JPEG", "*.jpg"),
+                ("PNG", "*.png"),
+                ("TIFF", "*.tif"),
+                ("BMP", "*.bmp"),
+            ]
             ruta_guardado = filedialog.asksaveasfilename(
                 defaultextension=".png", filetypes=filetypes
             )
@@ -540,8 +409,8 @@ class ImageProcessingApp:
             image = self.imagen_procesada
         else:
             image = self.imagen
-
-        # evaluar si a la imagen tiene canales suficientes para una inversion fotografica
+        
+        #evaluar si a la imagen tiene canales suficientes para una inversion fotografica
         if image.shape == 2:
             print("La imagen tiene un solo canal")
         elif image.shape == 3:
@@ -600,7 +469,7 @@ class ImageProcessingApp:
         if base_array.shape != nueva_imagen_array.shape:
             messagebox.showerror(
                 "Error",
-                "Las imágenes deben tener la misma cantidad de. Por favor, seleccione otra imagen.",
+                "Las imágenes deben tener la misma cantidad de caneles. Por favor, seleccione otra imagen.",
             )
             return
         else:
@@ -622,29 +491,39 @@ class ImageProcessingApp:
         else:
             imagen_base = self.imagen
 
+        base_array = np.array(imagen_base)
         # Seleccionar una nueva imagen
         segunda_imagen = self.seleccionar_imagen()
+        nueva_imagen_array = np.array(segunda_imagen)
 
         if segunda_imagen is None:
             return
+        else:
+            if base_array.shape != nueva_imagen_array.shape:
+                messagebox.showerror(
+                    "Error",
+                    "Las imágenes deben tener la misma cantidad de caneles. Por favor, seleccione otra imagen.",
+                )
+                return
+            else:
+                # Redimensionar la segunda imagen para que tenga las mismas dimensiones que la imagen base
+                segunda_imagen = segunda_imagen.resize(imagen_base.size)
 
-        # Redimensionar la segunda imagen para que tenga las mismas dimensiones que la imagen base
-        segunda_imagen = segunda_imagen.resize(imagen_base.size)
+                # Convertir ambas imágenes a arrays NumPy
+                base_array = np.array(imagen_base)
+                segunda_imagen_array = np.array(segunda_imagen)
 
-        # Convertir ambas imágenes a arrays NumPy
-        base_array = np.array(imagen_base)
-        segunda_imagen_array = np.array(segunda_imagen)
+                # Realizar la operación de sustracción de píxeles
+                imagen_sustraida_array = np.clip(base_array - segunda_imagen_array, 0, 255)
 
-        # Realizar la operación de sustracción de píxeles
-        imagen_sustraida_array = np.clip(base_array - segunda_imagen_array, 0, 255)
+                # Convertir el array resultante de nuevo a una imagen Pillow
+                imagen_sustraida = Image.fromarray(
+                    np.array(imagen_sustraida_array, dtype=np.uint8)
+                )
 
-        # Convertir el array resultante de nuevo a una imagen Pillow
-        imagen_sustraida = Image.fromarray(
-            np.array(imagen_sustraida_array, dtype=np.uint8)
-        )
-
-        self.imagen_procesada = imagen_sustraida
-        self.ShowImageandSave(self.imagen_procesada)
+                self.imagen_procesada = imagen_sustraida
+                self.mostrar_imagenProcesada(self.imagen_procesada)
+                self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self, event=None):
         # llamar a la clase de collage
@@ -735,11 +614,9 @@ class ImageProcessingApp:
     def basic(self):
         # ventana_collage = tk.Toplevel(ventana)
         # app_collage = ImageCollageApp(ventana_collage, app_processing)
-        print("hola")
         pass
 
     def panel(self):
-        print("panel")
         pass
 
     def regresar(self):
