@@ -183,11 +183,6 @@ class ImageProcessingApp:
         self.botonLoadImage.pack(pady=75)
 
     def cargar_imagen(self, event=None):
-        #Verificar que se selecciono una imagen
-
-
-
-        #Verificar si cargo una imagen anteriormente
         if hasattr(self, "image_label"):
             # Eliminar la imagen anterior junto con el historial de cambios
             self.image_label.destroy()
@@ -218,6 +213,7 @@ class ImageProcessingApp:
 
         else:
             messagebox.showerror("Error", "No se seleccionó ninguna imagen.")
+            self.desactivar_botones()
             return None
         
     def save_image(self, event=None):
@@ -410,15 +406,14 @@ class ImageProcessingApp:
         else:
             image = self.imagen
         
-        #evaluar si a la imagen tiene canales suficientes para una inversion fotografica
-        if image.shape == 2:
-            print("La imagen tiene un solo canal")
-        elif image.shape == 3:
-            print("La imagen tiene 3 caneles")
-
-        self.invertida = Image.eval(image, lambda x: 255 - x)
-        self.imagen_procesada = self.invertida
-        self.ShowImageandSave(self.imagen_procesada)
+        if image.mode == 'RGB':
+            # La imagen tiene canales RGB
+            self.invertida = Image.eval(image, lambda x: 255 - x)
+            self.imagen_procesada = self.invertida
+            self.ShowImageandSave(self.imagen_procesada)
+        else:
+            # La imagen no tiene canales RGB, manejar según sea necesario
+            messagebox.showinfo("Info", "La imagen no tiene canales RGB. No se puede aplicar la inversión fotográfica.")
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
@@ -469,7 +464,7 @@ class ImageProcessingApp:
         if base_array.shape != nueva_imagen_array.shape:
             messagebox.showerror(
                 "Error",
-                "Las imágenes deben tener la misma cantidad de caneles. Por favor, seleccione otra imagen.",
+                "Las imágenes deben tener la misma cantidad de canales. Por favor, seleccione otra imagen.",
             )
             return
         else:
@@ -484,6 +479,7 @@ class ImageProcessingApp:
             self.imagen_procesada = imagen_combinada
             self.mostrar_imagenProcesada(self.imagen_procesada)
             self.HistorialdeCambios(self.imagen_procesada)
+
 
     def sustraccion(self, event=None):
         if hasattr(self, "imagen_procesada"):
