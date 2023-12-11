@@ -4,16 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
     />
     <title>Ayuda del Programa</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #1a1a1a;
+        color: white;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #4caf50;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        margin-bottom: 8px;
+      }
+      p {
+        margin-bottom: 16px;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
   </head>
-  <body class="font-sans bg-gray-900 text-white">
-    <div class="container mx-auto p-4">
-      <!-- Menú de Navegación -->
+  <body class="font-sans">
+    <div class="container">
+      <!-- Navigation Menu -->
       <h1 class="text-4xl font-bold mb-4">
-        Guía de Usuario procesamiento de imagenes.
+        Guía de Usuario procesamiento de imágenes.
       </h1>
       <nav class="mb-8">
         <ul class="flex space-x-4">
@@ -29,184 +61,271 @@
         </ul>
       </nav>
 
-      <!-- Contenido -->
+      <!-- Content -->
 
       <div class="mb-8" id="introduccion">
         <h2 class="text-2xl font-bold mb-2">Introducción</h2>
         <p>
           Bienvenido a la aplicación de procesamiento de imágenes. Esta guía te
-          proporcionará información sobre cómo utilizar las funciones principales
-          del programa.
+          proporcionará información sobre cómo utilizar las funciones
+          principales del programa.
         </p>
+      </div>
 
       <div class="mb-8" id="funciones-principales">
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold mb-2">Funciones Principales</h2>
-    
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-2">Cargar Imagen</h3>
-            <p>
-              Podrás cargar imágenes con los formatos jpg, jpeg, png, tif y bmp únicamente.
-            </p>
-            <p>
-              Para cargar una imagen, existen tres opciones:
-              <ul>
-                <li class="mb-8 p-4">
-                  Usando el botón central al iniciar el programa
-                  <img src="./imagenes html/CargarImagenBtn.png" alt="botonCentral" class="rounded-md shadow-md p-4 border border-white">
-                </li>
-                <li class="mb-8 p-4">
-                  Usando el menú superior: En el menú superior está el botón de "Archivo", desplegará algunas opciones. Selecciona "Cargar imagen"
-                  <img src="./imagenes html/CargarImagen.png" alt="menuSuperior" class="rounded-md shadow-md p-4 border border-white" >
-                </li>
-                <li>
-                  Utiliza la combinación de teclas "Ctrl+O" para cargar una imagen.
-                </li>
-              </ul>
-            </p>
-          </div>
-    
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-2">Guardar imagen</h3>
-            <p>
-              Podrás guardar imágenes con el formato jpg.
-            </p>
-            <p>
-              Para guardar una imagen, existen dos opciones:
-              <ul>
-                <li>
-                  Usando el menú superior: En el menú superior está el botón de "Archivo", desplegará algunas opciones. Selecciona "Guardar imagen"
-                  <img src="./imagenes html/Guardarimagen.png" alt="menuSuperior" class="rounded-md shadow-md p-4 border border-white">
-                </li>
-                <li>
-                  Utiliza la combinación de teclas "Ctrl+S" para guardar una imagen.
-                </li>
-              </ul>
-            </p>
-            <p>Esto desplegará una ventana donde podrás seleccionar la ubicación y nombre de la imagen a almacenar</p>
-          </div>
-    
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-2">Información de la imagen</h3>
-            <p>
-              Podrás ver la información de la imagen cargada.
-            </p>
-            <p>
-              Para ver la información de la imagen, existen tres opciones:
-              <ul>
-                <li class="mb-8 p-4">
-                  Usando el menú superior: En el menú superior está el botón de "Imagen", desplegará algunas opciones. Selecciona "Información de la imagen"
-                  <img src="./imagenes html/InfImagen.png" alt="menuSuperior" class="rounded-md shadow-md p-4 border border-white">
-                </li>
-                <li>
-                  Utiliza la combinación de teclas "Alt+I" para ver la información de la imagen.
-                </li>
-              </ul>
-            </p>
-          </div>
+        <h2 class="text-2xl font-bold mb-2">Funciones Principales</h2>
 
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-2">Deshacer los ultimos cambios</h3>
-            <p>
-              Podrás deshacer los ultimos cambios realizados en la imagen.
-            </p>
-            <p>
-              Para ver la información de la imagen, existen dos opciones:
-            </p>
-            <ul>
-              <li>
-                Usando el menú superior: En el menú superior está el botón de "Edición", desplegará algunas opciones. Selecciona "Deshacer"
-                <img src="./imagenes html/DeshacerCambio.png" alt="menuSuperior"  class="rounded-md shadow-md p-4 border border-white">
-              </li>
-              <li>
-                Utiliza la combinación de teclas "Ctrl+Z" para deshacer los ultimos cambios.
-              </li>
-            
-            
-          </div>
-    
+        <!-- Cargar Imagen -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Cargar Imagen</h3>
+          <p>
+            Podrás cargar imágenes con los formatos jpg, jpeg, png, tif y bmp
+            únicamente.
+          </p>
+          <ul>
+            <li class="mb-8 p-4">
+              Usando el botón central al iniciar el programa
+              <img
+                src="./imagenes html/CargarImagenBtn.png"
+                alt="botonCentral"
+              />
+            </li>
+            <li class="mb-8 p-4">
+              Usando el menú superior: En el menú superior está el botón de
+              "Archivo", desplegará algunas opciones. Selecciona "Cargar imagen"
+              <img src="./imagenes html/CargarImagen.png" alt="menuSuperior" />
+            </li>
+            <li>
+              Utiliza la combinación de teclas "Ctrl+O" para cargar una imagen.
+            </li>
+          </ul>
         </div>
-        
+
+        <!-- Guardar Imagen -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Guardar imagen</h3>
+          <p>Podrás guardar imágenes con el formato jpg.</p>
+          <ul>
+            <li>
+              Usando el menú superior: En el menú superior está el botón de
+              "Archivo", desplegará algunas opciones. Selecciona "Guardar
+              imagen"
+              <img src="./imagenes html/Guardarimagen.png" alt="menuSuperior" />
+            </li>
+            <li>
+              Utiliza la combinación de teclas "Ctrl+S" para guardar una imagen.
+            </li>
+          </ul>
+          <p>
+            Esto desplegará una ventana donde podrás seleccionar la ubicación y
+            nombre de la imagen a almacenar.
+          </p>
+        </div>
+
+        <!-- Información de la Imagen -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Información de la imagen</h3>
+          <p>Podrás ver la información de la imagen cargada.</p>
+          <ul>
+            <li class="mb-8 p-4">
+              Usando el menú superior: En el menú superior está el botón de
+              "Imagen", desplegará algunas opciones. Selecciona "Información de
+              la imagen"
+              <img src="./imagenes html/InfImagen.png" alt="menuSuperior" />
+            </li>
+            <li>
+              Utiliza la combinación de teclas "Alt+I" para ver la información
+              de la imagen.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Deshacer Cambios -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Deshacer los últimos cambios</h3>
+          <p>Podrás deshacer los últimos cambios realizados en la imagen.</p>
+          <ul>
+            <li>
+              Usando el menú superior: En el menú superior está el botón de
+              "Edición", desplegará algunas opciones. Selecciona "Deshacer"
+              <img
+                src="./imagenes html/DeshacerCambio.png"
+                alt="menuSuperior"
+              />
+            </li>
+            <li>
+              Utiliza la combinación de teclas "Ctrl+Z" para deshacer los
+              últimos cambios.
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="mb-8" id="operaciones-basicas">
-        <h2 class="text-2xl font-bold mb-2">Operaciones Basicas</h2>
-        <div>    
-            <h3><strong>Ecualizacion</strong></h3>
-            <p>
-              La Ecualizacion es un proceso que permite mejorar el contraste de una imagen, para que esta sea más visible y clara.
-            </p>
-            <p>
-              Para realizar la Ecualizacion, existen dos opciones:
-              <ul>
-                <li class="mb-8 p-4">
-                  Usando el menu derecho. Selecciona "Ecualizacion"
-                  <img src="./imagenes html/Ecualización.png" alt="imgEcualizada" class="rounded-md shadow-md p-4 border border-white">
-                </li>
-                <li>
-                  Utiliza la combinación de teclas "Ctrl+E" para realizar la Ecualizacion.
-                </li>
-                <p>Esta funcion desplegará la imagen ecualizada y en una ventana emergente los histogramas de la imagen original y la imagen ecualizada</p>
-                <img src="./imagenes html/ecualizaciónResultado.png" alt="histogramas" class="rounded-md shadow-md p-4 border border-white">
-                <img src="./imagenes html/histogramas.png" alt="histogramas" class="rounded-md shadow-md p-4 border border-white">
-              </ul>
+        <h2 class="text-2xl font-bold mb-2">Operaciones Básicas</h2>
+
+        <!-- Ecualizacion -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Ecualización</h3>
+          <p>
+            La Ecualización es un proceso que permite mejorar el contraste de
+            una imagen, para que esta sea más visible y clara.
+          </p>
+          <ul>
+            <li class="mb-8 p-4">
+              Usando el menú derecho. Selecciona "Ecualización"
+              <img src="./imagenes html/Ecualización.png" alt="imgEcualizada" />
+            </li>
+            <li>
+              Utiliza la combinación de teclas "Ctrl+E" para realizar la
+              Ecualización.
+            </li>
+          </ul>
+          <p>
+            Esta función desplegará la imagen ecualizada y en una ventana
+            emergente los histogramas de la imagen original y la imagen
+            ecualizada.
+          </p>
+          <img
+            src="./imagenes html/ecualizaciónResultado.png"
+            alt="histogramas"
+            class="rounded-md shadow-md p-4 border border-white"
+          />
+          <img
+            src="./imagenes html/histogramas.png"
+            alt="histogramas"
+            class="rounded-md shadow-md p-4 border border-white"
+          />
         </div>
-        <div>    
-            <h3><strong> Inversion binaria</strong></h3>
-            <p>
-              La inversion binaria es un proceso el cual permite convertir la imagen en blanco y negro , de tal manera que se mantengan los detalles de la imagen.
-            </p>
-            <p>Para relizar la inversion binaria, existen dos opciones:</p>
-            <ul>
-              <li>
-                Usando el boton del menu derecho. Seleccion "Inversion Binaria"
-              </li>
-              <img src="./imagenes html/invB.png" alt="botonInversionBinaria">
-              <li>
-                Utilza la combinación de teclas "Ctrl+E"
-              </li>
-            </ul>
-            <img src="./imagenes html/Inversion binaria.png" alt="inversion binaria" class="rounded-md shadow-md p-4 border border-white">
+
+        <!-- Inversion Binaria -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Inversión Binaria</h3>
+          <p>
+            La inversión binaria es un proceso que permite convertir la imagen
+            en blanco y negro, manteniendo los detalles de la imagen.
+          </p>
+          <ul>
+            <li>
+              Usando el botón del menú derecho. Selecciona "Inversión Binaria"
+              <img src="./imagenes html/invB.png" alt="botonInversionBinaria" />
+            </li>
+            <li>Utiliza la combinación de teclas "Ctrl+i".</li>
+          </ul>
+          <img
+            src="./imagenes html/Inversion binaria.png"
+            alt="inversion binaria"
+            class="rounded-md shadow-md p-4 border border-white"
+          />
         </div>
-        
-        
-        <div>    
-            <h3><strong>Inversion fotografica</strong></h3>
-            <p>
-              La inversion fotografica es un proceso en la que las áreas claras aparecen oscuras y las áreas oscuras aparecen claras.
-            </p>
-            <p>Para relizar la inversion fotografica, existen dos opciones:</p>
-            <ul>
-              <li>
-                Usando el boton del menu derecho. Seleccion "Inversion fotografica"
-              </li>
-              <img src="./imagenes html/invF.png" alt="botonInversionBinaria" class="rounded-md shadow-md p-4 border border-white">
-              <li>
-                Utilza la combinación de teclas "Ctrl+E"
-              </li>
-            </ul>
-            <img src="./imagenes html/inv fotogra.png" alt="inversion binaria" class="rounded-md shadow-md p-4 border border-white">
-            
+
+        <!-- Inversion Fotografica -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-2">Inversión Fotográfica</h3>
+          <p>
+            La inversión fotográfica es un proceso en el que las áreas claras
+            aparecen oscuras y las áreas oscuras aparecen claras.
+          </p>
+          <ul>
+            <li>
+              Usando el botón del menú derecho. Selecciona "Inversión
+              Fotográfica"
+              <img
+                src="./imagenes html/invF.png"
+                alt="botonInversionFotografica"
+                class="rounded-md shadow-md p-4 border border-white"
+              />
+            </li>
+            <li>Utiliza la combinación de teclas "Ctrl+F".</li>
+          </ul>
+          <img
+            src="./imagenes html/inv fotogra.png"
+            alt="inversion fotográfica"
+            class="rounded-md shadow-md p-4 border border-white"
+          />
         </div>
       </div>
-      
+
+      <div class="mb-8" id="rotacion-espejo">
+        <h2 class="text-2xl font-bold mb-2">Rotación y Espejo</h2>
+        <ul>
+          <li>Rotación</li>
+          <div>
+            <p>
+              La rotación es un proceso que permite rotar la imagen en sentido
+              horario a 45°, 90°, 180° y 270°.
+            </p>
+              <li>
+                Usando el botón del menú derecho. Selecciona "Rotación"
+                <img
+                  src="./imagenes html/Rotacion.png"
+                  alt="botonRotacion"
+                  class="rounded-md shadow-md p-4 border border-white"
+                />
+              </li>
+              <li>Utiliza la combinación de teclas "Ctrl+R".</li>
+              <img src="" alt="ResultadoRotación" class="rounded-md shadow-md p-4 border border-white"
+              />
+          </div>
+          <li>Espejo</li>
+          <div>
+            <p>
+              El espejo es un proceso que permite voltear la imagen en sentido
+              horizontal y vertical.
+            </p>
+            <ul>
+              <li>
+                Usando el botón del menú derecho. Selecciona "Espejo"
+                <img
+                  src="./imagenes html/Espejo.png"
+                  alt="botonEspejo"
+                  class="rounded-md shadow-md p-4 border border-white"
+                />
+              </li>
+              <li>Utiliza la combinación de teclas "Ctrl+M".</li>
+
+              <img src="" alt="ResultadoEspejo" class="rounded-md shadow-md p-4 border border-white"
+            </ul>
+        </ul>
+      </div>
 
       <div class="mb-8" id="collage">
         <h2 class="text-2xl font-bold mb-2">Collage</h2>
         <!-- Contenido de Collage -->
       </div>
 
-      <div class="mb-8" id="rotacion-espejo">
-        <h2 class="text-2xl font-bold mb-2">Rotación y Espejo</h2>
-        <!-- Contenido de Rotación y Espejo -->
-      </div>
-
       <div class="mb-8" id="filtros">
         <h2 class="text-2xl font-bold mb-2">Filtros</h2>
-        <!-- Contenido de Filtros -->
         <div class="mb-4">
-          <h3 class="text-xl font-bold mb-2">Todos los Filtros</h3>
-          <!-- Contenido de Todos los Filtros -->
+          <!--Lista con todos los filtros-->
+          <ul>
+            <li>
+              Usando el botón del menú derecho. Selecciona "Filtros", esto desplegará una lista con todos los filtros disponibles.
+              <img
+                src="./imagenes html/Filtros.png"
+                alt="botonFiltros"
+                class="rounded-md shadow-md p-4 border border-white"
+              />
+            </li>
+            <li>Utiliza la combinación de teclas "Ctrl+L".</li>
+
+            <h3>Filtros:</h3>
+            <ul>
+              <li>Filtro moda</li>
+              <li>Filtro media</li>
+              <li>Filtro mediana</li>
+              <li>Filtro gaussiano</li>
+              <li>Filtro minimos</li>
+              <li>Filtro maximos</li>
+              <li>Filtro de orden n</li>
+              <li>Filtro laplaciano 4 vecinos</li>
+              <li>Filtro laplaciano 8 vecinos</li>
+              <li>Filtro prewit</li>
+              <li>Filtro sobel</li>
+              <li>Filtro roberts</li>
+            </ul>
+            <p>Para salir del menu de filtros y volver al menu principal utiliza el boton de "Regresar" </p>
+
         </div>
       </div>
 

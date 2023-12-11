@@ -519,6 +519,8 @@ class ImageProcessingApp:
                 self.mostrar_imagenProcesada(self.imagen_procesada)
                 self.HistorialdeCambios(self.imagen_procesada)
 
+                
+
     def seleccionar_imagen_collage(self):
         collage_images = []
 
@@ -556,6 +558,7 @@ class ImageProcessingApp:
         self.ventana_collage.geometry("1250x650")
         self.ventana_collage.resizable(False, False)
         frames = []
+
         for i in range(2):
             for j in range(3):
                 frame = tk.Frame(self.ventana_collage)
