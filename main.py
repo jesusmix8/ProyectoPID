@@ -1012,22 +1012,39 @@ class ImageProcessingApp:
         self.ShowImageandSave(self.imagen_procesada)
 
     def open_kernel_dialog(self):
-        kernel_size = tkinter.simpledialog.askinteger(
-            "Tamaño del kernel",
-            "Ingrese el tamaño del kernel (entre 3 y 10):",
-            initialvalue=3,
-            minvalue=3,
-            maxvalue=10,
-        )
+        kernel_dialog = tk.Toplevel(self.root)
+        kernel_dialog.title("Tamaño del kernel")
 
-        if kernel_size is not None:
-            # Verificar si el tamaño del kernel es válido
+        label = tk.Label(kernel_dialog, text="Ingrese el tamaño del kernel (entre 3 y 10):")
+        label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        spinbox_var = tk.StringVar()
+        spinbox_var.set(3)  # Valor inicial
+
+        spinbox = tk.Spinbox(
+            kernel_dialog,
+            from_=3,
+            to=10,
+            textvariable=spinbox_var,
+            wrap=True
+        )
+        spinbox.grid(row=1, column=0, pady=10)
+
+        def apply_erosion():
+            kernel_size = int(spinbox_var.get())
+
             if 3 <= kernel_size <= 10:
                 self.apply_erosion_with_custom_kernel(kernel_size)
+                kernel_dialog.destroy()
             else:
-                messagebox.showerror(
-                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
-                )
+                messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
+
+        apply_button = tk.Button(
+            kernel_dialog, text="Aplicar", command=apply_erosion
+        )
+        apply_button.grid(row=1, column=1, pady=10)
+
+        kernel_dialog.mainloop()
 
     def apply_erosion_with_custom_kernel(self, kernel_size):
         if hasattr(self, "imagen_procesada"):
@@ -1055,12 +1072,14 @@ class ImageProcessingApp:
 
         def get_custom_kernel():
             custom_kernel = []
-            for row in entries:
-                row_values = [
-                    int(entry.get()) if entry.get().strip() != "" else 0
-                    for entry in row
-                ]
-
+            try:
+                for row in entries:
+                    row_values = [
+                        int(entry.get()) if entry.get().strip() != "" else 0
+                        for entry in row
+                    ]
+            except:
+                messagebox.showerror("Error", "Todos los valores del kernel deben ser números")
                 # Que todos los valores del kernel estén entre 0 y 1
 
                 # Convertir los valores de la fila a uint8
@@ -1120,12 +1139,14 @@ class ImageProcessingApp:
 
         def get_custom_kernel():
             custom_kernel = []
-            for row in entries:
-                row_values = [
-                    int(entry.get()) if entry.get().strip() != "" else 0
-                    for entry in row
-                ]
-
+            try:
+                for row in entries:
+                    row_values = [
+                        int(entry.get()) if entry.get().strip() != "" else 0
+                        for entry in row
+                    ]
+            except:
+                messagebox.showerror("Error", "Todos los valores del kernel deben ser números")
                 # Que todos los valores del kernel estén entre 0 y 1
 
                 # Convertir los valores de la fila a uint8
@@ -1160,22 +1181,38 @@ class ImageProcessingApp:
         self.open_kernel_dialog_for_dilation()
 
     def open_kernel_dialog_for_dilation(self):
-        kernel_size = tkinter.simpledialog.askinteger(
-            "Tamaño del kernel",
-            "Ingrese el tamaño del kernel (entre 3 y 10):",
-            initialvalue=3,
-            minvalue=3,
-            maxvalue=10,
-        )
+            # Crear una nueva ventana para que el usuario ingrese el tamaño del kernel con Spinbox
+            kernel_dialog = tk.Toplevel(self.root)
+            kernel_dialog.title("Tamaño del Kernel")
+            kernel_dialog.geometry("200x100")
 
-        if kernel_size is not None:
-            # Verificar si el tamaño del kernel es válido
-            if 3 <= kernel_size <= 10:
-                self.apply_dilation_with_custom_kernel(kernel_size)
-            else:
-                messagebox.showerror(
-                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
-                )
+            # Etiqueta y Spinbox para ingresar el tamaño del kernel
+            label = tk.Label(kernel_dialog, text="Tamaño del Kernel:")
+            label.pack(pady=5)
+
+            spinbox_var = tk.IntVar()
+            spinbox = tk.Spinbox(
+                kernel_dialog,
+                from_=3,
+                to=10,
+                textvariable=spinbox_var,
+                width=5
+            )
+            spinbox.pack(pady=5)
+
+            def apply_dilation():
+                kernel_size = spinbox_var.get()
+                if 3 <= kernel_size <= 10:
+                    self.apply_dilation_with_custom_kernel(kernel_size)
+                    kernel_dialog.destroy()
+                else:
+                    messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
+
+            # Botón para aplicar la dilatación
+            apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_dilation)
+            apply_button.pack(pady=10)
+
+            kernel_dialog.mainloop()
 
     def ConvertirEscaladeGrises(self):
         if hasattr(self, "imagen_procesada"):
