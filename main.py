@@ -13,7 +13,7 @@ from tkinter import colorchooser
 from tkinter import simpledialog
 import time
 from tkinter import PhotoImage
-
+from skimage import filters
 
 # TODO
 
@@ -797,10 +797,14 @@ class ImageProcessingApp:
         else:
             image = self.imagen
 
-        image = np.array(image)
-        image = cv2.filter2D(image, -1, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]) / 9)
-        image = Image.fromarray(image)
-        self.imagen_procesada = image
+        size=3
+        rank = min((size * size - 1), 5)
+        image_array = np.array(image)
+        image =  Image.fromarray(image_array).filter(
+                ImageFilter.RankFilter(size=size, rank=rank)
+            )
+        imageMedia = Image.fromarray(np.array(image, dtype=np.uint8))
+        self.imagen_procesada = imageMedia
         self.ShowImageandSave(self.imagen_procesada)
 
     def filtroOrdenN(self):
@@ -849,12 +853,11 @@ class ImageProcessingApp:
         else:
             image = self.imagen
 
-        image = np.array(image)
+        image = image.filter(ImageFilter.GaussianBlur(radius=1))
 
-        image = cv2.GaussianBlur(image, (3, 3), 0)
-        image = Image.fromarray(image)
         self.imagen_procesada = image
         self.ShowImageandSave(self.imagen_procesada)
+        
 
     def FiltroMin(self):
         if hasattr(self, "imagen_procesada"):

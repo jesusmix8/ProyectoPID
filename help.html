@@ -39,6 +39,18 @@
         max-width: 100%;
         height: auto;
       }
+      nav {
+      background-color: transparent;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+
+      
+
+    
     </style>
   </head>
   <body class="font-sans">
@@ -47,7 +59,7 @@
       <h1 class="text-4xl font-bold mb-4">
         Guía de Usuario procesamiento de imágenes.
       </h1>
-      <nav class="mb-8">
+      <nav class="mb-8 navbar" id ="miNavBar" >
         <ul class="flex space-x-4">
           <li><a href="#introduccion">Introducción</a></li>
           <li><a href="#funciones-principales">Funciones Principales</a></li>
@@ -258,13 +270,14 @@
               <li>
                 Usando el botón del menú derecho. Selecciona "Rotación"
                 <img
-                  src="./imagenes html/Rotacion.png"
+                  src="./imagenes html/rotacionB.png"
                   alt="botonRotacion"
                   class="rounded-md shadow-md p-4 border border-white"
                 />
               </li>
               <li>Utiliza la combinación de teclas "Ctrl+R".</li>
-              <img src="" alt="ResultadoRotación" class="rounded-md shadow-md p-4 border border-white"
+              <p><strong>Resultado:</strong></p>
+              <img src="./imagenes html/rotacionResultado.png" alt="ResultadoRotación" class="rounded-md shadow-md p-4 border border-white"
               />
           </div>
           <li>Espejo</li>
@@ -277,14 +290,14 @@
               <li>
                 Usando el botón del menú derecho. Selecciona "Espejo"
                 <img
-                  src="./imagenes html/Espejo.png"
+                  src="./imagenes html/espejoB.png"
                   alt="botonEspejo"
                   class="rounded-md shadow-md p-4 border border-white"
                 />
               </li>
               <li>Utiliza la combinación de teclas "Ctrl+M".</li>
 
-              <img src="" alt="ResultadoEspejo" class="rounded-md shadow-md p-4 border border-white"
+              <img src="./imagenes html/espejoResul.png" alt="ResultadoEspejo" class="rounded-md shadow-md p-4 border border-white"
             </ul>
         </ul>
       </div>
@@ -302,7 +315,7 @@
             <li>
               Usando el botón del menú derecho. Selecciona "Filtros", esto desplegará una lista con todos los filtros disponibles.
               <img
-                src="./imagenes html/Filtros.png"
+                src="./imagenes html/filtrosbuton.png"
                 alt="botonFiltros"
                 class="rounded-md shadow-md p-4 border border-white"
               />
@@ -310,21 +323,96 @@
             <li>Utiliza la combinación de teclas "Ctrl+L".</li>
 
             <h3>Filtros:</h3>
-            <ul>
-              <li>Filtro moda</li>
-              <li>Filtro media</li>
-              <li>Filtro mediana</li>
-              <li>Filtro gaussiano</li>
-              <li>Filtro minimos</li>
-              <li>Filtro maximos</li>
-              <li>Filtro de orden n</li>
-              <li>Filtro laplaciano 4 vecinos</li>
-              <li>Filtro laplaciano 8 vecinos</li>
-              <li>Filtro prewit</li>
-              <li>Filtro sobel</li>
-              <li>Filtro roberts</li>
-            </ul>
-            <p>Para salir del menu de filtros y volver al menu principal utiliza el boton de "Regresar" </p>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Moda</h3>
+              <p>Descripción: Este filtro resalta las áreas de mayor frecuencia en una imagen, suavizando la transición entre píxeles.</p>
+              <p>Resultado:</p>
+              <img src="./imagenes html/ModaR.png" alt="Filtro Moda Result">
+            </div>
+      
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Media</h3>
+              <p> Descripción: Suaviza la imagen al reemplazar cada píxel con la media de su entorno.</p>
+              <img src="./imagenes html/mediaR.png" alt="Filtro Media Result">
+            </div>
+      
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Mediana</h3>
+              <p>Descripción: Similar al filtro de media, pero utiliza la mediana en lugar de la media para preservar mejor los detalles.</p>
+              <img src="imagenes html/medianaR.png" alt="Filtro Mediana Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Gaussiano</h3>
+              <p>Descripción: Aplica un suavizado a la imagen utilizando una función de distribución gaussiana.</p>
+              <img src="./imagenes html/gausR.png" alt="Filtro Gaussiano Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Mínimos</h3>
+              <p>Descripción: Resalta los detalles finos y minimiza el ruido al reemplazar cada píxel con el valor mínimo en su vecindario</p>
+              <img src="./imagenes html/filminR.png" alt="Filtro Mínimos Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Máximos</h3>
+              <p>Descripción: Similar al filtro de mínimos, pero utiliza el valor máximo en lugar del mínimo.</p>
+              <img src="./imagenes html/filtmaxR.png" alt="Filtro Máximos Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro de Orden N</h3>
+              <p>Descripción: Utiliza un valor introducido por el usuario del 1 al 9, dependiendo el numero introducido tomaremos un trozo de imagen y el valor de pixel mayor sera a 9 y el 1 el menor dentro del kernel y remplazara esos valores equivalentes en la imagen.</p>
+              <p>Con n = 9</p>
+              <img src="./imagenes html/n9.png" alt="Filtro de Orden N Result">
+              <p>Con n = 6</p>
+              <img src="./imagenes html/n6.png" alt="Filtro de Orden N Result">
+              <p>Con n = 4</p>
+              <img src="./imagenes html/n4.png" alt="">
+              <p>Con n = 2</p>
+              <img src="./imagenes html/n2.png" alt="">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Laplaciano 4 Vecinos</h3>
+              <p>Descripción: Detecta los bordes de la imagen utilizando el operador Laplaciano con 4 vecinos.</p>
+              <img src="path_to_image_laplaciano_4_result" alt="Filtro Laplaciano 4 Vecinos Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Laplaciano 8 Vecinos</h3>
+              <p>Descripción: Detecta los bordes de la imagen utilizando el operador Laplaciano con 8 vecinos.</p>
+              <img src="path_to_image_laplaciano_8_result" alt="Filtro Laplaciano 8 Vecinos Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Prewit</h3>
+              <p>Descripción: Detecta los bordes de la imagen utilizando el operador Prewit.</p>
+              <img src="path_to_image_prewit_result" alt="Filtro Prewit Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Sobel</h3>
+              <p>Descripción: Detecta los bordes de la imagen utilizando el operador Sobel.</p>
+              <img src="path_to_image_sobel_result" alt="Filtro Sobel Result">
+            </div>
+
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Filtro Roberts</h3>
+              <p>Descripción: Detecta los bordes de la imagen utilizando el operador Roberts.</p>
+              <img src="path_to_image_roberts_result" alt="Filtro Roberts Result">
+            </div>
+
+
+      
+            <!-- Add more filter result sections as needed -->
+      
+            <div class="mb-4">
+              <h3 class="text-xl font-bold mb-2">Regresar al Menú Principal</h3>
+              <p>Para salir del menú de filtros y volver al menú principal, utiliza el botón "Regresar".</p>
+              <img src="path_to_image_regresar_button" alt="Botón Regresar">
+            </div>
 
         </div>
       </div>
@@ -334,5 +422,24 @@
         <!-- Contenido de Operaciones Morfológicas -->
       </div>
     </div>
+
+    
+  </div>
+
+    <script>
+      window.onscroll = function() {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        var navbar = document.getElementById("miNavbar");
+
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+      }
+    </script>
   </body>
 </html>
