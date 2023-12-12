@@ -403,15 +403,16 @@ class ImageProcessingApp:
         else:
             image = self.imagen
 
-        # evaluar si a la imagen tiene canales suficientes para una inversion fotografica
-        if image.shape == 2:
-            print("La imagen tiene un solo canal")
-        elif image.shape == 3:
-            print("La imagen tiene 3 caneles")
+        # Verificar si la imagen tiene canales RGB
+        if image.mode == 'RGB':
+            # La imagen tiene canales RGB
+            self.invertida = Image.eval(image, lambda x: 255 - x)
+            self.imagen_procesada = self.invertida
+            self.ShowImageandSave(self.imagen_procesada)
+        else:
+            # La imagen no tiene canales RGB, manejar según sea necesario
+            messagebox.showinfo("Info", "La imagen no tiene canales RGB. No se puede aplicar la inversión fotográfica.")
 
-        self.invertida = Image.eval(image, lambda x: 255 - x)
-        self.imagen_procesada = self.invertida
-        self.ShowImageandSave(self.imagen_procesada)
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
