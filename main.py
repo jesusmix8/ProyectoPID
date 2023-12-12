@@ -33,6 +33,7 @@ class ImageProcessingApp:
         self.botonesbg = "#9DB2BF"
 
         self.historial = []
+        self.frames = []
 
         self.create_menu_frame()
         self.create_content_frame()
@@ -533,8 +534,11 @@ class ImageProcessingApp:
                 image = Image.open(image_path)
                 if image.format != "JPEG" or image.format != "JPG":
                     image = image.convert("RGB")
-
+                
                 collage_images.append(image)
+            else:
+                return None
+        #
         self.display_images(collage_images)
 
     def display_images(self, images):

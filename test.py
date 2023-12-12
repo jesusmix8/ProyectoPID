@@ -1,59 +1,42 @@
-import cv2
+from PIL import Image
 import numpy as np
+from tkinter import Tk, filedialog
 
-# Cargar la imagens
-imagen = cv2.imread('img/img (1).jpg')
+def open_file_dialog():
+    root = Tk()
+    root.withdraw()  # Hide the main window
 
-imagencv2 = np.array(imagen)
-print(imagencv2)
-# Convertir la imagen a escala de grises
-gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+    file_path = filedialog.askopenfilename(title="Select an Image File", filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif")])
 
-# Cargar el clasificador en cascada para los ojos
-cascade_ojos = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+    return file_path
 
-# Detectar los ojos
-ojos = cascade_ojos.detectMultiScale(gris, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+def collage_maker():
+    print("Select the first image:")
+    image1_path = open_file_dialog()
 
-print(ojos)
+    print("Select the second image:")
+    image2_path = open_file_dialog()
 
-# Porcentaje de reducción del tamaño del rectángulo
-porcentaje_reduccion = .8
+    if not image1_path or not image2_path:
+        print("Image selection canceled.")
+        return
 
-# Recorrer cada ojo detectado
-for (x, y, w, h) in ojos:
-    # Calcular el nuevo tamaño del rectángulo
-    nuevo_w = int(w * porcentaje_reduccion)
-    nuevo_h = int(h * porcentaje_reduccion)
+    image1 = Image.open(image1_path)
+    image2 = Image.open(image2_path)
 
-    # Calcular las nuevas coordenadas de la esquina inferior derecha
-    nuevo_x = x + nuevo_w
-    nuevo_y = y + nuevo_h
+    # Resize images to have the same width
+    new_width = min(image1.width, image2.width)
+    image1 = image1.resize((new_width, image1.height))
+    image2 = image2.resize((new_width, image2.height))
 
-    # Dibujar el rectángulo rojo alrededor del ojo con el nuevo tamaño
-    cv2.rectangle(imagen, (x, y), (nuevo_x, nuevo_y), (0, 0, 255), 2)
+    i1 = np.array(image1).astype(np.uint8)
+    i2 = np.array(image2).astype(np.uint8)
 
-    # Extraer el ojo de la imagen
-    ojo = gris[y:nuevo_y, x:nuevo_x]
+    collage = np.vstack([i1, i2])
 
-    # Aplicar un desenfoque gaussiano para reducir el ruido
-    ojo = cv2.GaussianBlur(ojo, (5, 5), 0)
+    new_image = Image.fromarray(collage)
+    new_image.save("new.jpg")
+    print("Collage saved as new.jpg")
 
-    # Detectar los círculos en el ojo utilizando la transformada de Hough
-    circulos = cv2.HoughCircles(ojo, cv2.HOUGH_GRADIENT, dp=1.5, minDist=250, param1=90, param2=30, minRadius=10, maxRadius=50)
-
-    # Asegurarse de que se encontró al menos un círculo
-    if circulos is not None:
-        # Convertir las coordenadas y radios de los círculos a enteros
-        circulos = np.round(circulos[0, :]).astype("int")
-
-        # Recorrer los círculos detectados
-        for (cx, cy, radio) in circulos:
-            # Dibujar el círculo en la imagen
-            cv2.circle(imagen, (x+cx, y+cy), radio, (0, 255, 0), 4)
-
-# Mostrar la imagen
-imagen = cv2.resize(imagen, (0, 0), fx=0.2, fy=0.2)
-cv2.imshow("Imagen", imagen)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# To Run The Above Function
+collage_maker()
