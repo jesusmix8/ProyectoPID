@@ -2143,7 +2143,7 @@ class ImageProcessingApp:
         self.imagen_procesada = image_array
         self.ShowImageandSave(self.imagen_procesada)
 
-    def Segmentación(self):
+    def Segmentación_old(self):
         # Utilizar operador ternario para simplificar la asignación de la imagen
         image = (
             self.imagen_procesada if hasattr(self, "imagen_procesada") else self.imagen
@@ -2172,6 +2172,58 @@ class ImageProcessingApp:
         self.imagen_procesada = Image.fromarray(image_with_contours_np)
 
         # Llamar a los métodos directamente con la imagen procesada
+        self.mostrar_imagenProcesada(self.imagen_procesada)
+        self.HistorialdeCambios(self.imagen_procesada)
+
+    def Segmentación(self):
+        if hasattr(self, "imagen_procesada"):
+            image = self.imagen_procesada
+        else:
+            image = self.imagen
+
+        image = image.convert("L")
+
+        hist, _ = np.histogram(np.array(image).ravel(), bins=256, range=[0, 256])
+
+        N = simpledialog.askinteger("Valor de N", "Ingrese el valor de N:")
+
+        picos_indices = np.argsort(-hist)[:N]
+
+        minimos_indices = np.argmin(hist[picos_indices])
+
+        if len(picos_indices) >= 2 and minimos_indices < len(picos_indices) - 1:
+            umbral = (
+                picos_indices[minimos_indices] + picos_indices[minimos_indices + 1]
+            ) // 2
+        else:
+            umbral = picos_indices[-1]
+
+        _, threshold_image = cv2.threshold(
+            np.array(image), umbral, 255, cv2.THRESH_BINARY_INV
+        )
+
+        contours, _ = cv2.findContours(
+            threshold_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
+
+        # Etiquetar las regiones sobre la imagen
+        image_with_labels = np.array(self.imagen)
+        for i, contour in enumerate(contours):
+            x, y, w, h = cv2.boundingRect(contour)
+            cv2.rectangle(image_with_labels, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.putText(
+                image_with_labels,
+                str(i + 1),
+                (x, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 255, 0),
+                2,
+            )
+
+        image_with_labels = Image.fromarray(image_with_labels)
+
+        self.imagen_procesada = image_with_labels
         self.mostrar_imagenProcesada(self.imagen_procesada)
         self.HistorialdeCambios(self.imagen_procesada)
 
