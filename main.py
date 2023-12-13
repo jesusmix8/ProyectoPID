@@ -1,7 +1,7 @@
 import os
 import sys
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 from tkinter import messagebox
 import webbrowser
 from PIL import Image, ImageTk, ImageFilter
@@ -19,6 +19,917 @@ from skimage import filters
 
 
 #       Falta collage Pablo Jesus
+class CollageAppOne:
+    def __init__(self):
+        self.ventana_collage_2x2 = tk.Toplevel()
+        self.ventana_collage_2x2.geometry("1250x850")
+        self.ventana_collage_2x2.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x2)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x2)
+
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_2x2, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_2x2, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(4):
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (300, 300), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 4:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (600, 600))
+
+        for i in range(2):
+            for j in range(2):
+                index = i * 2 + j
+                collage.paste(self.imagenes[index], (j * 300, i * 300))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_2x2, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        for i in range(2):
+            for j in range(2):
+                index = i * 2 + j
+                # Escalar y pegar las imágenes en el collage personalizado
+                imagen_escalada = self.imagenes[index].resize(
+                    (ancho // 2, alto // 2), Image.ANTIALIAS
+                )
+                collage_personalizado.paste(
+                    imagen_escalada, (j * (ancho // 2), i * (alto // 2))
+                )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Crea una nueva lista de imágenes en el orden especificado por el usuario
+        self.imagenes = [self.imagenes[i] for i in orden]
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_2x2.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
+
+
+class CollageAppTwo:
+    def __init__(self):
+        self.ventana_collage_3x2 = tk.Toplevel()
+        self.ventana_collage_3x2.geometry("1250x950")
+        self.ventana_collage_3x2.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_3x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_3x2)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_3x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_3x2)
+
+        tk.Button(
+            self.ventana_collage_3x2,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_3x2, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_3x2, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_3x2,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_3x2,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(6):  # Ahora se cargan 6 imágenes para el collage 3x2
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (250, 250), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 6:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (750, 750))  # Cambia las dimensiones del collage
+
+        for i in range(3):  # 3 renglones
+            for j in range(2):  # 2 columnas
+                index = i * 2 + j
+                width, height = 250, 250  # Dimensiones iniciales de la imagen
+
+                if j == 1:  # Columna 2
+                    # Alarga la imagen hacia la derecha
+                    width *= 2
+
+                imagen_resized = self.imagenes[index].resize(
+                    (width, height), Image.ANTIALIAS
+                )
+                collage.paste(imagen_resized, (j * 250, i * 250))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_3x2, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        for i in range(3):  # 3 renglones
+            for j in range(2):  # 2 columnas
+                index = i * 2 + j
+                # Escalar y pegar las imágenes en el collage personalizado
+                imagen_escalada = self.imagenes[index].resize(
+                    (ancho // 2, alto // 3), Image.ANTIALIAS
+                )
+                collage_personalizado.paste(
+                    imagen_escalada, (j * (ancho // 2), i * (alto // 3))
+                )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Crea una nueva lista de imágenes en el orden especificado por el usuario
+        self.imagenes = [self.imagenes[i] for i in orden]
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3 4 5): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_3x2.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
+
+
+class CollageAppThree:
+    def __init__(self):
+        self.ventana_collage_2x2 = tk.Toplevel()
+        self.ventana_collage_2x2.geometry("1250x850")
+        self.ventana_collage_2x2.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x2)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x2)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x2)
+
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_2x2, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_2x2, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_2x2,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(5):
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (250, 250), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 5:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (500, 500))  # Cambia las dimensiones del collage
+
+        # Imagen en la primera columna, primera fila
+        collage.paste(self.imagenes[0], (0, 0))
+
+        # Imagen en la primera columna, segunda fila
+        collage.paste(self.imagenes[1], (0, 250))
+
+        # Imágenes en la segunda columna, primera fila
+        collage.paste(self.imagenes[2].resize((250, 125), Image.ANTIALIAS), (250, 0))
+        collage.paste(self.imagenes[3].resize((250, 125), Image.ANTIALIAS), (250, 125))
+
+        # Imagen en la segunda columna, segunda fila (ocupa toda la columna y fila)
+        collage.paste(self.imagenes[4].resize((500, 250), Image.ANTIALIAS), (250, 250))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_2x2, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        # Escalar y pegar las imágenes en el collage personalizado
+        collage_personalizado.paste(
+            self.imagenes[0].resize((ancho // 2, alto // 2), Image.ANTIALIAS), (0, 0)
+        )
+        collage_personalizado.paste(
+            self.imagenes[1].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            (0, alto // 2),
+        )
+        collage_personalizado.paste(
+            self.imagenes[2].resize((ancho // 2, alto // 4), Image.ANTIALIAS),
+            (ancho // 2, 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[3].resize((ancho // 2, alto // 4), Image.ANTIALIAS),
+            (ancho // 2, alto // 4),
+        )
+        collage_personalizado.paste(
+            self.imagenes[4].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+        )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Verificar que los índices en el orden estén dentro del rango
+        if all(0 <= i < len(self.imagenes) for i in orden):
+            # Crea una nueva lista de imágenes en el orden especificado por el usuario
+            self.imagenes = [self.imagenes[i] for i in orden]
+        else:
+            print("Error: Índices fuera de rango")
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3 4): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_2x2.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
+
+
+class CollageAppFive:
+    def __init__(self):
+        self.ventana_collage_2x3 = tk.Toplevel()
+        self.ventana_collage_2x3.geometry("1250x1250")
+        self.ventana_collage_2x3.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x3)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x3)
+
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_2x3, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_2x3, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(7):
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (250, 250), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 7:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (500, 750))  # Cambia las dimensiones del collage
+
+        # Imágenes en la primera columna, primera fila
+        collage.paste(self.imagenes[0].resize((250, 125), Image.ANTIALIAS), (0, 0))
+        collage.paste(self.imagenes[1].resize((250, 125), Image.ANTIALIAS), (0, 125))
+
+        # Imagen en la primera columna, segunda fila
+        collage.paste(self.imagenes[2], (0, 250))
+
+        # Imágenes en la segunda columna, primera fila
+        collage.paste(self.imagenes[3], (250, 0))
+        collage.paste(self.imagenes[4].resize((250, 250), Image.ANTIALIAS), (250, 250))
+
+        # Imágenes en la segunda columna, segunda fila
+        collage.paste(self.imagenes[5].resize((250, 500), Image.ANTIALIAS), (250, 500))
+
+        # Imagen en la tercera fila
+        collage.paste(self.imagenes[6].resize((500, 250), Image.ANTIALIAS), (0, 500))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_2x3, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        # Escalar y pegar las imágenes en el collage personalizado
+        collage_personalizado.paste(
+            self.imagenes[0].resize((ancho // 2, alto // 6), Image.ANTIALIAS), (0, 0)
+        )
+        collage_personalizado.paste(
+            self.imagenes[1].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            (0, alto // 6),
+        )
+        collage_personalizado.paste(
+            self.imagenes[2].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            (0, alto // 3),
+        )
+        collage_personalizado.paste(
+            self.imagenes[3].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            (ancho // 2, 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[4].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            (ancho // 2, alto // 2),
+        )
+        collage_personalizado.paste(
+            self.imagenes[5].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            (ancho // 2, alto),
+        )
+        collage_personalizado.paste(
+            self.imagenes[6].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto)
+        )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Verificar que los índices en el orden estén dentro del rango
+        if all(0 <= i < len(self.imagenes) for i in orden):
+            # Crea una nueva lista de imágenes en el orden especificado por el usuario
+            self.imagenes = [self.imagenes[i] for i in orden]
+        else:
+            print("Error: Índices fuera de rango")
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3 4 5 6): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_2x3.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
+
+
+class CollageAppSix:
+    def __init__(self):
+        self.ventana_collage_2x3 = tk.Toplevel()
+        self.ventana_collage_2x3.geometry("1250x950")
+        self.ventana_collage_2x3.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x3)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_2x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_2x3)
+
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_2x3, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_2x3, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_2x3,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(8):
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (250, 250), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 8:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (500, 750))  # Cambia las dimensiones del collage
+
+        # Imagen en la columna 1, fila 1
+        collage.paste(self.imagenes[0], (0, 0))
+
+        # Imágenes en la columna 1, fila 2 (reescaladas más pequeñas)
+        collage.paste(self.imagenes[1].resize((250, 125), Image.ANTIALIAS), (0, 250))
+        collage.paste(self.imagenes[2].resize((250, 125), Image.ANTIALIAS), (0, 375))
+
+        # Imagen en la columna 1, fila 3
+        collage.paste(self.imagenes[3], (0, 500))
+
+        # Imagen en la columna 2, fila 1
+        collage.paste(self.imagenes[4], (250, 0))
+
+        # Imagen en la columna 2, fila 2 (ocupa toda la fila)
+        collage.paste(self.imagenes[5].resize((250, 250), Image.ANTIALIAS), (250, 250))
+
+        # Imágenes en la columna 2, fila 3 (reescaladas más pequeñas)
+        collage.paste(self.imagenes[6].resize((250, 125), Image.ANTIALIAS), (250, 500))
+        collage.paste(self.imagenes[7].resize((250, 125), Image.ANTIALIAS), (250, 625))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_2x3, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        # Pegar las imágenes en el collage personalizado según la distribución
+        collage_personalizado.paste(
+            self.imagenes[0].resize((ancho // 2, alto // 3), Image.ANTIALIAS), (0, 0)
+        )
+        collage_personalizado.paste(
+            self.imagenes[1].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            (0, alto // 3),
+        )
+        collage_personalizado.paste(
+            self.imagenes[2].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            (0, alto // 2),
+        )
+        collage_personalizado.paste(
+            self.imagenes[3].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            (0, 2 * (alto // 3)),
+        )
+        collage_personalizado.paste(
+            self.imagenes[4].resize((ancho // 2, alto), Image.ANTIALIAS),
+            (ancho // 2, 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[5].resize((ancho // 2, alto), Image.ANTIALIAS),
+            (ancho // 2, alto // 2),
+        )
+        collage_personalizado.paste(
+            self.imagenes[6].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            (ancho // 2, 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[7].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            (ancho // 2, alto // 6),
+        )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Verificar que los índices en el orden estén dentro del rango
+        if all(0 <= i < len(self.imagenes) for i in orden):
+            # Crea una nueva lista de imágenes en el orden especificado por el usuario
+            self.imagenes = [self.imagenes[i] for i in orden]
+        else:
+            print("Error: Índices fuera de rango")
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3 4 5 6 7): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_2x3.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
+
+
+import tkinter as tk
+from tkinter import filedialog, simpledialog
+from PIL import Image, ImageTk
+
+
+class CollageAppFour:
+    def __init__(self):
+        self.ventana_collage_1x3 = tk.Toplevel()
+        self.ventana_collage_1x3.geometry("1250x950")
+        self.ventana_collage_1x3.resizable(False, False)
+
+        self.imagenes = []
+
+        # Nuevos atributos para almacenar las dimensiones del collage
+        self.ancho_entry = tk.Entry(self.ventana_collage_1x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_1x3)
+
+    def crear_botones(self):
+        # Crea de nuevo los widgets Entry
+        self.ancho_entry = tk.Entry(self.ventana_collage_1x3)
+        self.alto_entry = tk.Entry(self.ventana_collage_1x3)
+
+        tk.Button(
+            self.ventana_collage_1x3,
+            text="Cargar Imágenes",
+            command=self.cargar_imagenes,
+        ).pack()
+
+        # Agregar Entries para ancho y alto
+        tk.Label(self.ventana_collage_1x3, text="Ancho:").pack()
+        self.ancho_entry.pack()
+        tk.Label(self.ventana_collage_1x3, text="Alto:").pack()
+        self.alto_entry.pack()
+
+        # Botón para guardar el collage con dimensiones personalizadas
+        tk.Button(
+            self.ventana_collage_1x3,
+            text="Guardar Collage",
+            command=self.guardar_collage,
+        ).pack()
+
+        # Botón para reordenar y mostrar el collage
+        tk.Button(
+            self.ventana_collage_1x3,
+            text="Reordenar y Mostrar Collage",
+            command=self.pedir_orden,
+        ).pack()
+
+    def cargar_imagenes(self):
+        for i in range(5):
+            ruta_imagen = filedialog.askopenfilename(
+                title="Seleccionar Imagen {}".format(i + 1),
+                filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+            )
+
+            if not ruta_imagen:
+                break  # El usuario canceló la selección
+
+            imagen = Image.open(ruta_imagen)
+            imagen = imagen.resize(
+                (250, 250), Image.ANTIALIAS
+            )  # Ajusta el tamaño según tus necesidades
+
+            self.imagenes.append(imagen)
+
+        if len(self.imagenes) == 5:
+            self.mostrar_collage()
+
+    def mostrar_collage(self):
+        collage = Image.new("RGB", (750, 750))  # Cambia las dimensiones del collage
+
+        # Imágenes en la columna 1, fila 1 (juntas horizontalmente)
+        collage.paste(self.imagenes[0], (0, 0))
+        collage.paste(self.imagenes[1], (250, 0))
+        collage.paste(self.imagenes[2], (500, 0))
+
+        # Imagen en la columna 1, fila 2 (se alarga para llenar el espacio)
+        collage.paste(self.imagenes[3].resize((750, 250), Image.ANTIALIAS), (0, 250))
+
+        # Imagen en la columna 1, fila 3 (se alarga para llenar el espacio)
+        collage.paste(self.imagenes[4].resize((750, 250), Image.ANTIALIAS), (0, 500))
+
+        collage_tk = ImageTk.PhotoImage(collage)
+        label_collage = tk.Label(self.ventana_collage_1x3, image=collage_tk)
+        label_collage.photo = collage_tk
+        label_collage.pack()
+
+    def guardar_collage(self):
+        # Obtener las dimensiones ingresadas por el usuario
+        ancho = int(self.ancho_entry.get())
+        alto = int(self.alto_entry.get())
+
+        # Crear una nueva imagen con las dimensiones proporcionadas
+        collage_personalizado = Image.new("RGB", (ancho, alto))
+
+        # Pegar las imágenes en el collage personalizado según la distribución
+        collage_personalizado.paste(
+            self.imagenes[0].resize((ancho // 3, alto), Image.ANTIALIAS), (0, 0)
+        )
+        collage_personalizado.paste(
+            self.imagenes[1].resize((ancho // 3, alto), Image.ANTIALIAS),
+            (ancho // 3, 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[2].resize((ancho // 3, alto), Image.ANTIALIAS),
+            (2 * (ancho // 3), 0),
+        )
+        collage_personalizado.paste(
+            self.imagenes[3].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+        )
+        collage_personalizado.paste(
+            self.imagenes[4].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+        )
+
+        # Guardar el collage personalizado
+        ruta_guardar = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("Archivos de Imagen", "*.png;*.jpg;*.jpeg")],
+        )
+        if ruta_guardar:
+            collage_personalizado.save(ruta_guardar)
+
+    def reordenar_imagenes(self, orden):
+        # Verificar que los índices en el orden estén dentro del rango
+        if all(0 <= i < len(self.imagenes) for i in orden):
+            # Crea una nueva lista de imágenes en el orden especificado por el usuario
+            self.imagenes = [self.imagenes[i] for i in orden]
+        else:
+            print("Error: Índices fuera de rango")
+
+    def pedir_orden(self):
+        # Pide al usuario que ingrese el orden de las imágenes
+        orden = simpledialog.askstring(
+            "Orden de las imágenes",
+            "Ingresa el orden de las imágenes (p. ej., 0 1 2 3 4): ",
+        )
+
+        # Convierte el orden a una lista de enteros
+        orden = list(map(int, orden.split()))
+
+        # Reordena las imágenes
+        self.reordenar_imagenes(orden)
+
+        # Limpia el collage actual
+        for widget in self.ventana_collage_1x3.winfo_children():
+            widget.destroy()
+
+        # Vuelve a mostrar el collage con las imágenes reordenadas
+        self.mostrar_collage()
+
+        # Genera de nuevo los entries y los botones
+        self.crear_botones()
 
 
 class ImageProcessingApp:
@@ -404,15 +1315,17 @@ class ImageProcessingApp:
             image = self.imagen
 
         # Verificar si la imagen tiene canales RGB
-        if image.mode == 'RGB':
+        if image.mode == "RGB":
             # La imagen tiene canales RGB
             self.invertida = Image.eval(image, lambda x: 255 - x)
             self.imagen_procesada = self.invertida
             self.ShowImageandSave(self.imagen_procesada)
         else:
             # La imagen no tiene canales RGB, manejar según sea necesario
-            messagebox.showinfo("Info", "La imagen no tiene canales RGB. No se puede aplicar la inversión fotográfica.")
-
+            messagebox.showinfo(
+                "Info",
+                "La imagen no tiene canales RGB. No se puede aplicar la inversión fotográfica.",
+            )
 
     def seleccionar_imagen(self):
         # Abrir una ventana de diálogo para seleccionar la imagen
@@ -521,43 +1434,6 @@ class ImageProcessingApp:
                 self.mostrar_imagenProcesada(self.imagen_procesada)
                 self.HistorialdeCambios(self.imagen_procesada)
 
-                
-
-    def seleccionar_imagen_collage(self):
-        collage_images = []
-
-        for _ in range(2):
-            image_path = filedialog.askopenfilename(
-                title="Seleccione una imagen",
-                filetypes=[("Archivos de imagen", "*.*")],
-            )
-            if image_path:
-                image = Image.open(image_path)
-                if image.format != "JPEG" or image.format != "JPG":
-                    image = image.convert("RGB")
-                
-                collage_images.append(image)
-            else:
-                return None
-        #
-        self.display_images(collage_images)
-
-    def display_images(self, images):
-        photo_images = []
-
-        for frame, image in zip(self.frames, images):
-            image = image.resize((400, 400))
-
-            photo = ImageTk.PhotoImage(image)
-
-            label = tk.Label(frame, image=photo)
-            label.image = photo
-            label.pack()
-
-            photo_images.append(photo)
-
-        self.root.photo_images = photo_images
-
     def collage(self, event=None):
         self.ventana_collage = tk.Toplevel(ventana)
         self.ventana_collage.geometry("1250x650")
@@ -637,57 +1513,35 @@ class ImageProcessingApp:
             self.ventana_collage.grid_columnconfigure(j, weight=1)
 
     def collage_2_2(self):
+        # Crear una instancia de CollageApp
         self.ventana_collage.destroy()
-        self.ventana_collage_2x2 = tk.Toplevel(ventana)
-        self.ventana_collage_2x2.geometry("1250x650")
-        self.ventana_collage_2x2.resizable(False, False)
-
-        # genera un frame en la ventana
-        self.frame_2x2 = tk.Frame(self.ventana_collage_2x2)
-        self.frame_2x2.pack()
-        # dentro de este frame genera 2x2 frames para mostrar las imganes
-        frames = []
-        for i in range(2):
-            for j in range(2):
-                frame = tk.Frame(self.frame_2x2)
-                frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
-                frames.append(frame)
-
-        # se crean los botones para seleccionar las imagenes
-        self.boton_1 = tk.Button(
-            frames[0], text="Seleccionar", command=self.seleccionar_imagen_collage
-        )
-        self.boton_1.pack()
+        collage_app = CollageAppOne()
+        collage_app.crear_botones()
 
     def collage_3_2(self):
         self.ventana_collage.destroy()
-        self.ventana_collage_3x2 = tk.Toplevel(ventana)
-        self.ventana_collage_3x2.geometry("1250x650")
-        self.ventana_collage_3x2.resizable(False, False)
+        collage_app = CollageAppTwo()
+        collage_app.crear_botones()
 
     def collage_5_2(self):
         self.ventana_collage.destroy()
-        self.ventana_collage_5x2 = tk.Toplevel(ventana)
-        self.ventana_collage_5x2.geometry("1250x650")
-        self.ventana_collage_5x2.resizable(False, False)
+        collage_app = CollageAppThree()
+        collage_app.crear_botones()
 
     def collage_6_2(self):
         self.ventana_collage.destroy()
-        self.ventana_collage_6x2 = tk.Toplevel(ventana)
-        self.ventana_collage_6x2.geometry("1250x650")
-        self.ventana_collage_6x2.resizable(False, False)
+        collage_app = CollageAppFour()
+        collage_app.crear_botones()
 
     def ccollage_7_3(self):
         self.ventana_collage.destroy()
-        self.ventana_collage_7x3 = tk.Toplevel(ventana)
-        self.ventana_collage_7x3.geometry("1250x650")
-        self.ventana_collage_7x3.resizable(False, False)
+        collage_app = CollageAppFive()
+        collage_app.crear_botones()
 
     def collage_8_3(self):
         self.ventana_collage.destroy()
-        self.ventana_collage_8x3 = tk.Toplevel(ventana)
-        self.ventana_collage_8x3.geometry("1250x650")
-        self.ventana_collage_8x3.resizable(False, False)
+        collage_app = CollageAppSix()
+        collage_app.crear_botones()
 
     def regresar(self):
         for widget in self.menu_frame.winfo_children():
@@ -802,12 +1656,12 @@ class ImageProcessingApp:
         else:
             image = self.imagen
 
-        size=3
+        size = 3
         rank = min((size * size - 1), 5)
         image_array = np.array(image)
-        image =  Image.fromarray(image_array).filter(
-                ImageFilter.RankFilter(size=size, rank=rank)
-            )
+        image = Image.fromarray(image_array).filter(
+            ImageFilter.RankFilter(size=size, rank=rank)
+        )
         imageMedia = Image.fromarray(np.array(image, dtype=np.uint8))
         self.imagen_procesada = imageMedia
         self.ShowImageandSave(self.imagen_procesada)
@@ -862,7 +1716,6 @@ class ImageProcessingApp:
 
         self.imagen_procesada = image
         self.ShowImageandSave(self.imagen_procesada)
-        
 
     def FiltroMin(self):
         if hasattr(self, "imagen_procesada"):
@@ -1016,18 +1869,16 @@ class ImageProcessingApp:
         kernel_dialog = tk.Toplevel(self.root)
         kernel_dialog.title("Tamaño del kernel")
 
-        label = tk.Label(kernel_dialog, text="Ingrese el tamaño del kernel (entre 3 y 10):")
+        label = tk.Label(
+            kernel_dialog, text="Ingrese el tamaño del kernel (entre 3 y 10):"
+        )
         label.grid(row=0, column=0, columnspan=2, pady=10)
 
         spinbox_var = tk.StringVar()
         spinbox_var.set(3)  # Valor inicial
 
         spinbox = tk.Spinbox(
-            kernel_dialog,
-            from_=3,
-            to=10,
-            textvariable=spinbox_var,
-            wrap=True
+            kernel_dialog, from_=3, to=10, textvariable=spinbox_var, wrap=True
         )
         spinbox.grid(row=1, column=0, pady=10)
 
@@ -1038,11 +1889,11 @@ class ImageProcessingApp:
                 self.apply_erosion_with_custom_kernel(kernel_size)
                 kernel_dialog.destroy()
             else:
-                messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
+                messagebox.showerror(
+                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
+                )
 
-        apply_button = tk.Button(
-            kernel_dialog, text="Aplicar", command=apply_erosion
-        )
+        apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_erosion)
         apply_button.grid(row=1, column=1, pady=10)
 
         kernel_dialog.mainloop()
@@ -1080,7 +1931,9 @@ class ImageProcessingApp:
                         for entry in row
                     ]
             except:
-                messagebox.showerror("Error", "Todos los valores del kernel deben ser números")
+                messagebox.showerror(
+                    "Error", "Todos los valores del kernel deben ser números"
+                )
                 # Que todos los valores del kernel estén entre 0 y 1
 
                 # Convertir los valores de la fila a uint8
@@ -1147,7 +2000,9 @@ class ImageProcessingApp:
                         for entry in row
                     ]
             except:
-                messagebox.showerror("Error", "Todos los valores del kernel deben ser números")
+                messagebox.showerror(
+                    "Error", "Todos los valores del kernel deben ser números"
+                )
                 # Que todos los valores del kernel estén entre 0 y 1
 
                 # Convertir los valores de la fila a uint8
@@ -1182,38 +2037,36 @@ class ImageProcessingApp:
         self.open_kernel_dialog_for_dilation()
 
     def open_kernel_dialog_for_dilation(self):
-            # Crear una nueva ventana para que el usuario ingrese el tamaño del kernel con Spinbox
-            kernel_dialog = tk.Toplevel(self.root)
-            kernel_dialog.title("Tamaño del Kernel")
-            kernel_dialog.geometry("200x100")
+        # Crear una nueva ventana para que el usuario ingrese el tamaño del kernel con Spinbox
+        kernel_dialog = tk.Toplevel(self.root)
+        kernel_dialog.title("Tamaño del Kernel")
+        kernel_dialog.geometry("200x100")
 
-            # Etiqueta y Spinbox para ingresar el tamaño del kernel
-            label = tk.Label(kernel_dialog, text="Tamaño del Kernel:")
-            label.pack(pady=5)
+        # Etiqueta y Spinbox para ingresar el tamaño del kernel
+        label = tk.Label(kernel_dialog, text="Tamaño del Kernel:")
+        label.pack(pady=5)
 
-            spinbox_var = tk.IntVar()
-            spinbox = tk.Spinbox(
-                kernel_dialog,
-                from_=3,
-                to=10,
-                textvariable=spinbox_var,
-                width=5
-            )
-            spinbox.pack(pady=5)
+        spinbox_var = tk.IntVar()
+        spinbox = tk.Spinbox(
+            kernel_dialog, from_=3, to=10, textvariable=spinbox_var, width=5
+        )
+        spinbox.pack(pady=5)
 
-            def apply_dilation():
-                kernel_size = spinbox_var.get()
-                if 3 <= kernel_size <= 10:
-                    self.apply_dilation_with_custom_kernel(kernel_size)
-                    kernel_dialog.destroy()
-                else:
-                    messagebox.showerror("Error", "El tamaño del kernel debe estar entre 3 y 10")
+        def apply_dilation():
+            kernel_size = spinbox_var.get()
+            if 3 <= kernel_size <= 10:
+                self.apply_dilation_with_custom_kernel(kernel_size)
+                kernel_dialog.destroy()
+            else:
+                messagebox.showerror(
+                    "Error", "El tamaño del kernel debe estar entre 3 y 10"
+                )
 
-            # Botón para aplicar la dilatación
-            apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_dilation)
-            apply_button.pack(pady=10)
+        # Botón para aplicar la dilatación
+        apply_button = tk.Button(kernel_dialog, text="Aplicar", command=apply_dilation)
+        apply_button.pack(pady=10)
 
-            kernel_dialog.mainloop()
+        kernel_dialog.mainloop()
 
     def ConvertirEscaladeGrises(self):
         if hasattr(self, "imagen_procesada"):
@@ -1346,6 +2199,5 @@ class Collage:
 
 if __name__ == "__main__":
     ventana = tk.Tk()
-
     app_processing = ImageProcessingApp(ventana)
     ventana.mainloop()
