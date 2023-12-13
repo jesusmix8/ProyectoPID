@@ -1435,6 +1435,16 @@ class ImageProcessingApp:
                 self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self, event=None):
+        def resource_path(relative_path):
+            """Get absolute path to resource, works for dev and for PyInstaller"""
+            try:
+                # PyInstaller creates a temp folder and stores path in _MEIPASS
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
+
+            return os.path.join(base_path, relative_path)
+
         self.ventana_collage = tk.Toplevel(ventana)
         self.ventana_collage.geometry("1250x650")
         self.ventana_collage.resizable(False, False)
@@ -1446,7 +1456,8 @@ class ImageProcessingApp:
                 frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
                 frames.append(frame)
 
-        imagen_1x1 = PhotoImage(file="img/2x2.png")
+        imagen_1x1_path = resource_path("2x2.png")
+        imagen_1x1 = PhotoImage(file=imagen_1x1_path)
         self.label_1x1 = tk.Label(frames[0], image=imagen_1x1)
         self.label_1x1.image = imagen_1x1
         self.label_1x1.pack(expand=True, fill="both")
@@ -1455,7 +1466,8 @@ class ImageProcessingApp:
         )
         self.boton_1x1.pack()
 
-        imagen_2x3 = PhotoImage(file="img/2x3.png")
+        imagen_2x3_path = resource_path("2x3.png")
+        imagen_2x3 = PhotoImage(file=imagen_2x3_path)
         self.label_2x3 = tk.Label(frames[1], image=imagen_2x3)
         self.label_2x3.image = imagen_2x3
         self.label_2x3.pack(expand=True, fill="both")
@@ -1464,7 +1476,8 @@ class ImageProcessingApp:
         )
         self.boton_1x2.pack()
 
-        imagen_3x3 = PhotoImage(file="img/3x3.png")
+        imagen_3x3_path = resource_path("3x3.png")
+        imagen_3x3 = PhotoImage(file=imagen_3x3_path)
         self.label_3x3 = tk.Label(frames[2], image=imagen_3x3)
         self.label_3x3.image = imagen_3x3
         self.label_3x3.pack(expand=True, fill="both")
@@ -1473,7 +1486,8 @@ class ImageProcessingApp:
         )
         self.boton_1x3.pack()
 
-        imagen_2x1 = PhotoImage(file="img/4x3.png")
+        imagen_4x3_path = resource_path("3x3.png")
+        imagen_2x1 = PhotoImage(file=imagen_4x3_path)
         self.label_2x1 = tk.Label(frames[3], image=imagen_2x1)
         self.label_2x1.image = (
             imagen_2x1  # Mantener referencia para evitar que la imagen sea eliminada
@@ -1484,7 +1498,8 @@ class ImageProcessingApp:
         )
         self.boton_2x1.pack()
 
-        imagen_2x2 = PhotoImage(file="img/7.png")
+        imagen_2x2_path = resource_path("7.png")
+        imagen_2x2 = PhotoImage(file=imagen_2x2_path)
         self.label_2x2 = tk.Label(frames[4], image=imagen_2x2)
         self.label_2x2.image = (
             imagen_2x2  # Mantener referencia para evitar que la imagen sea eliminada
@@ -1495,7 +1510,8 @@ class ImageProcessingApp:
         )
         self.boton_2x2.pack()
 
-        imagen_2x3 = PhotoImage(file="img/8.png")
+        imagen_2x3_path = resource_path("8.png")
+        imagen_2x3 = PhotoImage(file=imagen_2x3_path)
         self.label_2x3 = tk.Label(frames[5], image=imagen_2x3)
         self.label_2x3.image = (
             imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
