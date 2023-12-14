@@ -25,6 +25,8 @@ class CollageAppOne:
         self.ventana_collage_2x2.geometry("1250x850")
         self.ventana_collage_2x2.resizable(False, False)
 
+
+
         self.imagenes = []
 
         # Nuevos atributos para almacenar las dimensiones del collage
@@ -74,7 +76,7 @@ class CollageAppOne:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (300, 300), Image.ANTIALIAS
+                (300, 300), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -108,7 +110,7 @@ class CollageAppOne:
                 index = i * 2 + j
                 # Escalar y pegar las imágenes en el collage personalizado
                 imagen_escalada = self.imagenes[index].resize(
-                    (ancho // 2, alto // 2), Image.ANTIALIAS
+                    (ancho // 2, alto // 2), Image.Resampling.LANCZOS
                 )
                 collage_personalizado.paste(
                     imagen_escalada, (j * (ancho // 2), i * (alto // 2))
@@ -205,7 +207,7 @@ class CollageAppTwo:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (250, 250), Image.ANTIALIAS
+                (250, 250), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -226,7 +228,7 @@ class CollageAppTwo:
                     width *= 2
 
                 imagen_resized = self.imagenes[index].resize(
-                    (width, height), Image.ANTIALIAS
+                    (width, height), Image.Resampling.LANCZOS
                 )
                 collage.paste(imagen_resized, (j * 250, i * 250))
 
@@ -248,7 +250,7 @@ class CollageAppTwo:
                 index = i * 2 + j
                 # Escalar y pegar las imágenes en el collage personalizado
                 imagen_escalada = self.imagenes[index].resize(
-                    (ancho // 2, alto // 3), Image.ANTIALIAS
+                    (ancho // 2, alto // 3), Image.Resampling.LANCZOS
                 )
                 collage_personalizado.paste(
                     imagen_escalada, (j * (ancho // 2), i * (alto // 3))
@@ -345,7 +347,7 @@ class CollageAppThree:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (250, 250), Image.ANTIALIAS
+                (250, 250), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -363,11 +365,11 @@ class CollageAppThree:
         collage.paste(self.imagenes[1], (0, 250))
 
         # Imágenes en la segunda columna, primera fila
-        collage.paste(self.imagenes[2].resize((250, 125), Image.ANTIALIAS), (250, 0))
-        collage.paste(self.imagenes[3].resize((250, 125), Image.ANTIALIAS), (250, 125))
+        collage.paste(self.imagenes[2].resize((250, 125), Image.Resampling.LANCZOS), (250, 0))
+        collage.paste(self.imagenes[3].resize((250, 125), Image.Resampling.LANCZOS), (250, 125))
 
         # Imagen en la segunda columna, segunda fila (ocupa toda la columna y fila)
-        collage.paste(self.imagenes[4].resize((500, 250), Image.ANTIALIAS), (250, 250))
+        collage.paste(self.imagenes[4].resize((500, 250), Image.Resampling.LANCZOS), (250, 250))
 
         collage_tk = ImageTk.PhotoImage(collage)
         label_collage = tk.Label(self.ventana_collage_2x2, image=collage_tk)
@@ -384,22 +386,22 @@ class CollageAppThree:
 
         # Escalar y pegar las imágenes en el collage personalizado
         collage_personalizado.paste(
-            self.imagenes[0].resize((ancho // 2, alto // 2), Image.ANTIALIAS), (0, 0)
+            self.imagenes[0].resize((ancho // 2, alto // 2), Image.Resampling.LANCZOS), (0, 0)
         )
         collage_personalizado.paste(
-            self.imagenes[1].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            self.imagenes[1].resize((ancho // 2, alto // 2), Image.Resampling.LANCZOS),
             (0, alto // 2),
         )
         collage_personalizado.paste(
-            self.imagenes[2].resize((ancho // 2, alto // 4), Image.ANTIALIAS),
+            self.imagenes[2].resize((ancho // 2, alto // 4), Image.Resampling.LANCZOS),
             (ancho // 2, 0),
         )
         collage_personalizado.paste(
-            self.imagenes[3].resize((ancho // 2, alto // 4), Image.ANTIALIAS),
+            self.imagenes[3].resize((ancho // 2, alto // 4), Image.Resampling.LANCZOS),
             (ancho // 2, alto // 4),
         )
         collage_personalizado.paste(
-            self.imagenes[4].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+            self.imagenes[4].resize((ancho, alto // 2), Image.Resampling.LANCZOS), (0, alto // 2)
         )
 
         # Guardar el collage personalizado
@@ -497,7 +499,7 @@ class CollageAppFive:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (250, 250), Image.ANTIALIAS
+                (250, 250), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -509,21 +511,21 @@ class CollageAppFive:
         collage = Image.new("RGB", (500, 750))  # Cambia las dimensiones del collage
 
         # Imágenes en la primera columna, primera fila
-        collage.paste(self.imagenes[0].resize((250, 125), Image.ANTIALIAS), (0, 0))
-        collage.paste(self.imagenes[1].resize((250, 125), Image.ANTIALIAS), (0, 125))
+        collage.paste(self.imagenes[0].resize((250, 125), Image.Resampling.LANCZOS), (0, 0))
+        collage.paste(self.imagenes[1].resize((250, 125), Image.Resampling.LANCZOS), (0, 125))
 
         # Imagen en la primera columna, segunda fila
         collage.paste(self.imagenes[2], (0, 250))
 
         # Imágenes en la segunda columna, primera fila
         collage.paste(self.imagenes[3], (250, 0))
-        collage.paste(self.imagenes[4].resize((250, 250), Image.ANTIALIAS), (250, 250))
+        collage.paste(self.imagenes[4].resize((250, 250), Image.Resampling.LANCZOS), (250, 250))
 
         # Imágenes en la segunda columna, segunda fila
-        collage.paste(self.imagenes[5].resize((250, 500), Image.ANTIALIAS), (250, 500))
+        collage.paste(self.imagenes[5].resize((250, 500), Image.Resampling.LANCZOS), (250, 500))
 
         # Imagen en la tercera fila
-        collage.paste(self.imagenes[6].resize((500, 250), Image.ANTIALIAS), (0, 500))
+        collage.paste(self.imagenes[6].resize((500, 250), Image.Resampling.LANCZOS), (0, 500))
 
         collage_tk = ImageTk.PhotoImage(collage)
         label_collage = tk.Label(self.ventana_collage_2x3, image=collage_tk)
@@ -540,30 +542,30 @@ class CollageAppFive:
 
         # Escalar y pegar las imágenes en el collage personalizado
         collage_personalizado.paste(
-            self.imagenes[0].resize((ancho // 2, alto // 6), Image.ANTIALIAS), (0, 0)
+            self.imagenes[0].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS), (0, 0)
         )
         collage_personalizado.paste(
-            self.imagenes[1].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            self.imagenes[1].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS),
             (0, alto // 6),
         )
         collage_personalizado.paste(
-            self.imagenes[2].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            self.imagenes[2].resize((ancho // 2, alto // 3), Image.Resampling.LANCZOS),
             (0, alto // 3),
         )
         collage_personalizado.paste(
-            self.imagenes[3].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            self.imagenes[3].resize((ancho // 2, alto // 2), Image.Resampling.LANCZOS),
             (ancho // 2, 0),
         )
         collage_personalizado.paste(
-            self.imagenes[4].resize((ancho // 2, alto // 2), Image.ANTIALIAS),
+            self.imagenes[4].resize((ancho // 2, alto // 2), Image.Resampling.LANCZOS),
             (ancho // 2, alto // 2),
         )
         collage_personalizado.paste(
-            self.imagenes[5].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            self.imagenes[5].resize((ancho // 2, alto // 3), Image.Resampling.LANCZOS),
             (ancho // 2, alto),
         )
         collage_personalizado.paste(
-            self.imagenes[6].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto)
+            self.imagenes[6].resize((ancho, alto // 2), Image.Resampling.LANCZOS), (0, alto)
         )
 
         # Guardar el collage personalizado
@@ -661,7 +663,7 @@ class CollageAppSix:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (250, 250), Image.ANTIALIAS
+                (250, 250), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -676,8 +678,8 @@ class CollageAppSix:
         collage.paste(self.imagenes[0], (0, 0))
 
         # Imágenes en la columna 1, fila 2 (reescaladas más pequeñas)
-        collage.paste(self.imagenes[1].resize((250, 125), Image.ANTIALIAS), (0, 250))
-        collage.paste(self.imagenes[2].resize((250, 125), Image.ANTIALIAS), (0, 375))
+        collage.paste(self.imagenes[1].resize((250, 125), Image.Resampling.LANCZOS), (0, 250))
+        collage.paste(self.imagenes[2].resize((250, 125), Image.Resampling.LANCZOS), (0, 375))
 
         # Imagen en la columna 1, fila 3
         collage.paste(self.imagenes[3], (0, 500))
@@ -686,11 +688,11 @@ class CollageAppSix:
         collage.paste(self.imagenes[4], (250, 0))
 
         # Imagen en la columna 2, fila 2 (ocupa toda la fila)
-        collage.paste(self.imagenes[5].resize((250, 250), Image.ANTIALIAS), (250, 250))
+        collage.paste(self.imagenes[5].resize((250, 250), Image.Resampling.LANCZOS), (250, 250))
 
         # Imágenes en la columna 2, fila 3 (reescaladas más pequeñas)
-        collage.paste(self.imagenes[6].resize((250, 125), Image.ANTIALIAS), (250, 500))
-        collage.paste(self.imagenes[7].resize((250, 125), Image.ANTIALIAS), (250, 625))
+        collage.paste(self.imagenes[6].resize((250, 125), Image.Resampling.LANCZOS), (250, 500))
+        collage.paste(self.imagenes[7].resize((250, 125), Image.Resampling.LANCZOS), (250, 625))
 
         collage_tk = ImageTk.PhotoImage(collage)
         label_collage = tk.Label(self.ventana_collage_2x3, image=collage_tk)
@@ -707,34 +709,34 @@ class CollageAppSix:
 
         # Pegar las imágenes en el collage personalizado según la distribución
         collage_personalizado.paste(
-            self.imagenes[0].resize((ancho // 2, alto // 3), Image.ANTIALIAS), (0, 0)
+            self.imagenes[0].resize((ancho // 2, alto // 3), Image.Resampling.LANCZOS), (0, 0)
         )
         collage_personalizado.paste(
-            self.imagenes[1].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            self.imagenes[1].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS),
             (0, alto // 3),
         )
         collage_personalizado.paste(
-            self.imagenes[2].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            self.imagenes[2].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS),
             (0, alto // 2),
         )
         collage_personalizado.paste(
-            self.imagenes[3].resize((ancho // 2, alto // 3), Image.ANTIALIAS),
+            self.imagenes[3].resize((ancho // 2, alto // 3), Image.Resampling.LANCZOS),
             (0, 2 * (alto // 3)),
         )
         collage_personalizado.paste(
-            self.imagenes[4].resize((ancho // 2, alto), Image.ANTIALIAS),
+            self.imagenes[4].resize((ancho // 2, alto), Image.Resampling.LANCZOS),
             (ancho // 2, 0),
         )
         collage_personalizado.paste(
-            self.imagenes[5].resize((ancho // 2, alto), Image.ANTIALIAS),
+            self.imagenes[5].resize((ancho // 2, alto), Image.Resampling.LANCZOS),
             (ancho // 2, alto // 2),
         )
         collage_personalizado.paste(
-            self.imagenes[6].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            self.imagenes[6].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS),
             (ancho // 2, 0),
         )
         collage_personalizado.paste(
-            self.imagenes[7].resize((ancho // 2, alto // 6), Image.ANTIALIAS),
+            self.imagenes[7].resize((ancho // 2, alto // 6), Image.Resampling.LANCZOS),
             (ancho // 2, alto // 6),
         )
 
@@ -838,7 +840,7 @@ class CollageAppFour:
 
             imagen = Image.open(ruta_imagen)
             imagen = imagen.resize(
-                (250, 250), Image.ANTIALIAS
+                (250, 250), Image.Resampling.LANCZOS
             )  # Ajusta el tamaño según tus necesidades
 
             self.imagenes.append(imagen)
@@ -855,10 +857,10 @@ class CollageAppFour:
         collage.paste(self.imagenes[2], (500, 0))
 
         # Imagen en la columna 1, fila 2 (se alarga para llenar el espacio)
-        collage.paste(self.imagenes[3].resize((750, 250), Image.ANTIALIAS), (0, 250))
+        collage.paste(self.imagenes[3].resize((750, 250), Image.Resampling.LANCZOS), (0, 250))
 
         # Imagen en la columna 1, fila 3 (se alarga para llenar el espacio)
-        collage.paste(self.imagenes[4].resize((750, 250), Image.ANTIALIAS), (0, 500))
+        collage.paste(self.imagenes[4].resize((750, 250), Image.Resampling.LANCZOS), (0, 500))
 
         collage_tk = ImageTk.PhotoImage(collage)
         label_collage = tk.Label(self.ventana_collage_1x3, image=collage_tk)
@@ -875,21 +877,21 @@ class CollageAppFour:
 
         # Pegar las imágenes en el collage personalizado según la distribución
         collage_personalizado.paste(
-            self.imagenes[0].resize((ancho // 3, alto), Image.ANTIALIAS), (0, 0)
+            self.imagenes[0].resize((ancho // 3, alto), Image.Resampling.LANCZOS), (0, 0)
         )
         collage_personalizado.paste(
-            self.imagenes[1].resize((ancho // 3, alto), Image.ANTIALIAS),
+            self.imagenes[1].resize((ancho // 3, alto), Image.Resampling.LANCZOS),
             (ancho // 3, 0),
         )
         collage_personalizado.paste(
-            self.imagenes[2].resize((ancho // 3, alto), Image.ANTIALIAS),
+            self.imagenes[2].resize((ancho // 3, alto), Image.Resampling.LANCZOS),
             (2 * (ancho // 3), 0),
         )
         collage_personalizado.paste(
-            self.imagenes[3].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+            self.imagenes[3].resize((ancho, alto // 2), Image.Resampling.LANCZOS), (0, alto // 2)
         )
         collage_personalizado.paste(
-            self.imagenes[4].resize((ancho, alto // 2), Image.ANTIALIAS), (0, alto // 2)
+            self.imagenes[4].resize((ancho, alto // 2), Image.Resampling.LANCZOS), (0, alto // 2)
         )
 
         # Guardar el collage personalizado
@@ -1435,6 +1437,16 @@ class ImageProcessingApp:
                 self.HistorialdeCambios(self.imagen_procesada)
 
     def collage(self, event=None):
+        def resource_path(relative_path):
+            """Get absolute path to resource, works for dev and for PyInstaller"""
+            try:
+                # PyInstaller creates a temp folder and stores path in _MEIPASS
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
+
+            return os.path.join(base_path, relative_path)
+
         self.ventana_collage = tk.Toplevel(ventana)
         self.ventana_collage.geometry("1250x650")
         self.ventana_collage.resizable(False, False)
@@ -1446,7 +1458,8 @@ class ImageProcessingApp:
                 frame.grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
                 frames.append(frame)
 
-        imagen_1x1 = PhotoImage(file="img/2x2.png")
+        imagen_1x1_path = resource_path("2x2.png")
+        imagen_1x1 = PhotoImage(file=imagen_1x1_path)
         self.label_1x1 = tk.Label(frames[0], image=imagen_1x1)
         self.label_1x1.image = imagen_1x1
         self.label_1x1.pack(expand=True, fill="both")
@@ -1455,7 +1468,8 @@ class ImageProcessingApp:
         )
         self.boton_1x1.pack()
 
-        imagen_2x3 = PhotoImage(file="img/2x3.png")
+        imagen_2x3_path = resource_path("2x3.png")
+        imagen_2x3 = PhotoImage(file=imagen_2x3_path)
         self.label_2x3 = tk.Label(frames[1], image=imagen_2x3)
         self.label_2x3.image = imagen_2x3
         self.label_2x3.pack(expand=True, fill="both")
@@ -1464,7 +1478,8 @@ class ImageProcessingApp:
         )
         self.boton_1x2.pack()
 
-        imagen_3x3 = PhotoImage(file="img/3x3.png")
+        imagen_3x3_path = resource_path("3x3.png")
+        imagen_3x3 = PhotoImage(file=imagen_3x3_path)
         self.label_3x3 = tk.Label(frames[2], image=imagen_3x3)
         self.label_3x3.image = imagen_3x3
         self.label_3x3.pack(expand=True, fill="both")
@@ -1473,7 +1488,8 @@ class ImageProcessingApp:
         )
         self.boton_1x3.pack()
 
-        imagen_2x1 = PhotoImage(file="img/4x3.png")
+        imagen_4x3_path = resource_path("3x3.png")
+        imagen_2x1 = PhotoImage(file=imagen_4x3_path)
         self.label_2x1 = tk.Label(frames[3], image=imagen_2x1)
         self.label_2x1.image = (
             imagen_2x1  # Mantener referencia para evitar que la imagen sea eliminada
@@ -1484,7 +1500,8 @@ class ImageProcessingApp:
         )
         self.boton_2x1.pack()
 
-        imagen_2x2 = PhotoImage(file="img/7.png")
+        imagen_2x2_path = resource_path("7.png")
+        imagen_2x2 = PhotoImage(file=imagen_2x2_path)
         self.label_2x2 = tk.Label(frames[4], image=imagen_2x2)
         self.label_2x2.image = (
             imagen_2x2  # Mantener referencia para evitar que la imagen sea eliminada
@@ -1495,7 +1512,8 @@ class ImageProcessingApp:
         )
         self.boton_2x2.pack()
 
-        imagen_2x3 = PhotoImage(file="img/8.png")
+        imagen_2x3_path = resource_path("8.png")
+        imagen_2x3 = PhotoImage(file=imagen_2x3_path)
         self.label_2x3 = tk.Label(frames[5], image=imagen_2x3)
         self.label_2x3.image = (
             imagen_2x3  # Mantener referencia para evitar que la imagen sea eliminada
@@ -2093,9 +2111,21 @@ class ImageProcessingApp:
             return
 
         # Usar un clasificador de ojos más preciso
-        cascade_ojos = cv2.CascadeClassifier(
-            cv2.data.haarcascades + "haarcascade_eye.xml"
-        )
+        def resource_path(relative_path):
+                try:
+                        # PyInstaller creates a temp folder and stores path in _MEIPASS
+                        base_path = sys._MEIPASS
+                except Exception:
+                        base_path = os.path.abspath(".")
+
+                return os.path.join(base_path, relative_path)
+
+        haarcascade_eye_path = resource_path("haarcascade_eye.xml")
+
+        cascade_ojos = cv2.CascadeClassifier(haarcascade_eye_path)
+        
+        print(cascade_ojos)
+
 
         # Ajustar los parámetros de detectMultiScale
         ojos = cascade_ojos.detectMultiScale(
@@ -2176,12 +2206,18 @@ class ImageProcessingApp:
         self.HistorialdeCambios(self.imagen_procesada)
 
     def Segmentación(self):
+       
         if hasattr(self, "imagen_procesada"):
             image = self.imagen_procesada
         else:
             image = self.imagen
 
+
+
         image = image.convert("L")
+        #Como mostrar el histograma de la imagen
+
+
 
         hist, _ = np.histogram(np.array(image).ravel(), bins=256, range=[0, 256])
 
@@ -2206,6 +2242,8 @@ class ImageProcessingApp:
             threshold_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
 
+
+
         # Etiquetar las regiones sobre la imagen
         image_with_labels = np.array(self.imagen)
         for i, contour in enumerate(contours):
@@ -2222,6 +2260,9 @@ class ImageProcessingApp:
             )
 
         image_with_labels = Image.fromarray(image_with_labels)
+
+        plt.hist(np.array(image).ravel(), bins=256, range=[0, 256])
+        plt.show()
 
         self.imagen_procesada = image_with_labels
         self.mostrar_imagenProcesada(self.imagen_procesada)
@@ -2247,6 +2288,7 @@ class Collage:
         self.image = image
         self.n_rows = n_rows
         self.n_cols = n_cols
+
 
 
 if __name__ == "__main__":
